@@ -308,7 +308,7 @@ class WCController extends Controller
 
         //$data = json_encode($data);
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products/' . $params['id'] .'?name='.$data['name'].'&regular_price='.$data['regular_price'].'&sale_price='.$data['sale_price'].'&stock_quantity='.$data['stock_quantity'],
+            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products/' . $params['id'] .$url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -365,13 +365,13 @@ class WCController extends Controller
                                     //dd($WCProd->meta_data[0]->value);
                                     # if product holoo was not same with product hoocomrece
                                     $data = [
-                                        'id' => (int)$WCProd->id,
+                                        'id' => $WCProd->id,
                                         'name' => (isset($config->update_product_name) && $config->update_product_name=="1") && ($WCProd->name != $this->arabicToPersian($HolooProd->a_Name)) ? urlencode($this->arabicToPersian($HolooProd->a_Name)) :null,
                                         'regular_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ($WCProd->regular_price != $HolooProd->sel_Price) ? $HolooProd->sel_Price ?? 0 : null,
                                         'stock_quantity' =>(isset($config->update_product_stock) && $config->update_product_stock=="1") && (isset($WCProd->stock_quantity) and $WCProd->stock_quantity != $HolooProd->exist_Mandeh) ? (int)$HolooProd->exist_Mandeh ?? 0 : null,
                                     ];
-
-                                    $this->updateWCSingleProduct($data);
+                                    dd($data);
+                                    dd($this->updateWCSingleProduct($data));
 
                                     array_push($response_product,$WCProd->meta_data[0]->value);
 
