@@ -365,7 +365,7 @@ class WCController extends Controller
                                     //dd($WCProd->meta_data[0]->value);
                                     # if product holoo was not same with product hoocomrece
                                     $data = [
-                                        'id' => $WCProd->id,
+                                        'id' => (int)$WCProd->id,
                                         'name' => (isset($config->update_product_name) && $config->update_product_name=="1") && ($WCProd->name != $this->arabicToPersian($HolooProd->a_Name)) ? urlencode($this->arabicToPersian($HolooProd->a_Name)) :null,
                                         'regular_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ($WCProd->regular_price != $HolooProd->sel_Price) ? $HolooProd->sel_Price ?? 0 : null,
                                         'stock_quantity' =>(isset($config->update_product_stock) && $config->update_product_stock=="1") && (isset($WCProd->stock_quantity) and $WCProd->stock_quantity != $HolooProd->exist_Mandeh) ? (int)$HolooProd->exist_Mandeh ?? 0 : null,
