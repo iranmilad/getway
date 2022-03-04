@@ -301,6 +301,11 @@ class WCController extends Controller
             "stock_quantity"=>$params['stock_quantity'],
             "name"=>$params['name'],
         ];
+        $url="?";
+        $url=($data['name']!=null) ? $url.'name='.$data['name'] : $url;
+        $url=($data['regular_price']!=null) ? $url.'&regular_price='.$data['regular_price'] .'&sale_price='.$data['sale_price']: $url;
+        $url=($data['stock_quantity']!=null) ? $url.'&stock_quantity='.$data['stock_quantity'] : $url;
+
         //$data = json_encode($data);
         curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products/' . $params['id'] .'?name='.$data['name'].'&regular_price='.$data['regular_price'].'&sale_price='.$data['sale_price'].'&stock_quantity='.$data['stock_quantity'],
@@ -330,7 +335,7 @@ class WCController extends Controller
     /*
      * Update All Products
      */
-    public function updateAllProductFromHolooToWC()
+    public function updateAllProductFromHolooToWC(Request $config)
     {
         ini_set('max_execution_time', 120); // 120 (seconds) = 2 Minutes
         $callApi = $this->fetchAllHolloProds();
@@ -353,17 +358,17 @@ class WCController extends Controller
 
 
                                 if (
-                                    (isset($WCProd->stock_quantity) and $WCProd->stock_quantity != $HolooProd->exist_Mandeh) or
-                                    ($WCProd->name != $this->arabicToPersian($HolooProd->a_Name)) or
-                                    ($WCProd->regular_price != $HolooProd->sel_Price)
+                                    ((isset($config->update_product_stock) && $config->update_product_stock=="1") && isset($WCProd->stock_quantity) and $WCProd->stock_quantity != $HolooProd->exist_Mandeh) or
+                                    ((isset($config->update_product_name) && $config->update_product_name=="1") && $WCProd->name != $this->arabicToPersian($HolooProd->a_Name)) or
+                                    ((isset($config->update_product_price) && $config->update_product_price=="1") && $WCProd->regular_price != $HolooProd->sel_Price)
                                 ) {
                                     //dd($WCProd->meta_data[0]->value);
                                     # if product holoo was not same with product hoocomrece
                                     $data = [
                                         'id' => $WCProd->id,
-                                        'name' => urlencode($this->arabicToPersian($HolooProd->a_Name)),
-                                        'regular_price' => $HolooProd->sel_Price ?? 0,
-                                        'stock_quantity' => (int)$HolooProd->exist_Mandeh ?? 0,
+                                        'name' => (isset($config->update_product_name) && $config->update_product_name=="1") && ($WCProd->name != $this->arabicToPersian($HolooProd->a_Name)) ? urlencode($this->arabicToPersian($HolooProd->a_Name)) :null,
+                                        'regular_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ($WCProd->regular_price != $HolooProd->sel_Price) ? $HolooProd->sel_Price ?? 0 : null,
+                                        'stock_quantity' =>(isset($config->update_product_stock) && $config->update_product_stock=="1") && (isset($WCProd->stock_quantity) and $WCProd->stock_quantity != $HolooProd->exist_Mandeh) ? (int)$HolooProd->exist_Mandeh ?? 0 : null,
                                     ];
 
                                     $this->updateWCSingleProduct($data);
