@@ -30,6 +30,8 @@ Route::post('wcSingleProductUpdate', [HolooController::class, 'wcSingleProductUp
 Route::post('wcAddAllHolooProductsCategory', [HolooController::class, 'wcAddAllHolooProductsCategory']);
 Route::post('wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
 Route::get('wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
+Route::post('wcGetBankAccount', [HolooController::class, 'getAccountBank']);
+Route::post('wcGetCashAccount', [HolooController::class, 'getAccountCash']);
 
 Route::post('getProductCategory', [HolooController::class, 'getProductCategory']);
 Route::get('getAllHolooProducts', [HolooController::class, 'getAllHolooProducts']);

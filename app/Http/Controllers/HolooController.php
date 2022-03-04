@@ -770,4 +770,57 @@ class HolooController extends Controller
         return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result"=>["msg_code"=>1]]);
     }
 
+
+    public function getAccountBank(Request $config){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Bank/GetBank',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        CURLOPT_HTTPHEADER => array(
+            'serial: 10304923',
+            'database: Holoo1',
+            'Authorization: Bearer '.$this->getNewToken()
+        ),
+        ));
+
+        $response = curl_exec($curl);
+        $response =json_decode($response);
+        curl_close($curl);
+        return $this->sendResponse('لیست حسابهای بانکی', Response::HTTP_OK, ["result"=>$response->data]);
+
+    }
+
+    public function getAccountCash(Request $config){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Cash/GetCash',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        CURLOPT_HTTPHEADER => array(
+            'serial: 10304923',
+            'database: Holoo1',
+            'Authorization: Bearer '.$this->getNewToken()
+        ),
+        ));
+
+        $response = curl_exec($curl);
+        $response =json_decode($response);
+        curl_close($curl);
+        return $this->sendResponse('لیست حسابهای نقدی', Response::HTTP_OK, ["result"=>$response->data]);
+
+    }
+
 }
