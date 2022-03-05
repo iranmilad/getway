@@ -697,14 +697,15 @@ class HolooController extends Controller
         $curl = curl_init();
         $userSerial="10304923";
         $userApiKey="E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
-        $data=$request->all();
+
+        $data=$request->product_cat;
         //dd($data);
         $counter=1;
         $categories=$this->getAllCategory();
         $wcHolooExistCode=app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
         $allRespose=[];
         foreach ($categories->result as $key => $category) {
-            if(array_key_exists("product_cat_".$category->m_groupcode,$data)){
+            if(array_key_exists($category->m_groupcode,$data)){
 
                 curl_setopt_array($curl, array(
                     CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Article/SearchArticles?from.date=2020',
@@ -730,7 +731,8 @@ class HolooController extends Controller
 
                 foreach($HolooProds as $HolooProd){
 
-                    if (!in_array($HolooProd->a_Code, $wcHolooExistCode) && $HolooProd->exist_Mandeh>0) { //&& $HolooProd->exist_Mandeh>0
+                    if (!in_array($HolooProd->a_Code, $wcHolooExistCode)
+                    ) { //&& $HolooProd->exist_Mandeh>0
 
                         $param=[
                             "holooCode"=>$HolooProd->a_Code,
@@ -739,10 +741,15 @@ class HolooController extends Controller
                             "holooStockQuantity" => (string) $HolooProd->exist_Mandeh ?? 0,
                         ];
 
-
-                        $allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,$data["product_cat_".$category->m_groupcode]);
+                        if ((!isset($request->insert_zero_product ) && $HolooProd->exist_Mandeh>0) || (isset($request->insert_zero_product) && $request->insert_zero_product=="1" && $HolooProd->exist_Mandeh>0)) {
+                            $allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,$data[$category->m_groupcode]);
+                        }
+                        elseif (isset($request->insert_zero_product) && $request->insert_zero_product=="0") {
+                            $allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,$data[$category->m_groupcode]);
+                        }
 
                     }
+
 
                 }
 
