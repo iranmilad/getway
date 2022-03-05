@@ -61,11 +61,7 @@ class WCController extends Controller
      */
     public function createSingleProduct($param,$categories)
     {
-        $category=array(
-            (object)array(
-                'id' => $categories,
-            )
-        );
+
         $meta = array(
             (object)array(
                 'key' => '_holo_sku',
@@ -74,6 +70,12 @@ class WCController extends Controller
         );
         //$json = json_encode($value);
         if ($categories !=null) {
+            $category=array(
+                (object)array(
+                    'id' => $categories["id"],
+                    "name" => $categories["name"],
+                )
+            );
             $data = array(
                 'name' => $param["holooName"],
                 'type' => 'simple',

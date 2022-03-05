@@ -692,7 +692,7 @@ class HolooController extends Controller
 
 
     public function wcAddAllHolooProductsCategory(Request $request){
-        //ini_set('max_execution_time', 120); // 120 (seconds) = 2 Minutes
+        ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
         $token=$this->getNewToken();
         $curl = curl_init();
         $userSerial="10304923";
@@ -702,6 +702,7 @@ class HolooController extends Controller
         //dd($data);
         $counter=1;
         $categories=$this->getAllCategory();
+
         $wcHolooExistCode=app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
         $allRespose=[];
         foreach ($categories->result as $key => $category) {
@@ -741,13 +742,15 @@ class HolooController extends Controller
                             "holooStockQuantity" => (string) $HolooProd->exist_Mandeh ?? 0,
                         ];
 
-                        if ((!isset($request->insert_zero_product ) && $HolooProd->exist_Mandeh>0) || (isset($request->insert_zero_product) && $request->insert_zero_product=="1" && $HolooProd->exist_Mandeh>0)) {
-                            $allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,$data[$category->m_groupcode]);
+                        if ((!isset($request->insert_zero_product ) && $HolooProd->exist_Mandeh>0) || (isset($request->insert_zero_product) && $request->insert_zero_product=="0" && $HolooProd->exist_Mandeh>0)) {
+                            $allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
+                            sleep(2);
                         }
-                        elseif (isset($request->insert_zero_product) && $request->insert_zero_product=="0") {
-                            $allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,$data[$category->m_groupcode]);
+                        elseif (isset($request->insert_zero_product) && $request->insert_zero_product=="1") {
+                            $allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
+                            sleep(2);
+                            //dd($allRespose);
                         }
-
                     }
 
 
