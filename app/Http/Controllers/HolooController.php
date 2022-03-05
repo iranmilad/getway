@@ -698,7 +698,7 @@ class HolooController extends Controller
         $userSerial="10304923";
         $userApiKey="E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
 
-        $data=$request->product_cat;
+        $data=json_decode($request->product_cat, true);
         //dd($data);
         $counter=1;
         $categories=$this->getAllCategory();
