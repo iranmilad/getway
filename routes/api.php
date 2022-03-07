@@ -41,6 +41,11 @@ Route::post('wcInvoiceRegistration', [HolooController::class, 'wcInvoiceRegistra
 Route::post('wcInvoicePayed', [HolooController::class, 'wcInvoicePayed']);
 Route::post('addToCart', [HolooController::class, 'addToCart']);
 
+//holoo webhook event
+Route::post('webhook', [WCController::class, 'holooWebHook']);
+
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [AuthenticationController::class, 'user']);
     Route::post('updateUser', [AuthenticationController::class, 'updateWordpressSettings']);

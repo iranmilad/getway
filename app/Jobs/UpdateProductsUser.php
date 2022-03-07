@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Jobs;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+class UpdateProductsUser implements ShouldQueue, ShouldBeUnique
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected $user;
+    protected $param;
+    public $flag;
+    /**
+     * Create a new job instance.
+     *
+     * @return void
+     */
+    public function __construct($user,$param,$flag)
+    {
+        $this->user=$user;
+        $this->param=$param;
+        $this->flag=$flag;
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+
+        $curl = curl_init();
+        $data=[
+            "regular_price"=>$this->param['regular_price'],
+            "sale_price"=>$this->param['regular_price'],
+            "stock_quantity"=>$this->param['stock_quantity'],
+            "name"=>$this->param['name'],
+        ];
+        $url="?";
+        $url=($data['name']!=null) ? $url.'name='.$data['name'] : $url;
+        $url=($data['regular_price']!=null) ? $url.'&regular_price='.$data['regular_price'] .'&sale_price='.$data['sale_price']: $url;
+        $url=($data['stock_quantity']!=null) ? $url.'&stock_quantity='.$data['stock_quantity'] : $url;
+
+        //$data = json_encode($data);
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products/' . $this->param['id'] .$url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'PUT',
+            //CURLOPT_POSTFIELDS => $data,
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Basic Y2tfZGIyY2ZiNDIwMTY1ZDc0MGEyNDIxZDUxZWMwN2NlNmI1MzU0ZmRiNjpjc182YzU3ZmRkNmEzMWQ2NzgwYzRhNTEwOTMyYTM2NDgwZTg3YTkyYTNi'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+
+        curl_close($curl);
+    }
+
+    /**
+     * The unique ID of the job.
+     *
+     * @return string
+     */
+    public function uniqueId()
+    {
+        return $this->user.'_'.$this->flag;
+    }
+}

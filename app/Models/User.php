@@ -14,4 +14,8 @@ class User extends Authenticatable
 
     protected $guarded = [];
 
+    public function request_products()
+    {
+        return $this->hasMany(ProductRequest::class);
+    }
 }

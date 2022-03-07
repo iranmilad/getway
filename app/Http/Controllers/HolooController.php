@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Jobs\AddProductsUser;
+use App\Models\ProductRequest;
 use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\Response;
@@ -154,7 +156,7 @@ class HolooController extends Controller
 
     public function wcInvoiceRegistration(Request $orderInvoice)
     {
-        $oreder=array (
+        $oreder = array(
             'id' => 727,
             'parent_id' => 0,
             'number' => '727',
@@ -179,220 +181,242 @@ class HolooController extends Controller
             'customer_ip_address' => '',
             'customer_user_agent' => '',
             'customer_note' => '',
-            'billing' =>
-            array (
-              'first_name' => 'John',
-              'last_name' => 'Doe',
-              'company' => '',
-              'address_1' => '969 Market',
-              'address_2' => '',
-              'city' => 'San Francisco',
-              'state' => 'CA',
-              'postcode' => '94103',
-              'country' => 'US',
-              'email' => 'john.doe@example.com',
-              'phone' => '(555) 555-5555',
+            'billing' => array(
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'company' => '',
+                'address_1' => '969 Market',
+                'address_2' => '',
+                'city' => 'San Francisco',
+                'state' => 'CA',
+                'postcode' => '94103',
+                'country' => 'US',
+                'email' => 'john.doe@example.com',
+                'phone' => '(555) 555-5555',
             ),
-            'shipping' =>
-            array (
-              'first_name' => 'John',
-              'last_name' => 'Doe',
-              'company' => '',
-              'address_1' => '969 Market',
-              'address_2' => '',
-              'city' => 'San Francisco',
-              'state' => 'CA',
-              'postcode' => '94103',
-              'country' => 'US',
+            'shipping' => array(
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'company' => '',
+                'address_1' => '969 Market',
+                'address_2' => '',
+                'city' => 'San Francisco',
+                'state' => 'CA',
+                'postcode' => '94103',
+                'country' => 'US',
             ),
             'payment_method' => 'bacs',
             'payment_method_title' => 'Direct Bank Transfer',
             'transaction_id' => '',
             'date_paid' => '2017-03-22T16:28:08',
             'date_paid_gmt' => '2017-03-22T19:28:08',
-            'date_completed' => NULL,
-            'date_completed_gmt' => NULL,
+            'date_completed' => null,
+            'date_completed_gmt' => null,
             'cart_hash' => '',
-            'meta_data' =>
-            array (
-              0 =>
-              array (
-                'id' => 13106,
-                'key' => '_download_permissions_granted',
-                'value' => 'yes',
-              ),
+            'meta_data' => array(
+                0 => array(
+                    'id' => 13106,
+                    'key' => '_download_permissions_granted',
+                    'value' => 'yes',
+                ),
             ),
-            'line_items' =>
-            array (
-              0 =>
-              array (
-                'id' => 315,
-                'name' => 'Woo Single #1',
-                'product_id' => 93,
-                'variation_id' => 0,
-                'quantity' => 2,
-                'tax_class' => '',
-                'subtotal' => '6.00',
-                'subtotal_tax' => '0.45',
-                'total' => '6.00',
-                'total_tax' => '0.45',
-                'taxes' =>
-                array (
-                  0 =>
-                  array (
-                    'id' => 75,
-                    'total' => '0.45',
-                    'subtotal' => '0.45',
-                  ),
+            'line_items' => array(
+                0 => array(
+                    'id' => 315,
+                    'name' => 'Woo Single #1',
+                    'product_id' => 93,
+                    'variation_id' => 0,
+                    'quantity' => 2,
+                    'tax_class' => '',
+                    'subtotal' => '6.00',
+                    'subtotal_tax' => '0.45',
+                    'total' => '6.00',
+                    'total_tax' => '0.45',
+                    'taxes' => array(
+                        0 => array(
+                            'id' => 75,
+                            'total' => '0.45',
+                            'subtotal' => '0.45',
+                        ),
+                    ),
+                    'meta_data' => array(
+                    ),
+                    'sku' => '',
+                    'price' => 3,
                 ),
-                'meta_data' =>
-                array (
+                1 => array(
+                    'id' => 316,
+                    'name' => 'Ship Your Idea &ndash; Color: Black, Size: M Test',
+                    'product_id' => 22,
+                    'variation_id' => 23,
+                    'quantity' => 1,
+                    'tax_class' => '',
+                    'subtotal' => '12.00',
+                    'subtotal_tax' => '0.90',
+                    'total' => '12.00',
+                    'total_tax' => '0.90',
+                    'taxes' => array(
+                        0 => array(
+                            'id' => 75,
+                            'total' => '0.9',
+                            'subtotal' => '0.9',
+                        ),
+                    ),
+                    'meta_data' => array(
+                        0 => array(
+                            'id' => 2095,
+                            'key' => 'pa_color',
+                            'value' => 'black',
+                        ),
+                        1 => array(
+                            'id' => 2096,
+                            'key' => 'size',
+                            'value' => 'M Test',
+                        ),
+                    ),
+                    'sku' => 'Bar3',
+                    'price' => 12,
                 ),
-                'sku' => '',
-                'price' => 3,
-              ),
-              1 =>
-              array (
-                'id' => 316,
-                'name' => 'Ship Your Idea &ndash; Color: Black, Size: M Test',
-                'product_id' => 22,
-                'variation_id' => 23,
-                'quantity' => 1,
-                'tax_class' => '',
-                'subtotal' => '12.00',
-                'subtotal_tax' => '0.90',
-                'total' => '12.00',
-                'total_tax' => '0.90',
-                'taxes' =>
-                array (
-                  0 =>
-                  array (
-                    'id' => 75,
-                    'total' => '0.9',
-                    'subtotal' => '0.9',
-                  ),
-                ),
-                'meta_data' =>
-                array (
-                  0 =>
-                  array (
-                    'id' => 2095,
-                    'key' => 'pa_color',
-                    'value' => 'black',
-                  ),
-                  1 =>
-                  array (
-                    'id' => 2096,
-                    'key' => 'size',
-                    'value' => 'M Test',
-                  ),
-                ),
-                'sku' => 'Bar3',
-                'price' => 12,
-              ),
             ),
-            'tax_lines' =>
-            array (
-              0 =>
-              array (
-                'id' => 318,
-                'rate_code' => 'US-CA-STATE TAX',
-                'rate_id' => 75,
-                'label' => 'State Tax',
-                'compound' => false,
-                'tax_total' => '1.35',
-                'shipping_tax_total' => '0.00',
-                'meta_data' =>
-                array (
+            'tax_lines' => array(
+                0 => array(
+                    'id' => 318,
+                    'rate_code' => 'US-CA-STATE TAX',
+                    'rate_id' => 75,
+                    'label' => 'State Tax',
+                    'compound' => false,
+                    'tax_total' => '1.35',
+                    'shipping_tax_total' => '0.00',
+                    'meta_data' => array(
+                    ),
                 ),
-              ),
             ),
-            'shipping_lines' =>
-            array (
-              0 =>
-              array (
-                'id' => 317,
-                'method_title' => 'Flat Rate',
-                'method_id' => 'flat_rate',
-                'total' => '10.00',
-                'total_tax' => '0.00',
-                'taxes' =>
-                array (
+            'shipping_lines' => array(
+                0 => array(
+                    'id' => 317,
+                    'method_title' => 'Flat Rate',
+                    'method_id' => 'flat_rate',
+                    'total' => '10.00',
+                    'total_tax' => '0.00',
+                    'taxes' => array(
+                    ),
+                    'meta_data' => array(
+                    ),
                 ),
-                'meta_data' =>
-                array (
+            ),
+            'fee_lines' => array(
+            ),
+            'coupon_lines' => array(
+            ),
+            'refunds' => array(
+            ),
+            '_links' => array(
+                'self' => array(
+                    0 => array(
+                        'href' => 'https://example.com/wp-json/wc/v3/orders/727',
+                    ),
                 ),
-              ),
-            ),
-            'fee_lines' =>
-            array (
-            ),
-            'coupon_lines' =>
-            array (
-            ),
-            'refunds' =>
-            array (
-            ),
-            '_links' =>
-            array (
-              'self' =>
-              array (
-                0 =>
-                array (
-                  'href' => 'https://example.com/wp-json/wc/v3/orders/727',
+                'collection' => array(
+                    0 => array(
+                        'href' => 'https://example.com/wp-json/wc/v3/orders',
+                    ),
                 ),
-              ),
-              'collection' =>
-              array (
-                0 =>
-                array (
-                  'href' => 'https://example.com/wp-json/wc/v3/orders',
-                ),
-              ),
             ),
         );
 
-        $data=array (
-            'generalinfo' =>
-            array (
-              'apiname' => 'InvoicePost',
-              'dto' =>
-              array (
-                'invoiceinfo' =>
-                array (
-                  'id' => 2104120,
-                  'Type' => 1,
-                  'Date' => '2021-11-03',
-                  'Time' => '00:00:00 ',
-                  'Kind' => 4,
-                  'Discount' => '1',
-                  'Bank' => 999,
-                  'BankSarfasl' => '10200010001',
-                  'custid' => '00003',
-                  'detailinfo' =>
-                  array (
-                    0 =>
-                    array (
-                      'id' => '0201001',
-                      'Productid' => '0201001',
-                      'few' => 1,
-                      'price' => 1000,
-                      'discount' => '0',
-                      'levy' => 0,
-                      'scot' => 0,
+        $data = array(
+            'generalinfo' => array(
+                'apiname' => 'InvoicePost',
+                'dto' => array(
+                    'invoiceinfo' => array(
+                        'id' => 2104120,
+                        'Type' => 1,
+                        'Date' => '2021-11-03',
+                        'Time' => '00:00:00 ',
+                        'Kind' => 4,
+                        'Discount' => '1',
+                        'Bank' => 999,
+                        'BankSarfasl' => '10200010001',
+                        'custid' => '00003',
+                        'detailinfo' => array(
+                            0 => array(
+                                'id' => '0201001',
+                                'Productid' => '0201001',
+                                'few' => 1,
+                                'price' => 1000,
+                                'discount' => '0',
+                                'levy' => 0,
+                                'scot' => 0,
+                            ),
+                        ),
                     ),
-                  ),
                 ),
-              ),
             ),
         );
-        return $this->sendResponse('ثبت فاکتور فروش انجام شد', Response::HTTP_OK, ["result"=>["msg_code"=>1]]);
+
+        ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
+        $token = $this->getNewToken();
+        $curl = curl_init();
+        $userSerial = "10304923";
+        $userApiKey = "E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
+
+        // $wcHolooExistCode=app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
+        $allRespose = [];
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/CallApi/InvoicePost',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_CUSTOMREQUEST => 'post',
+            CURLOPT_HTTPHEADER => array(
+                'serial: ' . $userSerial,
+                'database: Holoo1',
+                'isArticle: true',
+                'access_token: ' . $userApiKey,
+                'Authorization: Bearer ' . $token,
+            ),
+        ));
+        $response = curl_exec($curl);
+        // $HolooProds=json_decode($response);
+
+        // foreach($HolooProds as $HolooProd){
+
+        //     if (!in_array($HolooProd->a_Code, $wcHolooExistCode)
+        //     ) { //&& $HolooProd->exist_Mandeh>0
+
+        //         $param=[
+        //             "holooCode"=>$HolooProd->a_Code,
+        //             "holooName"=>$this->arabicToPersian($HolooProd->a_Name),
+        //             "holooRegularPrice"=>(string) $HolooProd->sel_Price ?? 0,
+        //             "holooStockQuantity" => (string) $HolooProd->exist_Mandeh ?? 0,
+        //         ];
+
+        //         if ((!isset($request->insert_zero_product ) && $HolooProd->exist_Mandeh>0) || (isset($request->insert_zero_product) && $request->insert_zero_product=="0" && $HolooProd->exist_Mandeh>0)) {
+        //             $allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
+        //             sleep(2);
+        //         }
+        //         elseif (isset($request->insert_zero_product) && $request->insert_zero_product=="1") {
+        //             $allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
+        //             sleep(2);
+        //             //dd($allRespose);
+        //         }
+        //     }
+
+        // }
+        curl_close($curl);
+
+        return $this->sendResponse('ثبت فاکتور فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
     }
 
-    public function wcInvoicePayed(Request $orderInvoice){
+    public function wcInvoicePayed(Request $orderInvoice)
+    {
 
-
-        $oreder=array (
+        $order = array(
             'id' => 727,
             'parent_id' => 0,
             'number' => '727',
@@ -417,240 +441,323 @@ class HolooController extends Controller
             'customer_ip_address' => '',
             'customer_user_agent' => '',
             'customer_note' => '',
-            'billing' =>
-            array (
-              'first_name' => 'John',
-              'last_name' => 'Doe',
-              'company' => '',
-              'address_1' => '969 Market',
-              'address_2' => '',
-              'city' => 'San Francisco',
-              'state' => 'CA',
-              'postcode' => '94103',
-              'country' => 'US',
-              'email' => 'john.doe@example.com',
-              'phone' => '(555) 555-5555',
+            'billing' => array(
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'company' => '',
+                'address_1' => '969 Market',
+                'address_2' => '',
+                'city' => 'San Francisco',
+                'state' => 'CA',
+                'postcode' => '94103',
+                'country' => 'US',
+                'email' => 'john.doe@example.com',
+                'phone' => '(555) 555-5555',
             ),
-            'shipping' =>
-            array (
-              'first_name' => 'John',
-              'last_name' => 'Doe',
-              'company' => '',
-              'address_1' => '969 Market',
-              'address_2' => '',
-              'city' => 'San Francisco',
-              'state' => 'CA',
-              'postcode' => '94103',
-              'country' => 'US',
+            'shipping' => array(
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'company' => '',
+                'address_1' => '969 Market',
+                'address_2' => '',
+                'city' => 'San Francisco',
+                'state' => 'CA',
+                'postcode' => '94103',
+                'country' => 'US',
             ),
-            'payment_method' => 'bacs',
+            'payment_method' => 'cod',
             'payment_method_title' => 'Direct Bank Transfer',
             'transaction_id' => '',
             'date_paid' => '2017-03-22T16:28:08',
             'date_paid_gmt' => '2017-03-22T19:28:08',
-            'date_completed' => NULL,
-            'date_completed_gmt' => NULL,
+            'date_completed' => null,
+            'date_completed_gmt' => null,
             'cart_hash' => '',
-            'meta_data' =>
-            array (
-              0 =>
-              array (
-                'id' => 13106,
-                'key' => '_download_permissions_granted',
-                'value' => 'yes',
-              ),
+            'meta_data' => array(
+                0 => array(
+                    'id' => 13106,
+                    'key' => '_download_permissions_granted',
+                    'value' => 'yes',
+                ),
             ),
-            'line_items' =>
-            array (
-              0 =>
-              array (
-                'id' => 315,
-                'name' => 'Woo Single #1',
-                'product_id' => 93,
-                'variation_id' => 0,
-                'quantity' => 2,
-                'tax_class' => '',
-                'subtotal' => '6.00',
-                'subtotal_tax' => '0.45',
-                'total' => '6.00',
-                'total_tax' => '0.45',
-                'taxes' =>
-                array (
-                  0 =>
-                  array (
-                    'id' => 75,
-                    'total' => '0.45',
-                    'subtotal' => '0.45',
-                  ),
-                ),
-                'meta_data' =>
-                array (
-                ),
-                'sku' => '',
-                'price' => 3,
-              ),
-              1 =>
-              array (
-                'id' => 316,
-                'name' => 'Ship Your Idea &ndash; Color: Black, Size: M Test',
-                'product_id' => 22,
-                'variation_id' => 23,
-                'quantity' => 1,
-                'tax_class' => '',
-                'subtotal' => '12.00',
-                'subtotal_tax' => '0.90',
-                'total' => '12.00',
-                'total_tax' => '0.90',
-                'taxes' =>
-                array (
-                  0 =>
-                  array (
-                    'id' => 75,
-                    'total' => '0.9',
-                    'subtotal' => '0.9',
-                  ),
-                ),
-                'meta_data' =>
-                array (
-                  0 =>
-                  array (
-                    'id' => 2095,
-                    'key' => 'pa_color',
-                    'value' => 'black',
-                  ),
-                  1 =>
-                  array (
-                    'id' => 2096,
-                    'key' => 'size',
-                    'value' => 'M Test',
-                  ),
-                ),
-                'sku' => 'Bar3',
-                'price' => 12,
-              ),
-            ),
-            'tax_lines' =>
-            array (
-              0 =>
-              array (
-                'id' => 318,
-                'rate_code' => 'US-CA-STATE TAX',
-                'rate_id' => 75,
-                'label' => 'State Tax',
-                'compound' => false,
-                'tax_total' => '1.35',
-                'shipping_tax_total' => '0.00',
-                'meta_data' =>
-                array (
-                ),
-              ),
-            ),
-            'shipping_lines' =>
-            array (
-              0 =>
-              array (
-                'id' => 317,
-                'method_title' => 'Flat Rate',
-                'method_id' => 'flat_rate',
-                'total' => '10.00',
-                'total_tax' => '0.00',
-                'taxes' =>
-                array (
-                ),
-                'meta_data' =>
-                array (
-                ),
-              ),
-            ),
-            'fee_lines' =>
-            array (
-            ),
-            'coupon_lines' =>
-            array (
-            ),
-            'refunds' =>
-            array (
-            ),
-            '_links' =>
-            array (
-              'self' =>
-              array (
-                0 =>
-                array (
-                  'href' => 'https://example.com/wp-json/wc/v3/orders/727',
-                ),
-              ),
-              'collection' =>
-              array (
-                0 =>
-                array (
-                  'href' => 'https://example.com/wp-json/wc/v3/orders',
-                ),
-              ),
-            ),
-        );
-
-        $DateString=Carbon::parse($oreder["date_paid_gmt"],'UTC');
-        $DateString->setTimezone('Asia/Tehran');
-        //return $DateString->format('Y-m-d');
-
-        if(isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid=="paid"){
-            $type=1;
-        }
-        else if(isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid=="prePaid"){
-            $type=2;
-        }
-        else if(isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid=="order"){
-            $type=3;
-        }
-        else {
-            return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result"=>["msg_code"=>0]]);
-        }
-
-        $data=array (
-            'generalinfo' =>
-            array (
-              'apiname' => 'InvoicePost',
-              'dto' =>
-                    array (
-                        'invoiceinfo' =>
-                            array (
-                            'id' => $oreder["id"],          //$oreder->id
-                            'Type' => $type,              //1 faktor frosh 2 pish factor
-                            'Date' => $DateString->format('Y-m-d'),
-                            'Time' => $DateString->format('H:i:s'),
-                            'Bank' => 999,
-                            'BankSarfasl' => '10200010001',
-                            'Cash' => '10200010001',
-                            'CashSarfas' => '10200010001',
-                            'Nesiyeh' => '',
-                            'custid' => '00003',
-                            'detailinfo' =>
-                                array (
-                                    0 =>
-                                        array (
-                                            'id' => '0201001',
-                                            'Productid' => '0201001',
-                                            'few' => 1,
-                                            'price' => 1000,
-                                            'discount' => '0',
-                                            'levy' => 0,
-                                            'scot' => 0,
-                                        ),
-                                ),
-                            ),
+            'line_items' => array(
+                0 => array(
+                    'id' => 315,
+                    'name' => 'Woo Single #1',
+                    'product_id' => 93,
+                    'variation_id' => 0,
+                    'quantity' => 2,
+                    'tax_class' => '',
+                    'subtotal' => '6.00',
+                    'subtotal_tax' => '0.45',
+                    'total' => '6.00',
+                    'total_tax' => '0.45',
+                    'taxes' => array(
+                        0 => array(
+                            'id' => 75,
+                            'total' => '0.45',
+                            'subtotal' => '0.45',
+                        ),
                     ),
+                    'meta_data' => array(
+                    ),
+                    'sku' => '',
+                    'price' => 3,
+                ),
+                1 => array(
+                    'id' => 316,
+                    'name' => 'Ship Your Idea &ndash; Color: Black, Size: M Test',
+                    'product_id' => 22,
+                    'variation_id' => 23,
+                    'quantity' => 1,
+                    'tax_class' => '',
+                    'subtotal' => '12.00',
+                    'subtotal_tax' => '0.90',
+                    'total' => '12.00',
+                    'total_tax' => '0.90',
+                    'taxes' => array(
+                        0 => array(
+                            'id' => 75,
+                            'total' => '0.9',
+                            'subtotal' => '0.9',
+                        ),
+                    ),
+                    'meta_data' => array(
+                        0 => array(
+                            'id' => 2095,
+                            'key' => 'pa_color',
+                            'value' => 'black',
+                        ),
+                        1 => array(
+                            'id' => 2096,
+                            'key' => 'size',
+                            'value' => 'M Test',
+                        ),
+                    ),
+                    'sku' => 'Bar3',
+                    'price' => 12,
+                ),
+            ),
+            'tax_lines' => array(
+                0 => array(
+                    'id' => 318,
+                    'rate_code' => 'US-CA-STATE TAX',
+                    'rate_id' => 75,
+                    'label' => 'State Tax',
+                    'compound' => false,
+                    'tax_total' => '1.35',
+                    'shipping_tax_total' => '0.00',
+                    'meta_data' => array(
+                    ),
+                ),
+            ),
+            'shipping_lines' => array(
+                0 => array(
+                    'id' => 317,
+                    'method_title' => 'Flat Rate',
+                    'method_id' => 'flat_rate',
+                    'total' => '10.00',
+                    'total_tax' => '0.00',
+                    'taxes' => array(
+                    ),
+                    'meta_data' => array(
+                    ),
+                ),
+            ),
+            'fee_lines' => array(
+            ),
+            'coupon_lines' => array(
+            ),
+            'refunds' => array(
+            ),
+            '_links' => array(
+                'self' => array(
+                    0 => array(
+                        'href' => 'https://example.com/wp-json/wc/v3/orders/727',
+                    ),
+                ),
+                'collection' => array(
+                    0 => array(
+                        'href' => 'https://example.com/wp-json/wc/v3/orders',
+                    ),
+                ),
             ),
         );
 
+        $orderInvoice->request->add($order);
 
-        return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result"=>["msg_code"=>1]]);
+        if ($orderInvoice->save_sale_invoice) {
+            $DateString = Carbon::parse($orderInvoice->input("date_paid_gmt"), 'UTC');
+            $DateString->setTimezone('Asia/Tehran');
+            //return $DateString->format('Y-m-d');
+
+            // if (isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid == "paid") {
+            //     $type = 1;
+            // } else if (isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid == "prePaid") {
+            //     $type = 2;
+            // } else if (isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid == "order") {
+            //     $type = 3;
+            // } else {
+            //     return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+            // }
+            if (!$orderInvoice->save_sale_invoice || $orderInvoice->save_sale_invoice == 0) {
+                return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+            } else {
+                $type = $orderInvoice->save_sale_invoice;
+            }
+
+            $custid = $this->getHolooCustomerID($orderInvoice->billing, $orderInvoice->customer_id);
+
+            $items = array();
+            $sum_total = 0;
+            $payment_methos = $orderInvoice->payment_method;
+            $payment = json_decode($orderInvoice->payment)->$payment_methos;
+            foreach ($orderInvoice->line_items as $item) {
+                if (is_array($item)) {
+                    $item = (object) $item;
+                }
+
+                foreach ($item->meta_data as $meta) {
+                    if (is_array($meta)) {
+                        $meta = (object) $meta;
+                    }
+
+                    if ($meta->key == "_holo_sku") {
+                        $total = $this->getAmount($item->total, $orderInvoice->currency);
+                        $lazy = 0;
+                        $scot = 0;
+                        if ($payment->vat) {
+                            $lazy = $total * 6 / 100;
+                            $scot = $total * 3 / 100;
+                        }
+                        $items[] = array(
+                            'id' => $meta->value,
+                            'Productid' => $meta->value,
+                            'few' => $item->quantity,
+                            'price' => $total,
+                            'discount' => '0',
+                            'levy' => $lazy,
+                            'scot' => $scot,
+                        );
+                        $sum_total += $total + $lazy + $scot;
+                    }
+
+                }
+            }
+
+            if ($orderInvoice->product_shipping) {
+                $shipping_lines = $orderInvoice->shipping_lines[0] ?? null;
+                if ($shipping_lines) {
+                    if (is_array($shipping_lines)) {
+                        $shipping_lines = (object) $shipping_lines;
+                    }
+
+                    $total = $this->getAmount($shipping_lines->total, $orderInvoice->currency);
+                    $scot = $this->getAmount($shipping_lines->total_tax, $orderInvoice->currency);
+                    $items[] = array(
+                        'id' => $orderInvoice->product_shipping,
+                        'Productid' => $orderInvoice->product_shipping,
+                        'few' => 1,
+                        'price' => $total,
+                        'discount' => 0,
+                        'levy' => 0,
+                        'scot' => $scot,
+                    );
+
+                    $sum_total += $total + $scot;
+                }
+
+            }
+
+            if (sizeof($items) > 0) {
+                $payment_type = "bank";
+                if ($orderInvoice->status_place_payment == "Installment") {
+                    $payment_type = "nesiyeh";
+                } else if (substr($payment->number, 0, 3) == "101") {
+                    $payment_type = "cash";
+                }
+                $data = array(
+                    'generalinfo' => array(
+                        'apiname' => 'InvoicePost',
+                        'dto' => array(
+                            'invoiceinfo' => array(
+                                'id' => $orderInvoice->input("id"), //$oreder->id
+                                'Type' => $type, //1 faktor frosh 2 pish factor
+                                'Date' => $DateString->format('Y-m-d'),
+                                'Time' => $DateString->format('H:i:s'),
+
+                                'Bank' => $payment_type == "bank" ? $sum_total : null,
+                                'BankSarfasl' => $payment_type == "bank" ? $payment->number : null,
+
+                                'Cash' => $payment_type == "cash" ? $sum_total : null,
+                                'CashSarfas' => $payment_type == "cash" ? $payment->number : null,
+
+                                'Nesiyeh' => $payment_type == "nesiyeh" ? $sum_total : null,
+                                'custid' => $custid,
+                                'detailinfo' => $items,
+                            ),
+                        ),
+                    ),
+                );
+
+                ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
+                $token = $this->getNewToken();
+                $curl = curl_init();
+                $userSerial = "10304923";
+                $userApiKey = "E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://sandbox.myholoo.ir/api/CallApi/InvoicePost',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_POSTFIELDS =>http_build_query($data),
+                    CURLOPT_CUSTOMREQUEST => 'post',
+                    CURLOPT_HTTPHEADER => array(
+                        'serial: ' . $userSerial,
+                        'database: Holoo1',
+                        'isArticle: true',
+                        'access_token: ' . $userApiKey,
+                        'Authorization: Bearer ' . $token,
+                    ),
+                ));
+                $response = curl_exec($curl);
+                $response = json_decode($response);
+                curl_close($curl);
+                if($response->success){
+                    return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
+                }
+
+                return $this->sendResponse($response->message, Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" =>0]]);
+            }
+
+        }
+
+    }
+
+    private function getAmount($amount, $currency)
+    {
+        if ($currency == "toman") {
+            return $amount * 10;
+        }
+
+        return $amount;
     }
 
     public function wcSingleProductUpdate(Request $request){
+
+        $response= $this->wcSingleProductSendUpdate($request->holoo_id,$request->product_id);
+
+        return $this->sendResponse('محصول به روز شد', Response::HTTP_OK, ['code'=>1,'result' => $response]);
+    }
+
+    public function wcSingleProductSendUpdate($holoo_id,$product_id){
         ini_set('max_execution_time', 120); // 120 (seconds) = 2 Minutes
-        $holoo_product_id=$request->holoo_id;
-        $wp_product_id=$request->product_id;
+        $holoo_product_id=$holoo_id;
+        $wp_product_id=$product_id;
 
         $userSerial="10304923";
         $userApiKey="E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
@@ -687,11 +794,53 @@ class HolooController extends Controller
         $response= $this->updateWCSingleProduct($param);
 
 
-        return $this->sendResponse('محصول به روز شد', Response::HTTP_OK, ['code'=>1,'result' => $response]);
+        return $response;
     }
 
 
+
+    public function GetSingleProductHoloo($holoo_id){
+
+        $userSerial="10304923";
+        $userApiKey="E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/Holoo1/'.$holoo_id,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'GET',
+          CURLOPT_HTTPHEADER => array(
+              'serial: '.$userSerial,
+              'access_token: '.$userApiKey,
+              'Authorization: Bearer '.$this->getNewToken()
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        echo $response;
+
+    }
+
     public function wcAddAllHolooProductsCategory(Request $request){
+        $counter=0;
+        $user_id=1;
+        if(ProductRequest::where(['user_id'=>$user_id])->exists()){
+            return $this->sendResponse('شما یک درخواست ثبت محصول در ۲۴ ساعت گذشته ارسال کرده اید لطفا منتظر بمانید تا عملیات قبلی شما تکمیل گردد', Response::HTTP_OK, ["result"=>["msg_code"=>0]]);
+        }
+        else{
+            $productRequest = new ProductRequest;
+            $productRequest->user_id = $user_id;
+            $productRequest->request_time = Carbon::now();
+            $productRequest->save();
+        }
+
         ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
         $token=$this->getNewToken();
         $curl = curl_init();
@@ -700,7 +849,7 @@ class HolooController extends Controller
 
         $data=json_decode($request->product_cat, true);
         //dd($data);
-        $counter=1;
+
         $categories=$this->getAllCategory();
 
         $wcHolooExistCode=app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
@@ -709,7 +858,7 @@ class HolooController extends Controller
             if(array_key_exists($category->m_groupcode,$data)){
 
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Article/SearchArticles?from.date=2020',
+                    CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Article/SearchArticles?from.date=2022',
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
                     CURLOPT_MAXREDIRS => 10,
@@ -743,12 +892,16 @@ class HolooController extends Controller
                         ];
 
                         if ((!isset($request->insert_zero_product ) && $HolooProd->exist_Mandeh>0) || (isset($request->insert_zero_product) && $request->insert_zero_product=="0" && $HolooProd->exist_Mandeh>0)) {
-                            $allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
-                            sleep(2);
+                            //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
+                            $counter=$counter+1;
+                            $user="ali";
+                            AddProductsUser::dispatch($user,$param,['id' => $category->m_groupcode,"name" => $category->m_groupname],$HolooProd->a_Code);
                         }
                         elseif (isset($request->insert_zero_product) && $request->insert_zero_product=="1") {
-                            $allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
-                            sleep(2);
+                            //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
+                            $counter=$counter+1;
+                            $user="ali";
+                            AddProductsUser::dispatch($user,$param,['id' => $category->m_groupcode,"name" => $category->m_groupname],$HolooProd->a_Code);
                             //dd($allRespose);
                         }
                     }
@@ -761,10 +914,11 @@ class HolooController extends Controller
         }
         curl_close($curl);
 
-
-        return $this->sendResponse('محصولات جدید با موفقیت اضافه گردیدند', Response::HTTP_OK, ["result"=>["msg_code"=>1,"respose"=>$allRespose]]);
+        if ($counter==0) {
+            return $this->sendResponse("تمامی محصولات به روز هستند", Response::HTTP_OK, ["result"=>["msg_code"=>2]]);
+        }
+        return $this->sendResponse(" درخواست ثبت ".$counter.'محصولات جدید با موفقیت ثبت گردید. ', Response::HTTP_OK, ["result"=>["msg_code"=>1]]);
     }
-
 
 
     public function wcGetExcelProducts(Request $orderInvoice){
@@ -833,4 +987,102 @@ class HolooController extends Controller
 
     }
 
+    private function getHolooCustomerID($customer, $customerId)
+    {
+        if (is_array($customer)) {
+            $customer = (object) $customer;
+        }
+        $holooCustomers = $this->getHolooDataTable();
+
+        foreach ($holooCustomers->result as $holloCustomer) {
+            if ($holloCustomer->c_Mobile == $customer->phone) {
+                return $customer->c_Code;
+            }
+        }
+
+        return $this->createHolooCustomer($customer, $customerId);
+
+    }
+
+    private function getHolooDataTable($table = "customer")
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://sandbox.myholoo.ir/api/Service/$table/Holoo1",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'serial: 10304923',
+                'database: Holoo1',
+                'Authorization: Bearer ' . $this->getNewToken(),
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $response = json_decode($response);
+        return $response;
+    }
+
+    private function createHolooCustomer($customer, $customerId)
+    {
+        $curl = curl_init();
+        $data = [
+            "generalinfo" => [
+                "apiname" => "CustomerPost",
+                "dto" => [
+                    "custinfo" => [
+                        [
+                            "code" => 12345566,
+                            "id" => 12345566,
+                            "name" => "Arya Rashidi",
+                            "ispurchaser" => true,
+                            "isseller" => false,
+                            "custtype" => 0,
+                            "Kind" => 2,
+                            "tel" => "8736",
+                            "mobile" => "091899937",
+                            "city" => "Saqqez",
+                            "ostan" => "Kurdistan",
+                            "email" => "arya.rashidi98@gmail.com",
+                            "zipcode" => "6565656565",
+                            "address" => "Srt 2 Avv 2",
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $token = $this->getNewToken();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://sandbox.myholoo.ir/api/CallApi/CustomerPost",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => http_build_query($data),
+            CURLOPT_HTTPHEADER => array(
+                'serial: 10304923',
+                'database: Holoo1',
+                "Authorization: Bearer $token",
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $response = json_decode($response);
+
+        if ($response->success) {
+            return $this->getHolooCustomerID($customer, $customerId);
+        }
+        return false;
+    }
 }
