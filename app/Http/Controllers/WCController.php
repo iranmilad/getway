@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\UpdateProductsUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -129,7 +130,6 @@ class WCController extends Controller
         return $this->sendResponse('مشکل در ارسال و دریافت ریسپانس', Response::HTTP_NOT_ACCEPTABLE, null);
 
     }
-
 
     public function compareProductsFromWoocommerceToHoloo(Request $config){
 
@@ -339,7 +339,7 @@ class WCController extends Controller
      */
     public function updateAllProductFromHolooToWC(Request $config)
     {
-        ini_set('max_execution_time', 120); // 120 (seconds) = 2 Minutes
+        ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         $callApi = $this->fetchAllHolloProds();
         $holooProducts = $callApi;
 
@@ -372,8 +372,9 @@ class WCController extends Controller
                                         'regular_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ($WCProd->regular_price != $HolooProd->sel_Price) ? $HolooProd->sel_Price ?? 0 : null,
                                         'stock_quantity' =>(isset($config->update_product_stock) && $config->update_product_stock=="1") && (isset($WCProd->stock_quantity) and $WCProd->stock_quantity != $HolooProd->exist_Mandeh) ? (int)$HolooProd->exist_Mandeh ?? 0 : null,
                                     ];
-
-                                    $this->updateWCSingleProduct($data);
+                                    $user=1;
+                                    UpdateProductsUser::dispatch($user,$data,$WCProd->meta_data[0]->value)->onQueue('high');
+                                    //$this->updateWCSingleProduct($data);
 
                                     array_push($response_product,$WCProd->meta_data[0]->value);
 
@@ -408,6 +409,68 @@ class WCController extends Controller
         }
 
         return $response_products;
+    }
+
+    public function holooWebHook(Request $request){
+        // {
+        //     "Dbname": "S11216632_holoo1",
+        //     "Table": "Article",
+        //     "MsgType": "0",
+        //     "MsgValue": "0101001,0907057,0914097,0914098,0914099",
+        //     "MsgError": "",
+        //     "Message": "درج کالا"
+        //   }
+        // {
+        //     "Dbname": "S11216632_holoo1",
+        //     "Table": "Article",
+        //     "MsgType": "1",
+        //     "MsgValue": "0101001,0907057,0914097,0914098,0914099",
+        //     "MsgError": "",
+        //     "Message": "ویرایش"
+        //   }
+
+        if($request->Table=="Article" && ($request->MsgType==1 or $request->MsgType==0)){
+            $Dbname=explode("_",$request->Dbname);
+            $HolooUser=$Dbname[0];
+            $HolooDb=$Dbname[1];
+            $HolooIDs=explode(",",$request->MsgValue);
+            foreach($HolooIDs as $holooID){
+                $wcProduct=$this->getWcProductWithHolooId($holooID);
+
+                if ($request->MsgType==1) {
+                    $response=app('App\Http\Controllers\HolooController')->wcSingleProductSendUpdate($holooID,$wcProduct["id"]);
+                }
+
+                if ($request->MsgType==0) {
+                    $response=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID,$wcProduct["id"]);
+                }
+
+            }
+        }
+    }
+
+    private function getWcProductWithHolooId($meta){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products/meta=_holo_sku&value='.$meta,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Basic Y2tfZGIyY2ZiNDIwMTY1ZDc0MGEyNDIxZDUxZWMwN2NlNmI1MzU0ZmRiNjpjc182YzU3ZmRkNmEzMWQ2NzgwYzRhNTEwOTMyYTM2NDgwZTg3YTkyYTNi'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        return $response;
+
+
     }
 
 }

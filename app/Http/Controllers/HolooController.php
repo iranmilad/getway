@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Jobs\AddProductsUser;
+use App\Models\ProductRequest;
+use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarDumper\Cloner\Data;
@@ -786,11 +789,54 @@ class HolooController extends Controller
 
         $response = $this->updateWCSingleProduct($param);
 
-        return $this->sendResponse('محصول به روز شد', Response::HTTP_OK, ['code' => 1, 'result' => $response]);
+
+        return $response;
     }
 
-    public function wcAddAllHolooProductsCategory(Request $request)
-    {
+
+
+    public function GetSingleProductHoloo($holoo_id){
+
+        $userSerial="10304923";
+        $userApiKey="E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/Holoo1/'.$holoo_id,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'GET',
+          CURLOPT_HTTPHEADER => array(
+              'serial: '.$userSerial,
+              'access_token: '.$userApiKey,
+              'Authorization: Bearer '.$this->getNewToken()
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        echo $response;
+
+    }
+
+    public function wcAddAllHolooProductsCategory(Request $request){
+        $counter=0;
+        $user_id=1;
+        if(ProductRequest::where(['user_id'=>$user_id])->exists()){
+            return $this->sendResponse('شما یک درخواست ثبت محصول در ۲۴ ساعت گذشته ارسال کرده اید لطفا منتظر بمانید تا عملیات قبلی شما تکمیل گردد', Response::HTTP_OK, ["result"=>["msg_code"=>0]]);
+        }
+        else{
+            $productRequest = new ProductRequest;
+            $productRequest->user_id = $user_id;
+            $productRequest->request_time = Carbon::now();
+            $productRequest->save();
+        }
+
         ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
         $token = $this->getNewToken();
         $curl = curl_init();
@@ -799,8 +845,8 @@ class HolooController extends Controller
 
         $data = json_decode($request->product_cat, true);
         //dd($data);
-        $counter = 1;
-        $categories = $this->getAllCategory();
+
+        $categories=$this->getAllCategory();
 
         $wcHolooExistCode = app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
         $allRespose = [];
@@ -808,7 +854,7 @@ class HolooController extends Controller
             if (array_key_exists($category->m_groupcode, $data)) {
 
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Article/SearchArticles?from.date=2020',
+                    CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Article/SearchArticles?from.date=2022',
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
                     CURLOPT_MAXREDIRS => 10,
@@ -840,12 +886,17 @@ class HolooController extends Controller
                             "holooStockQuantity" => (string) $HolooProd->exist_Mandeh ?? 0,
                         ];
 
-                        if ((!isset($request->insert_zero_product) && $HolooProd->exist_Mandeh > 0) || (isset($request->insert_zero_product) && $request->insert_zero_product == "0" && $HolooProd->exist_Mandeh > 0)) {
-                            $allRespose[] = app('App\Http\Controllers\WCController')->createSingleProduct($param, ['id' => $category->m_groupcode, "name" => $category->m_groupname]);
-                            sleep(2);
-                        } elseif (isset($request->insert_zero_product) && $request->insert_zero_product == "1") {
-                            $allRespose[] = app('App\Http\Controllers\WCController')->createSingleProduct($param, ['id' => $category->m_groupcode, "name" => $category->m_groupname]);
-                            sleep(2);
+                        if ((!isset($request->insert_zero_product ) && $HolooProd->exist_Mandeh>0) || (isset($request->insert_zero_product) && $request->insert_zero_product=="0" && $HolooProd->exist_Mandeh>0)) {
+                            //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
+                            $counter=$counter+1;
+                            $user="ali";
+                            AddProductsUser::dispatch($user,$param,['id' => $category->m_groupcode,"name" => $category->m_groupname],$HolooProd->a_Code);
+                        }
+                        elseif (isset($request->insert_zero_product) && $request->insert_zero_product=="1") {
+                            //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
+                            $counter=$counter+1;
+                            $user="ali";
+                            AddProductsUser::dispatch($user,$param,['id' => $category->m_groupcode,"name" => $category->m_groupname],$HolooProd->a_Code);
                             //dd($allRespose);
                         }
                     }
@@ -856,11 +907,14 @@ class HolooController extends Controller
         }
         curl_close($curl);
 
-        return $this->sendResponse('محصولات جدید با موفقیت اضافه گردیدند', Response::HTTP_OK, ["result" => ["msg_code" => 1, "respose" => $allRespose]]);
+        if ($counter==0) {
+            return $this->sendResponse("تمامی محصولات به روز هستند", Response::HTTP_OK, ["result"=>["msg_code"=>2]]);
+        }
+        return $this->sendResponse(" درخواست ثبت ".$counter.'محصولات جدید با موفقیت ثبت گردید. ', Response::HTTP_OK, ["result"=>["msg_code"=>1]]);
     }
 
-    public function wcGetExcelProducts(Request $orderInvoice)
-    {
+
+    public function wcGetExcelProducts(Request $orderInvoice){
         //PDF file is stored under project/public/download/info.pdf
         $file = url('/') . "/download/file.csv";
 
@@ -1025,5 +1079,4 @@ class HolooController extends Controller
         }
         return false;
     }
-
 }
