@@ -7,9 +7,10 @@ use Illuminate\Http\Request;
 use App\Jobs\AddProductsUser;
 use App\Models\ProductRequest;
 use PhpParser\Node\Stmt\TryCatch;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarDumper\Cloner\Data;
+use Symfony\Component\HttpFoundation\Response;
 
 class HolooController extends Controller
 {
@@ -159,6 +160,8 @@ class HolooController extends Controller
 
     public function wcInvoiceRegistration(Request $orderInvoice)
     {
+        Log::info($orderInvoice);
+        //return $orderInvoice;
         $oreder = array(
             'id' => 727,
             'parent_id' => 0,
@@ -356,9 +359,10 @@ class HolooController extends Controller
                 ),
             ),
         );
-
+        $data =json_encode($data);
         ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
         $token = $this->getNewToken();
+
         $curl = curl_init();
         $userSerial = "10304923";
         $userApiKey = "E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
@@ -820,7 +824,7 @@ class HolooController extends Controller
         $response = curl_exec($curl);
 
         curl_close($curl);
-        echo $response;
+        return $response;
 
     }
 
