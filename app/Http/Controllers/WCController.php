@@ -132,19 +132,21 @@ class WCController extends Controller
     }
 
     public function compareProductsFromWoocommerceToHoloo(Request $config){
+        ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
+        //Log::error(json_encode($config));
 
-        Log::error(json_encode($config));
-
-        $callApi = $this->fetchAllWCProds();
+        $callApi = $this->fetchAllWCProds(true);
         $WCProds = $callApi;
 
         $callApi = $this->fetchAllHolloProds();
         $HolooProds = $callApi;
-
+        $counter_confid=0;
         $products = [];
         foreach ($WCProds as $WCProd) {
             //array_push($products,$WCProd->id);
-
+            if ($counter_confid==30) {
+                break;
+            }
             if (count($WCProd->meta_data)>0) {
                 if ($WCProd->meta_data[0]->key == '_holo_sku') {
                     if ($WCProd->meta_data[0]->value!=null) {
@@ -176,6 +178,7 @@ class WCController extends Controller
 
 
                                 }
+
                                 unset($HolooProds->result[$key]);
                                 $productFind = true;
                                 break;
@@ -201,6 +204,7 @@ class WCController extends Controller
 
                                 ]
                             );
+                            $counter_confid=$counter_confid+1;
                         }
                     }
                 }
@@ -216,8 +220,14 @@ class WCController extends Controller
         return json_decode($response);
     }
 
-    private function fetchAllWCProds()
+    private function fetchAllWCProds($published=false)
     {
+        if($published){
+            $status= "status=publish&" ;
+        }
+        else{
+            $status= "";
+        }
         $curl = curl_init();
         $page = 1;
         $products = [];
@@ -225,7 +235,7 @@ class WCController extends Controller
         do{
           try {
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products?page='.$page.'&per_page=100',
+                CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products?'.$status.'page='.$page.'&per_page=100',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 0,
@@ -239,12 +249,11 @@ class WCController extends Controller
 
             $response = curl_exec($curl);
             $products = json_decode($response);
-
+            $all_products = array_merge($all_products,$products);
           }
-          catch(HttpClientException $e){
-            return [];
+          catch(\Throwable $th){
+            break;
           }
-          $all_products = array_merge($all_products,$products);
           $page++;
         } while (count($products) > 0);
 
