@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ReportExport;
 use App\Jobs\AddProductsUser;
 use App\Models\ProductRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
+use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarDumper\Cloner\Data;
 
@@ -397,7 +398,7 @@ class HolooController extends Controller
         $orderInvoice->request->add($order);
 
         if ($orderInvoice->save_sale_invoice) {
-            $DateString = Carbon::parse($orderInvoice->input("date_paid_gmt"), 'UTC');
+            $DateString = Carbon::parse(((object) $orderInvoice->input("date_created"))->date ?? now(), 'UTC');
             $DateString->setTimezone('Asia/Tehran');
             //return $DateString->format('Y-m-d');
 
@@ -417,6 +418,9 @@ class HolooController extends Controller
             }
 
             $custid = $this->getHolooCustomerID($orderInvoice->billing, $orderInvoice->customer_id);
+            if (!$custid) {
+                return $this->sendResponse("ثبت فاکتور انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+            }
 
             $items = array();
             $sum_total = 0;
@@ -484,7 +488,7 @@ class HolooController extends Controller
                         'scot' => $scot,
                     );
 
-                    $sum_total += $total ;
+                    $sum_total += $total;
                 }
 
             }
@@ -503,7 +507,7 @@ class HolooController extends Controller
                             'invoiceinfo' => array(
                                 'id' => $orderInvoice->input("id"), //$oreder->id
                                 'Type' => 2, //1 faktor frosh 2 pish factor,
-                                'kind' =>  $type,
+                                'kind' => $type,
                                 'Date' => $DateString->format('Y-m-d'),
                                 'Time' => $DateString->format('H:i:s'),
                                 'custid' => $custid,
@@ -522,7 +526,6 @@ class HolooController extends Controller
                 } else {
                     $data["generalinfo"]["dto"]["invoiceinfo"]["nesiyeh"] = $sum_total;
                 }
-
 
                 ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
                 $token = $this->getNewToken();
@@ -584,7 +587,7 @@ class HolooController extends Controller
             "cart_tax" => "0",
             "total" => "8000.00",
             "total_tax" => "0",
-            "customer_id" => 2,
+            "customer_id" => 12,
             "order_key" => "wc_order_9ukFS1c8klNMe",
             "billing" => array(
                 "first_name" => "milad",
@@ -597,7 +600,7 @@ class HolooController extends Controller
                 "postcode" => "1937933613",
                 "country" => "IR",
                 "email" => "kazemi.milad@gmail.com",
-                "phone" => "09189997745",
+                "phone" => "09189997740",
             ),
             "shipping" => array(
                 "first_name" => "",
@@ -619,7 +622,11 @@ class HolooController extends Controller
             "created_via" => "checkout",
             "customer_note" => "",
             "date_completed" => null,
-            "date_paid" => null,
+            "date_paid" => array(
+                "date" => "2022-03-06 20:38:39.000000",
+                "timezone_type" => 3,
+                "timezone" => "Atlantic/Azores",
+            ),
             "cart_hash" => "7fd3c40c67e5797ec4482b019a058dbb",
             "number" => "4656",
             "meta_data" => array(
@@ -797,8 +804,11 @@ class HolooController extends Controller
         $orderInvoice->request->add($order);
 
         if ($orderInvoice->save_sale_invoice) {
-            $DateString = Carbon::parse($orderInvoice->input("date_paid_gmt"), 'UTC');
+            $_data = (object) $orderInvoice->input("date_paid");
+            $DateString = Carbon::parse($_data->date ?? now(), 'Asia/Tehran');
+
             $DateString->setTimezone('Asia/Tehran');
+            // return $DateString;
             //return $DateString->format('Y-m-d');
 
             // if (isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid == "paid") {
@@ -817,6 +827,10 @@ class HolooController extends Controller
             }
 
             $custid = $this->getHolooCustomerID($orderInvoice->billing, $orderInvoice->customer_id);
+
+            if (!$custid) {
+                return $this->sendResponse("ثبت فاکتور انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+            }
 
             $items = array();
             $sum_total = 0;
@@ -884,7 +898,7 @@ class HolooController extends Controller
                         'scot' => $scot,
                     );
 
-                    $sum_total += $total ;
+                    $sum_total += $total;
                 }
 
             }
@@ -903,7 +917,7 @@ class HolooController extends Controller
                             'invoiceinfo' => array(
                                 'id' => $orderInvoice->input("id"), //$oreder->id
                                 'Type' => 1, //1 faktor frosh 2 pish factor,
-                                'kind' =>  $type,
+                                'kind' => $type,
                                 'Date' => $DateString->format('Y-m-d'),
                                 'Time' => $DateString->format('H:i:s'),
                                 'custid' => $custid,
@@ -922,7 +936,6 @@ class HolooController extends Controller
                 } else {
                     $data["generalinfo"]["dto"]["invoiceinfo"]["nesiyeh"] = $sum_total;
                 }
-
 
                 ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
                 $token = $this->getNewToken();
@@ -1041,6 +1054,7 @@ class HolooController extends Controller
 
     public function wcAddAllHolooProductsCategory(Request $request)
     {
+       
         $counter = 0;
         $user_id = 1;
         if (ProductRequest::where(['user_id' => $user_id])->exists()) {
@@ -1065,8 +1079,10 @@ class HolooController extends Controller
 
         $wcHolooExistCode = app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
         $allRespose = [];
+        $sheetes=[];
         foreach ($categories->result as $key => $category) {
             if (array_key_exists($category->m_groupcode, $data)) {
+                $sheetes[$category->m_groupname]=array();
 
                 curl_setopt_array($curl, array(
                     CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Article/SearchArticles?from.date=2022',
@@ -1101,6 +1117,8 @@ class HolooController extends Controller
                             "holooStockQuantity" => (string) $HolooProd->exist_Mandeh ?? 0,
                         ];
 
+                        $sheetes[$category->m_groupname][]=$param;
+
                         if ((!isset($request->insert_zero_product) && $HolooProd->exist_Mandeh > 0) || (isset($request->insert_zero_product) && $request->insert_zero_product == "0" && $HolooProd->exist_Mandeh > 0)) {
                             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
                             $counter = $counter + 1;
@@ -1116,9 +1134,12 @@ class HolooController extends Controller
                     }
 
                 }
-
             }
         }
+
+        $excel=new ReportExport($sheetes);       
+        Excel::store($excel,"download/file.xls",);
+
         curl_close($curl);
 
         if ($counter == 0) {
@@ -1130,7 +1151,7 @@ class HolooController extends Controller
     public function wcGetExcelProducts(Request $orderInvoice)
     {
         //PDF file is stored under project/public/download/info.pdf
-        $file = url('/') . "/download/file.csv";
+        $file = asset('/storage/app/download/file.xls');
 
         return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => $file]]);
 
@@ -1278,7 +1299,7 @@ class HolooController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_POSTFIELDS => array("data" => json_encode($data)),
             CURLOPT_HTTPHEADER => array(
                 'serial: 10304923',
                 'database: Holoo1',
