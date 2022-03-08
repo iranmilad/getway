@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\UpdateProductsUser;
 use Illuminate\Http\Request;
+use App\Jobs\UpdateProductsUser;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Client\HttpClientException;
 
@@ -528,6 +529,19 @@ class WCController extends Controller
         return $response;
 
 
+    }
+
+    public function migrate(){
+        Artisan::call('migrate');
+        return "migrate run";
+    }
+
+    public function clearCache(){
+        Artisan::call('cache:clear');
+        Artisan::call('route:clear');
+        Artisan::call('config:clear');
+        Artisan::call('view:clear');
+        return "Cache is cleared";
     }
 
 }

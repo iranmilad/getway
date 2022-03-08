@@ -44,7 +44,9 @@ Route::post('addToCart', [HolooController::class, 'addToCart']);
 //holoo webhook event
 Route::post('webhook', [WCController::class, 'holooWebHook']);
 
-
+//assistent
+Route::get('migrate', [WCController::class, 'migrate']);
+Route::get('cashClear', [WCController::class, 'clearCache']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [AuthenticationController::class, 'user']);

@@ -18,7 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('siteUrl')->unique();
             $table->string('activeLicense', 12)->nullable();
             $table->date('expireActiveLicense')->nullable();
-            $table->string('holooDatabaseName')->unique();
+            $table->string('holooDatabaseName');
             $table->string('holooCustomerID')->unique();
             $table->string('wordpressToken')->nullable();
             $table->string('consumerKey')->nullable();
