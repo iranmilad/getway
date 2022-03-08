@@ -60,7 +60,7 @@ class WCController extends Controller
     /*
      * Create Single (and simple) product into Woocommerce
      */
-    public function createSingleProduct($param,$categories)
+    public function createSingleProduct($param,$categories=null)
     {
 
         $meta = array(
@@ -438,23 +438,48 @@ class WCController extends Controller
         //     "Message": "ویرایش"
         //   }
 
+
         if($request->Table=="Article" && ($request->MsgType==1 or $request->MsgType==0)){
             $Dbname=explode("_",$request->Dbname);
             $HolooUser=$Dbname[0];
             $HolooDb=$Dbname[1];
             $HolooIDs=explode(",",$request->MsgValue);
+            $config=$this->getWcConfig();
             foreach($HolooIDs as $holooID){
-                $wcProduct=$this->getWcProductWithHolooId($holooID);
+
 
                 if ($request->MsgType==1) {
-                    $response=app('App\Http\Controllers\HolooController')->wcSingleProductSendUpdate($holooID,$wcProduct["id"]);
-                }
+                    $wcProduct=$this->getWcProductWithHolooId($holooID);
+                    $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
+                    $holooProduct=json_decode($holooProduct);
+                    //return $holooProduct;
+                    $param = [
+                        'id' => $wcProduct->id,
+                        'name' => urlencode($this->arabicToPersian($holooProduct->result->a_Name)),
+                        'regular_price' => $holooProduct->result->sel_Price ?? 0,
+                        'stock_quantity' => (int) $holooProduct->result->exist_Mandeh ?? 0,
+                    ];
 
-                if ($request->MsgType==0) {
-                    $response=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID,$wcProduct["id"]);
+                    $response = $this->updateWCSingleProduct($param);
+
+                }
+                else if ($request->MsgType==0) {
+                    $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
+                    $holooProduct=json_decode($holooProduct);
+
+
+                    $param = [
+                        "holooCode" => $holooID,
+                        "holooName" => $this->arabicToPersian($holooProduct->result->a_Name),
+                        "holooRegularPrice" => (string) $holooProduct->result->sel_Price ?? 0,
+                        "holooStockQuantity" => (string) $holooProduct->result->exist_Mandeh ?? 0,
+                    ];
+                    $response=$this->createSingleProduct($param);
+
                 }
 
             }
+            $this->sendResponse('محصول با موفقیت دریافت شدند', Response::HTTP_OK,[]);
         }
     }
 
@@ -462,7 +487,7 @@ class WCController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products/meta=_holo_sku&value='.$meta,
+            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products?meta=_holo_sku&value='.$meta,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
@@ -476,7 +501,30 @@ class WCController extends Controller
 
         $response = curl_exec($curl);
         curl_close($curl);
+        return json_decode($response)[0];
 
+
+
+    }
+
+    public function getWcConfig(){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wooholo/v1/data',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Basic Y2tfZGIyY2ZiNDIwMTY1ZDc0MGEyNDIxZDUxZWMwN2NlNmI1MzU0ZmRiNjpjc182YzU3ZmRkNmEzMWQ2NzgwYzRhNTEwOTMyYTM2NDgwZTg3YTkyYTNi'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
         return $response;
 
 
