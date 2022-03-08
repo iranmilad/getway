@@ -159,7 +159,7 @@ class HolooController extends Controller
 
     public function wcInvoiceRegistration(Request $orderInvoice)
     {
-       
+
         $order = array(
             "id" => 4656,
             "parent_id" => 0,
@@ -523,7 +523,7 @@ class HolooController extends Controller
                     $data["generalinfo"]["dto"]["invoiceinfo"]["nesiyeh"] = $sum_total;
                 }
 
-                
+
                 ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
                 $token = $this->getNewToken();
                 $curl = curl_init();
@@ -923,7 +923,7 @@ class HolooController extends Controller
                     $data["generalinfo"]["dto"]["invoiceinfo"]["nesiyeh"] = $sum_total;
                 }
 
-                
+
                 ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
                 $token = $this->getNewToken();
                 $curl = curl_init();
@@ -1005,7 +1005,7 @@ class HolooController extends Controller
         ];
 
         $response = $this->updateWCSingleProduct($param);
-
+        return $this->sendResponse("محصول با موفقیت به روز شد.", Response::HTTP_OK, ["result" => ["msg_code" => $response]]);
         return $response;
     }
 
