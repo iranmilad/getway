@@ -18,7 +18,7 @@ class AuthenticationController extends Controller
 //        return \response(['time'=> Carbon::now()]);
         $validations = Validator::make($request->all(), [
             'siteUrl' => 'required|unique:users',
-            'holooDatabaseName' => 'required|unique:users',
+            'holooDatabaseName' => 'required',
             'holooCustomerID' => 'required|unique:users',
         ], [
             'siteUrl.required' => 'آدرس سایت الزامی می باشد.',
