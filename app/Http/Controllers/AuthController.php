@@ -116,7 +116,7 @@ class AuthController extends Controller
      */
     public function logout() {
         auth('api')->logout();
-        return $this->sendResponse('خروج از حساب با موفقیت انجام گردید', Response::HTTP_CREATED,null);
+        return $this->sendResponse('خروج از حساب با موفقیت انجام گردید', Response::HTTP_OK,null);
 
     }
     /**
@@ -165,19 +165,26 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateWordpressSettings(Request $request){
-        $incomeToken = $request->input('token');
-        $keys = ['consumerKey' => $request->input('consumerKey'), 'consumerSecret' => $request->input('consumerSecret')];
-        if ($keys['consumerKey'] == '' || $keys['consumerSecret'] == '') {
+
+        $validator = Validator::make($request->all(), [
+            'consumerKey' => 'required|string',
+            'consumerSecret' => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
             return $this->sendResponse('مقادیر consumerKey و یا consumerSecret خالی می باشد. لطفا دوباره بررسی فرمایید.', Response::HTTP_NOT_ACCEPTABLE, null);
         }
-        $user = User::where('wordpressToken', $incomeToken)->first();
+
+        $user=auth('api')->user();
+        $user = User::where('id', $user->id)->first();
         if ($user) {
             $user->update([
                 'consumerKey' => $request->input('consumerKey'),
                 'consumerSecret' => $request->input('consumerSecret'),
             ]);
             return $this->sendResponse('کاربر مورد نظر با موفقیت به روز رسانی شد.', Response::HTTP_OK, auth('api')->user());
-        } else {
+        }
+        else {
             return $this->sendResponse('کاربر مورد نظر یافت نشد. اطلاعات ورودی خود را مجددا بررسی نمایید.', Response::HTTP_NOT_ACCEPTABLE, null);
         }
     }
