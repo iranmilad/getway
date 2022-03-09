@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+//assistent
+Route::get('migrate', [WCController::class, 'migrate']);
+Route::get('cashClear', [WCController::class, 'clearCache']);
