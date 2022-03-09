@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\AddProductsUser;
-use App\Models\ProductRequest;
+
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Jobs\AddProductsUser;
+use App\Models\ProductRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarDumper\Cloner\Data;
+use Symfony\Component\HttpFoundation\Response;
 
 class HolooController extends Controller
 {
@@ -159,6 +160,8 @@ class HolooController extends Controller
 
     public function wcInvoiceRegistration(Request $orderInvoice)
     {
+        $user=auth('api')->user();
+        $this->recordLog("Invoice Registration",$user->siteUrl,"Invoice Registration receive");
 
         $order = array(
             "id" => 4656,
@@ -548,7 +551,12 @@ class HolooController extends Controller
                 $response = json_decode($response);
                 curl_close($curl);
                 if ($response->success) {
+                    $this->recordLog("Invoice Registration",$user->siteUrl,"Invoice Registration finish succsessfuly");
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
+                }
+                else{
+                    $this->recordLog("Invoice Registration",$user->siteUrl,"Invoice Registration finish wrong","error");
+                    $this->recordLog("Invoice Registration",$user->siteUrl,$response,"error");
                 }
 
                 return $this->sendResponse($response->message, Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
@@ -559,6 +567,8 @@ class HolooController extends Controller
 
     public function wcInvoicePayed(Request $orderInvoice)
     {
+        $user=auth('api')->user();
+        $this->recordLog("Invoice Payed",$user->siteUrl,"Invoice Payed receive");
 
         $order = array(
             "id" => 4656,
@@ -948,9 +958,13 @@ class HolooController extends Controller
                 $response = json_decode($response);
                 curl_close($curl);
                 if ($response->success) {
+                    $this->recordLog("Invoice Payed",$user->siteUrl,"Invoice Payed finish succsessfuly");
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
                 }
-
+                else{
+                    $this->recordLog("Invoice Payed",$user->siteUrl,"Invoice Payed finish wrong","error");
+                    $this->recordLog("Invoice Payed",$user->siteUrl,$response,"error");
+                }
                 return $this->sendResponse($response->message, Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
             }
 
@@ -1292,5 +1306,15 @@ class HolooController extends Controller
             return $this->getHolooCustomerID($customer, $customerId);
         }
         return false;
+    }
+
+    public function recordLog($event,$user,$comment=null,$type="info"){
+        $message=$user.' '.$event.' '.$comment;
+        if ($type=="info")
+            Log::info($message);
+        else if ($type=="error")
+            Log::error($message);
+
+
     }
 }

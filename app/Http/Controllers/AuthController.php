@@ -28,7 +28,7 @@ class AuthController extends Controller
     public function login(Request $request){
 
 
-        $request->request->add(["password"=>$request->input('activeLicense')]);
+        $request->request->add(["password"=>($request->input('activeLicense')) ?? null]);
         $validator = Validator::make($request->all(), [
             'siteUrl' => 'required|string',
             'activeLicense' => 'required|string|min:6',
