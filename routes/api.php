@@ -18,33 +18,32 @@ use App\Http\Controllers\AuthenticationController;
 |
 */
 
+Route::group(['middleware' => 'auth:api'], function ($router) {
+    Route::get('wcall', [WCController::class, 'fetchAllWCProducts']);
+    Route::get('wc/{id}', [WCController::class, 'fetchSingleProduct']);
+    Route::post('wcadd', [WCController::class, 'createSingleProduct']);
+    Route::post('getProductConflict', [WCController::class, 'compareProductsFromWoocommerceToHoloo']);
 
-Route::get('wcall', [WCController::class, 'fetchAllWCProducts']);
-Route::get('wc/{id}', [WCController::class, 'fetchSingleProduct']);
-Route::post('wcadd', [WCController::class, 'createSingleProduct']);
-Route::post('getProductConflict', [WCController::class, 'compareProductsFromWoocommerceToHoloo']);
+    Route::post('updateWCSingleProduct', [WCController::class, 'updateWCSingleProduct']);
+    Route::post('updateAllProductFromHolooToWC', [WCController::class, 'updateAllProductFromHolooToWC']);
+    Route::post('wcSingleProductUpdate', [HolooController::class, 'wcSingleProductUpdate']);
+    Route::post('wcAddAllHolooProductsCategory', [HolooController::class, 'wcAddAllHolooProductsCategory']);
+    Route::post('wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
+    Route::get('wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
+    Route::post('wcGetBankAccount', [HolooController::class, 'getAccountBank']);
+    Route::post('wcGetCashAccount', [HolooController::class, 'getAccountCash']);
 
-Route::post('updateWCSingleProduct', [WCController::class, 'updateWCSingleProduct']);
-Route::post('updateAllProductFromHolooToWC', [WCController::class, 'updateAllProductFromHolooToWC']);
-Route::post('wcSingleProductUpdate', [HolooController::class, 'wcSingleProductUpdate']);
-Route::post('wcAddAllHolooProductsCategory', [HolooController::class, 'wcAddAllHolooProductsCategory']);
-Route::post('wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
-Route::get('wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
-Route::post('wcGetBankAccount', [HolooController::class, 'getAccountBank']);
-Route::post('wcGetCashAccount', [HolooController::class, 'getAccountCash']);
+    Route::post('getProductCategory', [HolooController::class, 'getProductCategory']);
+    Route::get('getAllHolooProducts', [HolooController::class, 'getAllHolooProducts']);
 
-Route::post('getProductCategory', [HolooController::class, 'getProductCategory']);
-Route::get('getAllHolooProducts', [HolooController::class, 'getAllHolooProducts']);
-
-//woocomrece webhook event
-Route::post('wcInvoiceRegistration', [HolooController::class, 'wcInvoiceRegistration']);
-Route::post('wcInvoicePayed', [HolooController::class, 'wcInvoicePayed']);
-Route::post('addToCart', [HolooController::class, 'addToCart']);
+    //woocomrece webhook event
+    Route::post('wcInvoiceRegistration', [HolooController::class, 'wcInvoiceRegistration']);
+    Route::post('wcInvoicePayed', [HolooController::class, 'wcInvoicePayed']);
+    Route::post('addToCart', [HolooController::class, 'addToCart']);
+});
 
 //holoo webhook event
 Route::post('webhook', [WCController::class, 'holooWebHook']);
-
-
 
 
 //login and user group
@@ -57,4 +56,9 @@ Route::get('user-profile', [AuthController::class, 'userProfile']);
 Route::get('logout', [AuthController::class, 'logout']);
 Route::get('user', [AuthController::class, 'user']);
 Route::post('updateUser', [AuthController::class, 'updateWordpressSettings']);
+
+
+
+
+
 

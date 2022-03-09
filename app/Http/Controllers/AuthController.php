@@ -1,14 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -18,7 +20,7 @@ class AuthController extends Controller
      * @return void
      */
     public function __construct() {
-        $this->middleware('api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
     /**
      * Get a JWT via given credentials.
@@ -28,7 +30,7 @@ class AuthController extends Controller
     public function login(Request $request){
 
 
-        $request->request->add(["password"=>($request->input('activeLicense')) ?? null]);
+        $request->request->add(["password"=>$request->input('activeLicense')]);
         $validator = Validator::make($request->all(), [
             'siteUrl' => 'required|string',
             'activeLicense' => 'required|string|min:6',
@@ -50,14 +52,14 @@ class AuthController extends Controller
             return $this->sendResponse('ورود ناموفق، اطلاعات ورودی خود را مجدد بررسی نمایید.', Response::HTTP_UNAUTHORIZED, null);
         }
 
-        if ($User->expireActiveLicense > Carbon::now()) {
+        if ($User->expireActiveLicense > Carbon::now() and !isset(auth('api')->user()->id)) {
 
             $token=auth('api')->attempt($validator->validated());
             $response=$this->createNewToken($token);
-
-
-
             return $this->sendResponse("ورود با موفقیت انجام شد", Response::HTTP_OK, $response);
+        }
+        else if (isset(auth('api')->user()->id)) {
+           return $this->refresh();
         }
         else{
             return $this->sendResponse('لایسنس شما به پایان رسیده است، لطفا لایسنس جدید تهیه فرمایید.', Response::HTTP_NOT_ACCEPTABLE, null);
