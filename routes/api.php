@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WCController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HolooController;
 use App\Http\Controllers\AuthenticationController;
 
@@ -17,8 +18,7 @@ use App\Http\Controllers\AuthenticationController;
 |
 */
 
-Route::post('register', [AuthenticationController::class, 'register']);
-Route::post('login', [AuthenticationController::class, 'login']);
+
 Route::get('wcall', [WCController::class, 'fetchAllWCProducts']);
 Route::get('wc/{id}', [WCController::class, 'fetchSingleProduct']);
 Route::post('wcadd', [WCController::class, 'createSingleProduct']);
@@ -44,18 +44,17 @@ Route::post('addToCart', [HolooController::class, 'addToCart']);
 //holoo webhook event
 Route::post('webhook', [WCController::class, 'holooWebHook']);
 
-//assistent
-Route::get('migrate', [WCController::class, 'migrate']);
-Route::get('cashClear', [WCController::class, 'clearCache']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('user', [AuthenticationController::class, 'user']);
-    Route::post('updateUser', [AuthenticationController::class, 'updateWordpressSettings']);
-//    Route::post('logout', [AuthenticationController::class, 'logout']);
-});
 
-//Route::get()
 
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
+//login and user group
+Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);
+
+Route::post('logout', [AuthController::class, 'logout']);
+Route::post('refresh', [AuthController::class, 'refresh']);
+Route::get('user-profile', [AuthController::class, 'userProfile']);
+Route::get('logout', [AuthController::class, 'logout']);
+Route::get('user', [AuthController::class, 'user']);
+Route::post('updateUser', [AuthController::class, 'updateWordpressSettings']);
+
