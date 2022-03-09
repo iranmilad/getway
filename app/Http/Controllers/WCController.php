@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Jobs\UpdateProductsUser;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,11 +14,13 @@ use Illuminate\Http\Client\HttpClientException;
 
 class WCController extends Controller
 {
+
     /*
      * Fetch All Products from Woocommerce
      */
     public function fetchAllWCProducts()
     {
+
         $all_products=$this->fetchAllWCProds();
 
         if ($all_products) {
@@ -33,19 +36,21 @@ class WCController extends Controller
      */
     public function fetchSingleProduct($id)
     {
+
+        $user=auth('api')->user();
+
+
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products/' . $id . '/variations/' . $id . '?context=view&context=view',
+            CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products/' . $id . '/variations/' . $id . '?context=view&context=view',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Basic Y2tfZGIyY2ZiNDIwMTY1ZDc0MGEyNDIxZDUxZWMwN2NlNmI1MzU0ZmRiNjpjc182YzU3ZmRkNmEzMWQ2NzgwYzRhNTEwOTMyYTM2NDgwZTg3YTkyYTNi'
-            ),
+            CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
         ));
 
         $response = curl_exec($curl);
@@ -63,7 +68,7 @@ class WCController extends Controller
      */
     public function createSingleProduct($param,$categories=null)
     {
-
+        $user=auth('api')->user();
         $meta = array(
             (object)array(
                 'key' => '_holo_sku',
@@ -104,7 +109,7 @@ class WCController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products',
+            CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
@@ -112,10 +117,9 @@ class WCController extends Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => $data,
+            CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
-                'Authorization: Basic Y2tfZGIyY2ZiNDIwMTY1ZDc0MGEyNDIxZDUxZWMwN2NlNmI1MzU0ZmRiNjpjc182YzU3ZmRkNmEzMWQ2NzgwYzRhNTEwOTMyYTM2NDgwZTg3YTkyYTNi'
-                //'Authorization: Basic '. base64_encode("user:password") ali jan baray basic aut bayad in ra janshin konid
             ),
         ));
 
@@ -223,6 +227,7 @@ class WCController extends Controller
 
     private function fetchAllWCProds($published=false)
     {
+        $user=auth('api')->user();
         if($published){
             $status= "status=publish&" ;
         }
@@ -236,16 +241,14 @@ class WCController extends Controller
         do{
           try {
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products?'.$status.'page='.$page.'&per_page=100',
+                CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products?'.$status.'page='.$page.'&per_page=100',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 0,
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_HTTPHEADER => array(
-                    'Authorization: Basic Y2tfZGIyY2ZiNDIwMTY1ZDc0MGEyNDIxZDUxZWMwN2NlNmI1MzU0ZmRiNjpjc182YzU3ZmRkNmEzMWQ2NzgwYzRhNTEwOTMyYTM2NDgwZTg3YTkyYTNi'
-                ),
+                CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
             ));
 
             $response = curl_exec($curl);
@@ -306,6 +309,7 @@ class WCController extends Controller
      * Update Single Product
      */
     public function updateWCSingleProduct($params){
+        $user=auth('api')->user();
         $curl = curl_init();
         $data=[
             "regular_price"=>$params['regular_price'],
@@ -320,7 +324,7 @@ class WCController extends Controller
 
         //$data = json_encode($data);
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products/' . $params['id'] .$url,
+            CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products/' . $params['id'] .$url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -328,10 +332,7 @@ class WCController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'PUT',
-            //CURLOPT_POSTFIELDS => $data,
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Basic Y2tfZGIyY2ZiNDIwMTY1ZDc0MGEyNDIxZDUxZWMwN2NlNmI1MzU0ZmRiNjpjc182YzU3ZmRkNmEzMWQ2NzgwYzRhNTEwOTMyYTM2NDgwZTg3YTkyYTNi'
-            ),
+            CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
         ));
 
         $response = curl_exec($curl);
@@ -485,19 +486,18 @@ class WCController extends Controller
     }
 
     private function getWcProductWithHolooId($meta){
+        $user=auth('api')->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products?meta=_holo_sku&value='.$meta,
+            CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products?meta=_holo_sku&value='.$meta,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Basic Y2tfZGIyY2ZiNDIwMTY1ZDc0MGEyNDIxZDUxZWMwN2NlNmI1MzU0ZmRiNjpjc182YzU3ZmRkNmEzMWQ2NzgwYzRhNTEwOTMyYTM2NDgwZTg3YTkyYTNi'
-            ),
+            CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
         ));
 
         $response = curl_exec($curl);
@@ -509,19 +509,18 @@ class WCController extends Controller
     }
 
     public function getWcConfig(){
+        $user=auth('api')->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wooholo/v1/data',
+            CURLOPT_URL => $user->siteUrl.'/wp-json/wooholo/v1/data',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Basic Y2tfZGIyY2ZiNDIwMTY1ZDc0MGEyNDIxZDUxZWMwN2NlNmI1MzU0ZmRiNjpjc182YzU3ZmRkNmEzMWQ2NzgwYzRhNTEwOTMyYTM2NDgwZTg3YTkyYTNi'
-            ),
+            CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
         ));
 
         $response = curl_exec($curl);

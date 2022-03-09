@@ -16,7 +16,7 @@ class CreateRequestInsertProductTable extends Migration
         Schema::create('product_requests', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->dateTime('request_time');
             $table->timestamps();
         });

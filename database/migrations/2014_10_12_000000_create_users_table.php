@@ -15,6 +15,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('email')->unique();
             $table->string('siteUrl')->unique();
             $table->string('activeLicense', 12)->nullable();
             $table->date('expireActiveLicense')->nullable();
@@ -23,6 +24,10 @@ class CreateUsersTable extends Migration
             $table->string('wordpressToken')->nullable();
             $table->string('consumerKey')->nullable();
             $table->string('consumerSecret')->nullable();
+
+            $table->string('password');
+            $table->rememberToken();
+
             $table->timestamps();
             $table->date('deleted_at')->nullable();
         });
