@@ -7,8 +7,8 @@ use App\Jobs\AddProductsUser;
 use App\Models\ProductRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
+use stdClass;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarDumper\Cloner\Data;
 
@@ -398,7 +398,8 @@ class HolooController extends Controller
         $orderInvoice->request->add($order);
 
         if ($orderInvoice->save_sale_invoice) {
-            $DateString = Carbon::parse(((object) $orderInvoice->input("date_created"))->date ?? now(), 'UTC');
+            $_data = (object) $orderInvoice->input("date_created");
+            $DateString = Carbon::parse($_data->date ?? now(), $_data->timezone);
             $DateString->setTimezone('Asia/Tehran');
             //return $DateString->format('Y-m-d');
 
@@ -562,6 +563,8 @@ class HolooController extends Controller
 
     public function wcInvoicePayed(Request $orderInvoice)
     {
+
+        // return response()->json($this->genericFee("#102564#25000%3", 25000));
 
         $order = array(
             "id" => 4656,
@@ -805,7 +808,7 @@ class HolooController extends Controller
 
         if ($orderInvoice->save_sale_invoice) {
             $_data = (object) $orderInvoice->input("date_paid");
-            $DateString = Carbon::parse($_data->date ?? now(), 'Asia/Tehran');
+            $DateString = Carbon::parse($_data->date ?? now(), $_data->timezone);
 
             $DateString->setTimezone('Asia/Tehran');
             // return $DateString;
@@ -1054,7 +1057,7 @@ class HolooController extends Controller
 
     public function wcAddAllHolooProductsCategory(Request $request)
     {
-       
+
         $counter = 0;
         $user_id = 1;
         if (ProductRequest::where(['user_id' => $user_id])->exists()) {
@@ -1079,10 +1082,10 @@ class HolooController extends Controller
 
         $wcHolooExistCode = app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
         $allRespose = [];
-        $sheetes=[];
+        $sheetes = [];
         foreach ($categories->result as $key => $category) {
             if (array_key_exists($category->m_groupcode, $data)) {
-                $sheetes[$category->m_groupname]=array();
+                $sheetes[$category->m_groupname] = array();
 
                 curl_setopt_array($curl, array(
                     CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Article/SearchArticles?from.date=2022',
@@ -1117,7 +1120,7 @@ class HolooController extends Controller
                             "holooStockQuantity" => (string) $HolooProd->exist_Mandeh ?? 0,
                         ];
 
-                        $sheetes[$category->m_groupname][]=$param;
+                        $sheetes[$category->m_groupname][] = $param;
 
                         if ((!isset($request->insert_zero_product) && $HolooProd->exist_Mandeh > 0) || (isset($request->insert_zero_product) && $request->insert_zero_product == "0" && $HolooProd->exist_Mandeh > 0)) {
                             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
@@ -1137,8 +1140,8 @@ class HolooController extends Controller
             }
         }
 
-        $excel=new ReportExport($sheetes);       
-        Excel::store($excel,"download/file.xls",);
+        $excel = new ReportExport($sheetes);
+        Excel::store($excel, "download/file.xls", );
 
         curl_close($curl);
 
@@ -1313,5 +1316,60 @@ class HolooController extends Controller
             return $this->getHolooCustomerID($customer, $customerId);
         }
         return false;
+    }
+
+    private function genericFee($fee, $total)
+    {
+
+        try {
+            $arr = explode("#", $fee);
+            if (sizeof($arr) < 3) {
+                return false;
+            }
+
+            $sarfasl = $arr[1];
+            $pr = $arr[2];
+            if (strlen($pr) > 0) {
+                $pr = explode('*', $pr);
+                foreach ($pr as $p) {
+                    if (str_contains($p, '%')) {
+                        $a = explode("%", $p);
+                        if (sizeof($a) < 2) {
+                            return false;
+                        }
+                        if ($a[0] <= $total) {
+                            $amount = $total * $a[1] / 100;
+                        }
+
+                    } elseif (str_contains($p, ':')) {
+                        $a = explode(":", $p);
+                        if (sizeof($a) < 2) {
+                            return false;
+                        }
+                        if ($a[0] <= $total) {
+                            $amount = $a[1];
+                        }
+                    } else {
+                        if (is_numeric($p)) {
+                            $amount = $p;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+            } else {
+                return false;
+            }
+
+            $res = new stdClass();
+            $res->amount = $amount ?? 0;
+            $res->sarfasl = $sarfasl;
+
+            return $res;
+
+        } catch (\Exception$ex) {
+            return false;
+        }
+
     }
 }
