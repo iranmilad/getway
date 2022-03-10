@@ -160,7 +160,7 @@ class HolooController extends Controller
 
     public function wcInvoiceRegistration(Request $orderInvoice)
     {
-        $user=auth('api')->user();
+        $user=auth()->user();
         $this->recordLog("Invoice Registration",$user->siteUrl,"Invoice Registration receive");
 
         $order = array(
@@ -567,7 +567,7 @@ class HolooController extends Controller
 
     public function wcInvoicePayed(Request $orderInvoice)
     {
-        $user=auth('api')->user();
+        $user=auth()->user();
         $this->recordLog("Invoice Payed",$user->siteUrl,"Invoice Payed receive");
 
         $order = array(

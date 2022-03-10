@@ -20,7 +20,7 @@ class AuthController extends Controller
      * @return void
      */
     public function __construct() {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login']]);
     }
     /**
      * Get a JWT via given credentials.
@@ -52,15 +52,21 @@ class AuthController extends Controller
             return $this->sendResponse('ورود ناموفق، اطلاعات ورودی خود را مجدد بررسی نمایید.', Response::HTTP_UNAUTHORIZED, null);
         }
 
-        if ($User->expireActiveLicense > Carbon::now() and !isset(auth('api')->user()->id)) {
+        if ($User->expireActiveLicense > Carbon::now() and !isset(auth()->user()->id)) {
 
-            $token=auth('api')->attempt($validator->validated());
-            $response=$this->createNewToken($token);
-            return $this->sendResponse("ورود با موفقیت انجام شد", Response::HTTP_OK, $response);
+            $token=auth()->attempt($validator->validated());
+            if($token==false){
+                $response=$this->refresh();
+                return $this->sendResponse("توکن با موفقیت به روز شد", Response::HTTP_OK, $response);
+            }
+            else{
+                $response=$this->createNewToken($token);
+                return $this->sendResponse("ورود با موفقیت انجام شد", Response::HTTP_OK, $response);
+            }
         }
-        else if (isset(auth('api')->user()->id)) {
+        else if (isset(auth()->user()->id)) {
 
-            $response=$this->refresh('api');
+            $response=$this->refresh();
             return $this->sendResponse("توکن با موفقیت به روز شد", Response::HTTP_OK, $response);
 
         }
@@ -120,7 +126,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout() {
-        auth('api')->logout();
+        auth()->logout();
         return $this->sendResponse('خروج از حساب با موفقیت انجام گردید', Response::HTTP_OK,null);
 
     }
@@ -131,7 +137,7 @@ class AuthController extends Controller
      */
     public function refresh() {
 
-        return $this->createNewToken(auth('api')->refresh());
+        return $this->createNewToken(auth()->refresh());
     }
 
     /**
@@ -145,7 +151,7 @@ class AuthController extends Controller
         return [
             'token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 108000,
+            'expires_in' => auth()->factory()->getTTL() * 108000,
             'user' => auth()->user()
         ];
     }
@@ -159,7 +165,7 @@ class AuthController extends Controller
      */
 
     public function userProfile() {
-        return response()->json(auth('api')->user());
+        return response()->json(auth()->user());
     }
 
     /**
@@ -180,14 +186,14 @@ class AuthController extends Controller
             return $this->sendResponse('مقادیر consumerKey و یا consumerSecret خالی می باشد. لطفا دوباره بررسی فرمایید.', Response::HTTP_NOT_ACCEPTABLE, null);
         }
 
-        $user=auth('api')->user();
+        $user=auth()->user();
         $user = User::where('id', $user->id)->first();
         if ($user) {
             $user->update([
                 'consumerKey' => $request->input('consumerKey'),
                 'consumerSecret' => $request->input('consumerSecret'),
             ]);
-            return $this->sendResponse('کاربر مورد نظر با موفقیت به روز رسانی شد.', Response::HTTP_OK, auth('api')->user());
+            return $this->sendResponse('کاربر مورد نظر با موفقیت به روز رسانی شد.', Response::HTTP_OK, auth()->user());
         }
         else {
             return $this->sendResponse('کاربر مورد نظر یافت نشد. اطلاعات ورودی خود را مجددا بررسی نمایید.', Response::HTTP_NOT_ACCEPTABLE, null);

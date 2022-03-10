@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WCController;
+use Symfony\Component\HttpFoundation\Response;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,18 @@ use App\Http\Controllers\WCController;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/unauthenticated', function () {
+    return response([
+        'message' => "دسترسی به سرویس مسدود است لطفا ابتدا وارد شوید",
+        'responseCode' => Response::HTTP_UNAUTHORIZED,
+        'response' => null
+    ], Response::HTTP_UNAUTHORIZED);
+})->name("unauthenticated");
+
+
 //assistent
 Route::get('migrate', [WCController::class, 'migrate']);
 Route::get('cashClear', [WCController::class, 'clearCache']);
+
+
+

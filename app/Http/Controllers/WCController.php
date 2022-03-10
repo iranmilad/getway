@@ -37,7 +37,7 @@ class WCController extends Controller
     public function fetchSingleProduct($id)
     {
 
-        $user=auth('api')->user();
+        $user=auth()->user();
 
 
         $curl = curl_init();
@@ -68,7 +68,7 @@ class WCController extends Controller
      */
     public function createSingleProduct($param,$categories=null)
     {
-        $user=auth('api')->user();
+        $user=auth()->user();
         $meta = array(
             (object)array(
                 'key' => '_holo_sku',
@@ -227,7 +227,7 @@ class WCController extends Controller
 
     private function fetchAllWCProds($published=false)
     {
-        $user=auth('api')->user();
+        $user=auth()->user();
         if($published){
             $status= "status=publish&" ;
         }
@@ -309,7 +309,7 @@ class WCController extends Controller
      * Update Single Product
      */
     public function updateWCSingleProduct($params){
-        $user=auth('api')->user();
+        $user=auth()->user();
         $curl = curl_init();
         $data=[
             "regular_price"=>$params['regular_price'],
@@ -486,7 +486,7 @@ class WCController extends Controller
     }
 
     private function getWcProductWithHolooId($meta){
-        $user=auth('api')->user();
+        $user=auth()->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -509,7 +509,7 @@ class WCController extends Controller
     }
 
     public function getWcConfig(){
-        $user=auth('api')->user();
+        $user=auth()->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
