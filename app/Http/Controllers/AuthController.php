@@ -60,7 +60,10 @@ class AuthController extends Controller
                 $token=Auth::attempt($validator->validated());
 
                 if (!$token) {
-                    return $this->sendResponse("درخواست توکن مکرر لایسنس شما در بلک لیست قرار گرفت", Response::HTTP_NOT_ACCEPTABLE,null);
+
+                    $token = auth()->login($User);
+                    $response=$this->createNewToken($token);
+                    return $this->sendResponse("ورود با موفقیت انجام شد", Response::HTTP_OK,$response);
                 }
 
             }
@@ -165,7 +168,7 @@ class AuthController extends Controller
 
     public function userProfile() {
 
-        return $this->sendResponse("نمایش اطلاعات پروفایل", Response::HTTP_OK, auth()->user());
+        return $this->sendResponse("فعال", Response::HTTP_OK, auth()->user());
 
     }
 
