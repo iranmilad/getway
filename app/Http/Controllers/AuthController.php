@@ -56,12 +56,11 @@ class AuthController extends Controller
         if ($User->expireActiveLicense > Carbon::now()) {
             $token = JWTAuth::getToken();
             if (!$token) {
+
                 $token=Auth::attempt($validator->validated());
 
-
-                if ($token) {
-                    JWTAuth::setToken($token)->invalidate();
-                    $token=Auth::attempt($validator->validated());
+                if (!$token) {
+                    return $this->sendResponse("درخواست توکن مکرر لایسنس شما در بلک لیست قرار گرفت", Response::HTTP_NOT_ACCEPTABLE,null);
                 }
 
             }
