@@ -59,7 +59,10 @@ class AuthController extends Controller
             return $this->sendResponse("ورود با موفقیت انجام شد", Response::HTTP_OK, $response);
         }
         else if (isset(auth('api')->user()->id)) {
-           return $this->refresh();
+
+            $response=$this->refresh();
+            return $this->sendResponse("توکن با موفقیت به روز شد", Response::HTTP_OK, $response);
+
         }
         else{
             return $this->sendResponse('لایسنس شما به پایان رسیده است، لطفا لایسنس جدید تهیه فرمایید.', Response::HTTP_NOT_ACCEPTABLE, null);
