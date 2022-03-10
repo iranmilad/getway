@@ -164,7 +164,9 @@ class AuthController extends Controller
      */
 
     public function userProfile() {
-        return response()->json(auth()->user());
+
+        return $this->sendResponse("نمایش اطلاعات پروفایل", Response::HTTP_OK, auth()->user());
+
     }
 
     /**
