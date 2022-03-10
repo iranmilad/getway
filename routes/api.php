@@ -48,7 +48,6 @@ Route::group([
 
 Route::group([
     'middleware' => 'auth:api',
-
 ], function ($router) {
     Route::get('/wcall', [WCController::class, 'fetchAllWCProducts']);
     Route::get('/wc/{id}', [WCController::class, 'fetchSingleProduct']);

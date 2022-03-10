@@ -36,7 +36,7 @@ class HolooController extends Controller
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => array('Serial' => $userSerial, 'RefreshToken' => 'false', 'DeleteService' => 'false', 'MakeService' => 'true', 'RefreshKey' => 'false'),
             CURLOPT_HTTPHEADER => array(
-                'apikey: ' . $userApiKey,
+                'apikey:' . $userApiKey,
                 'Content-Type: multipart/form-data',
             ),
         ));
@@ -1079,7 +1079,8 @@ class HolooController extends Controller
         $user_id = 1;
         if (ProductRequest::where(['user_id' => $user_id])->exists()) {
             return $this->sendResponse('شما یک درخواست ثبت محصول در ۲۴ ساعت گذشته ارسال کرده اید لطفا منتظر بمانید تا عملیات قبلی شما تکمیل گردد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
-        } else {
+        }
+        else {
             $productRequest = new ProductRequest;
             $productRequest->user_id = $user_id;
             $productRequest->request_time = Carbon::now();
@@ -1137,14 +1138,14 @@ class HolooController extends Controller
                             "holooStockQuantity" => (string) $HolooProd->exist_Mandeh ?? 0,
                         ];
 
-                        $sheetes[$category->m_groupname][] = $param;
 
-                        if ((!isset($request->insert_zero_product) && $HolooProd->exist_Mandeh > 0) || (isset($request->insert_zero_product) && $request->insert_zero_product == "0" && $HolooProd->exist_Mandeh > 0)) {
+
+                        if ((!isset($request->insert_product_with_zero_inventory) && $HolooProd->exist_Mandeh > 0) || (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "0" && $HolooProd->exist_Mandeh > 0)) {
                             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
                             $counter = $counter + 1;
                             $user = "ali";
                             AddProductsUser::dispatch($user, $param, ['id' => $category->m_groupcode, "name" => $category->m_groupname], $HolooProd->a_Code);
-                        } elseif (isset($request->insert_zero_product) && $request->insert_zero_product == "1") {
+                        } elseif (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "1") {
                             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
                             $counter = $counter + 1;
                             $user = "ali";
@@ -1157,8 +1158,6 @@ class HolooController extends Controller
             }
         }
 
-        $excel = new ReportExport($sheetes);
-        Excel::store($excel, "download/file.xls", );
 
         curl_close($curl);
 
@@ -1168,12 +1167,87 @@ class HolooController extends Controller
         return $this->sendResponse(" درخواست ثبت " . $counter . 'محصولات جدید با موفقیت ثبت گردید. ', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
     }
 
-    public function wcGetExcelProducts(Request $orderInvoice)
+    public function wcGetExcelProducts()
     {
-        //PDF file is stored under project/public/download/info.pdf
-        $file = asset('/storage/app/download/file.xls');
 
-        return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => $file]]);
+        $counter = 0;
+        $user_id = 1;
+
+
+        ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
+        $token = $this->getNewToken();
+        $curl = curl_init();
+        $userSerial = "10304923";
+        $userApiKey = "E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
+
+        $productCategory = app('App\Http\Controllers\WCController')->get_wc_category();
+
+        $data = $productCategory;
+        $data=['02'=>12];
+        //dd($data);
+
+        $categories = $this->getAllCategory();
+
+        $wcHolooExistCode = app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
+        $allRespose = [];
+        $sheetes = [];
+        foreach ($categories->result as $key => $category) {
+            if (array_key_exists($category->m_groupcode, $data)) {
+                $sheetes[$category->m_groupname] = array();
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Article/SearchArticles?from.date=2022',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                    CURLOPT_HTTPHEADER => array(
+                        'serial: ' . $userSerial,
+                        'database: Holoo1',
+                        'm_groupcode: ' . $category->m_groupcode,
+                        'isArticle: true',
+                        'access_token: ' . $userApiKey,
+                        'Authorization: Bearer ' . $token,
+                    ),
+                ));
+                $response = curl_exec($curl);
+                $HolooProds = json_decode($response);
+
+                foreach ($HolooProds as $HolooProd) {
+
+                    if (!in_array($HolooProd->a_Code, $wcHolooExistCode)) {
+
+                        $param = [
+                            "holooCode" => $HolooProd->a_Code,
+                            "holooName" => $this->arabicToPersian($HolooProd->a_Name),
+                            "holooRegularPrice" => (string) $HolooProd->sel_Price ?? 0,
+                            "holooStockQuantity" => (string) $HolooProd->exist_Mandeh ?? 0,
+                        ];
+
+                        $sheetes[$category->m_groupname][] = $param;
+
+                    }
+
+                }
+            }
+        }
+
+        curl_close($curl);
+        if (count($sheetes) != 0) {
+            $excel = new ReportExport($sheetes);
+            $filename= $user_id;
+            $file =asset("/download/".$filename.".xls");
+            Excel::store($excel, $file);
+            return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => $file]]);
+        }
+        else{
+            return $this->sendResponse('محصولی جهت تولید فایل خروجی یافت نشد', Response::HTTP_OK, ["result" => ["url" => "#"]]);
+        }
+
+
 
     }
 

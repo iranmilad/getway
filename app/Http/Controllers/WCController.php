@@ -543,4 +543,8 @@ class WCController extends Controller
         return "Cache is cleared";
     }
 
+    public function get_wc_category(){
+        return json_decode($this->getWcConfig(),true)["product_cat"];
+    }
+
 }
