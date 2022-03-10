@@ -28,6 +28,28 @@ Route::group([
     'middleware' => 'api',
 
 ], function ($router) {
+
+    //holoo webhook event
+    Route::post('/webhook', [WCController::class, 'holooWebHook']);
+
+
+    //login and user group
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::post('/user-profile', [AuthController::class, 'userProfile']);
+    Route::get('/logout', [AuthController::class, 'logout']);
+
+    Route::post('/updateUser', [AuthController::class, 'updateWordpressSettings']);
+});
+
+
+Route::group([
+    'middleware' => 'auth:api',
+
+], function ($router) {
     Route::get('/wcall', [WCController::class, 'fetchAllWCProducts']);
     Route::get('/wc/{id}', [WCController::class, 'fetchSingleProduct']);
     Route::post('/wcadd', [WCController::class, 'createSingleProduct']);
@@ -50,21 +72,4 @@ Route::group([
     Route::post('/wcInvoicePayed', [HolooController::class, 'wcInvoicePayed']);
     Route::post('/addToCart', [HolooController::class, 'addToCart']);
 
-
-    //holoo webhook event
-    Route::post('/webhook', [WCController::class, 'holooWebHook']);
-
-
-    //login and user group
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
-
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::post('/user-profile', [AuthController::class, 'userProfile']);
-    Route::get('/logout', [AuthController::class, 'logout']);
-
-    Route::post('/updateUser', [AuthController::class, 'updateWordpressSettings']);
 });
-
-
