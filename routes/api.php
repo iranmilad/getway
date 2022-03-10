@@ -61,9 +61,9 @@ Route::group([
 
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::get('/user-profile', [AuthController::class, 'userProfile']);
+    Route::post('/user-profile', [AuthController::class, 'userProfile']);
     Route::get('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [AuthController::class, 'user']);
+
     Route::post('/updateUser', [AuthController::class, 'updateWordpressSettings']);
 });
 
