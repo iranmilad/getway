@@ -60,7 +60,7 @@ class AuthController extends Controller
         }
         else if (isset(auth('api')->user()->id)) {
 
-            $response=$this->refresh();
+            $response=$this->refresh('api');
             return $this->sendResponse("توکن با موفقیت به روز شد", Response::HTTP_OK, $response);
 
         }
