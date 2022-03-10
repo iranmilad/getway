@@ -7,10 +7,11 @@ use App\Models\User;
 use Illuminate\Support\Str;
 
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -52,22 +53,20 @@ class AuthController extends Controller
             return $this->sendResponse('ورود ناموفق، اطلاعات ورودی خود را مجدد بررسی نمایید.', Response::HTTP_UNAUTHORIZED, null);
         }
 
-        if ($User->expireActiveLicense > Carbon::now() and !isset(auth()->user()->id)) {
+        if ($User->expireActiveLicense > Carbon::now()) {
+            $token = JWTAuth::getToken();
+            if (!$token) {
+                $token=Auth::attempt($validator->validated());
 
-            $token=auth()->attempt($validator->validated());
-            if($token==false){
-                $response=$this->refresh();
-                return $this->sendResponse("توکن با موفقیت به روز شد", Response::HTTP_OK, $response);
-            }
-            else{
-                $response=$this->createNewToken($token);
-                return $this->sendResponse("ورود با موفقیت انجام شد", Response::HTTP_OK, $response);
-            }
-        }
-        else if (isset(auth()->user()->id)) {
 
-            $response=$this->refresh();
-            return $this->sendResponse("توکن با موفقیت به روز شد", Response::HTTP_OK, $response);
+                if ($token) {
+                    JWTAuth::setToken($token)->invalidate();
+                    $token=Auth::attempt($validator->validated());
+                }
+
+            }
+            $response=$this->createNewToken($token);
+            return $this->sendResponse("ورود با موفقیت انجام شد", Response::HTTP_OK, $response);
 
         }
         else{
@@ -126,6 +125,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout() {
+
         auth()->logout();
         return $this->sendResponse('خروج از حساب با موفقیت انجام گردید', Response::HTTP_OK,null);
 
