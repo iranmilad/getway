@@ -263,7 +263,13 @@ class WCController extends Controller
 
             }
         }
-        return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK, ['result' => $products]);
+
+        if($counter_confid==0){
+            return $this->sendResponse('عدم انطباقی در محصولات یافت نشد', Response::HTTP_OK, ['result' => []]);
+        }
+        else{
+            return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK, ['result' => $products]);
+        }
     }
 
     private function fetchAllHolloProds(){
