@@ -2,33 +2,29 @@
 
 namespace App\Http\Controllers;
 
-
-use stdClass;
-use Carbon\Carbon;
-use App\Models\User;
-use Illuminate\Http\Request;
 use App\Exports\ReportExport;
 use App\Jobs\AddProductsUser;
 use App\Models\ProductRequest;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
-use Symfony\Component\VarDumper\Cloner\Data;
+use stdClass;
 use Symfony\Component\HttpFoundation\Response;
-
+use Symfony\Component\VarDumper\Cloner\Data;
 
 class HolooController extends Controller
 {
     private function getNewToken(): string
     {
-        $user=auth()->user();
+        $user = auth()->user();
 
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
         if ($user->cloudTokenExDate > Carbon::now()) {
             return $user->cloudToken;
-        }
-        else {
+        } else {
 
             $curl = curl_init();
 
@@ -52,22 +48,22 @@ class HolooController extends Controller
 
             curl_close($curl);
             $response = json_decode($response);
-            User::where(['id'=>$user->id,])
-            ->update([
-                'cloudTokenExDate' => Carbon::now()->addDay(1),
-                'cloudToken' => $response->result->apikey,
-            ]);
+            User::where(['id' => $user->id])
+                ->update([
+                    'cloudTokenExDate' => Carbon::now()->addDay(1),
+                    'cloudToken' => $response->result->apikey,
+                ]);
             return $response->result->apikey;
         }
     }
 
     private function getAllCategory()
     {
-        $user=auth()->user();
+        $user = auth()->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/M_Group/'.$user->holooDatabaseName,
+            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/M_Group/' . $user->holooDatabaseName,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -75,7 +71,7 @@ class HolooController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_HTTPHEADER => array(
-                'serial: '.$user->serial,
+                'serial: ' . $user->serial,
                 'Authorization: Bearer ' . $this->getNewToken(),
             ),
         ));
@@ -144,11 +140,11 @@ class HolooController extends Controller
 
     public function fetchAllHolloProds()
     {
-        $user=auth()->user();
+        $user = auth()->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/'.$user->holooDatabaseName,
+            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/' . $user->holooDatabaseName,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
@@ -156,8 +152,8 @@ class HolooController extends Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
-                'serial: '.$user->serial,
-                'database: '.$user->holooDatabaseName,
+                'serial: ' . $user->serial,
+                'database: ' . $user->holooDatabaseName,
 
                 'Authorization: Bearer ' . $this->getNewToken(),
             ),
@@ -177,8 +173,8 @@ class HolooController extends Controller
 
     public function wcInvoiceRegistration(Request $orderInvoice)
     {
-        $user=auth()->user();
-        $this->recordLog("Invoice Registration",$user->siteUrl,"Invoice Registration receive");
+        $user = auth()->user();
+        $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration receive");
 
         $order = array(
             "id" => 4656,
@@ -563,7 +559,7 @@ class HolooController extends Controller
                     CURLOPT_POSTFIELDS => array('data' => json_encode($data)),
                     CURLOPT_HTTPHEADER => array(
                         "serial: $userSerial",
-                        'database: '.$user->holooDatabaseName,
+                        'database: ' . $user->holooDatabaseName,
                         "Authorization: Bearer $token",
                     ),
                 ));
@@ -571,12 +567,11 @@ class HolooController extends Controller
                 $response = json_decode($response);
                 curl_close($curl);
                 if ($response->success) {
-                    $this->recordLog("Invoice Registration",$user->siteUrl,"Invoice Registration finish succsessfuly");
+                    $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish succsessfuly");
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
-                }
-                else{
-                    $this->recordLog("Invoice Registration",$user->siteUrl,"Invoice Registration finish wrong","error");
-                    $this->recordLog("Invoice Registration",$user->siteUrl,$response,"error");
+                } else {
+                    $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish wrong", "error");
+                    $this->recordLog("Invoice Registration", $user->siteUrl, $response, "error");
                 }
 
                 return $this->sendResponse($response->message, Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
@@ -587,8 +582,8 @@ class HolooController extends Controller
 
     public function wcInvoicePayed(Request $orderInvoice)
     {
-        $user=auth()->user();
-        $this->recordLog("Invoice Payed",$user->siteUrl,"Invoice Payed receive");
+        $user = auth()->user();
+        $this->recordLog("Invoice Payed", $user->siteUrl, "Invoice Payed receive");
 
         // return response()->json($this->genericFee("#102564#25000%3", 25000));
 
@@ -752,7 +747,7 @@ class HolooController extends Controller
                 ),
                 "bankmellat" => array(
                     "number" => "10200010001",
-                    "fee" => "",
+                    "fee" => "#102564#25000%3",
                     "vat" => "1",
                 ),
                 "WC_payping" => array(
@@ -858,7 +853,7 @@ class HolooController extends Controller
             $custid = $this->getHolooCustomerID($orderInvoice->billing, $orderInvoice->customer_id);
 
             if (!$custid) {
-                return $this->sendResponse("ثبت فاکتور انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+                return $this->sendResponse("ثبت فاکتوdsd انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
             }
 
             $items = array();
@@ -982,7 +977,7 @@ class HolooController extends Controller
                     CURLOPT_POSTFIELDS => array('data' => json_encode($data)),
                     CURLOPT_HTTPHEADER => array(
                         "serial: $userSerial",
-                        'database: '.$user->holooDatabaseName,
+                        'database: ' . $user->holooDatabaseName,
                         "Authorization: Bearer $token",
                     ),
                 ));
@@ -990,17 +985,92 @@ class HolooController extends Controller
                 $response = json_decode($response);
                 curl_close($curl);
                 if ($response->success) {
-                    $this->recordLog("Invoice Payed",$user->siteUrl,"Invoice Payed finish succsessfuly");
+
+                    if ($payment->fee && $payment->fee != "") {
+                        $fee = $this->genericFee($payment->fee, $sum_total);
+                        if ($fee && $fee->amount > 0) {
+                            $this->wcInvoiceBank($orderInvoice, $fee, $custid, $DateString, $type);
+                        }
+                    }
+
+                    $this->recordLog("Invoice Payed", $user->siteUrl, "Invoice Payed finish succsessfuly");
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
-                }
-                else{
-                    $this->recordLog("Invoice Payed",$user->siteUrl,"Invoice Payed finish wrong","error");
-                    $this->recordLog("Invoice Payed",$user->siteUrl,$response,"error");
+                } else {
+                    $this->recordLog("Invoice Payed", $user->siteUrl, "Invoice Payed finish wrong", "error");
+                    $this->recordLog("Invoice Payed", $user->siteUrl, $response, "error");
                 }
                 return $this->sendResponse($response->message, Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
             }
 
         }
+
+    }
+
+    private function wcInvoiceBank($orderInvoice, $fee, $custid, $DateString, $kind)
+    {
+        $user = auth()->user();
+        $sarfasl=$fee->sarfasl;
+        $total = $this->getAmount($fee->amount, $orderInvoice->currency);
+        $items[] = array(
+            'id' => $sarfasl,
+            'Productid' => $sarfasl,
+            'few' => 1,
+            'price' => $total,
+            'discount' => 0,
+            'levy' => 0,
+            'scot' => 0,
+        );
+
+        $data = array(
+            'generalinfo' => array(
+                'apiname' => 'InvoicePost',
+                'dto' => array(
+                    'invoiceinfo' => array(
+                        'id' => $orderInvoice->input("id"), //$oreder->id
+                        'Type' => 1, //1 faktor frosh 2 pish factor,
+                        'kind' => $kind,
+                        'Date' => $DateString->format('Y-m-d'),
+                        'Time' => $DateString->format('H:i:s'),
+                        'custid' => $custid,
+                        'detailinfo' => $items,
+                    ),
+                ),
+            ),
+        );
+
+        // if ($payment_type == "bank") {
+            $data["generalinfo"]["dto"]["invoiceinfo"]["Bank"] = $total;
+            $data["generalinfo"]["dto"]["invoiceinfo"]["BankSarfasl"] = $sarfasl;
+        // } elseif ($payment_type == "cash") {
+        //     $data["generalinfo"]["dto"]["invoiceinfo"]["Cash"] = $total;
+        //     $data["generalinfo"]["dto"]["invoiceinfo"]["CashSarfas"] = $sarfasl;
+        // } else {
+        //     $data["generalinfo"]["dto"]["invoiceinfo"]["nesiyeh"] = $total;
+        // }
+
+        ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
+        $token = $this->getNewToken();
+        $curl = curl_init();
+        $userSerial = $user->serial;
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/CallApi/InvoicePost',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array('data' => json_encode($data)),
+            CURLOPT_HTTPHEADER => array(
+                "serial: $userSerial",
+                'database: ' . $user->holooDatabaseName,
+                "Authorization: Bearer $token",
+            ),
+        ));
+        $response = curl_exec($curl);
+        $response = json_decode($response);
+        curl_close($curl);
 
     }
 
@@ -1018,14 +1088,14 @@ class HolooController extends Controller
         ini_set('max_execution_time', 120); // 120 (seconds) = 2 Minutes
         $holoo_product_id = $request->holoo_id;
         $wp_product_id = $request->product_id;
-        $user=auth()->user();
+        $user = auth()->user();
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
 
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/'.$user->holooDatabaseName.'/' . $holoo_product_id,
+            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/' . $user->holooDatabaseName . '/' . $holoo_product_id,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1057,13 +1127,13 @@ class HolooController extends Controller
 
     public function GetSingleProductHoloo($holoo_id)
     {
-        $user=auth()->user();
+        $user = auth()->user();
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/'.$user->holooDatabaseName.'/' . $holoo_id,
+            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/' . $user->holooDatabaseName . '/' . $holoo_id,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1087,7 +1157,7 @@ class HolooController extends Controller
 
     public function wcAddAllHolooProductsCategory(Request $request)
     {
-        $user=auth()->user();
+        $user = auth()->user();
         $user_id = $user->id;
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
@@ -1095,8 +1165,7 @@ class HolooController extends Controller
 
         if (ProductRequest::where(['user_id' => $user_id])->exists()) {
             return $this->sendResponse('شما یک درخواست ثبت محصول در ۲۴ ساعت گذشته ارسال کرده اید لطفا منتظر بمانید تا عملیات قبلی شما تکمیل گردد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
-        }
-        else {
+        } else {
             $productRequest = new ProductRequest;
             $productRequest->user_id = $user_id;
             $productRequest->request_time = Carbon::now();
@@ -1106,7 +1175,6 @@ class HolooController extends Controller
         ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
         $token = $this->getNewToken();
         $curl = curl_init();
-
 
         $data = json_decode($request->product_cat, true);
         //dd($data);
@@ -1131,7 +1199,7 @@ class HolooController extends Controller
                     CURLOPT_CUSTOMREQUEST => 'GET',
                     CURLOPT_HTTPHEADER => array(
                         'serial: ' . $userSerial,
-                        'database: '.$user->holooDatabaseName,
+                        'database: ' . $user->holooDatabaseName,
                         'm_groupcode: ' . $category->m_groupcode,
                         'isArticle: true',
                         'access_token: ' . $userApiKey,
@@ -1153,14 +1221,11 @@ class HolooController extends Controller
                             "holooStockQuantity" => (string) $HolooProd->exist_Mandeh ?? 0,
                         ];
 
-
-
                         if ((!isset($request->insert_product_with_zero_inventory) && $HolooProd->exist_Mandeh > 0) || (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "0" && $HolooProd->exist_Mandeh > 0)) {
                             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
                             $counter = $counter + 1;
                             AddProductsUser::dispatch($user, $param, ['id' => $category->m_groupcode, "name" => $category->m_groupname], $HolooProd->a_Code);
-                        }
-                        elseif (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "1") {
+                        } elseif (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "1") {
                             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
                             $counter = $counter + 1;
                             AddProductsUser::dispatch($user, $param, ['id' => $category->m_groupcode, "name" => $category->m_groupname], $HolooProd->a_Code);
@@ -1171,7 +1236,6 @@ class HolooController extends Controller
                 }
             }
         }
-
 
         curl_close($curl);
 
@@ -1185,7 +1249,7 @@ class HolooController extends Controller
     {
 
         $counter = 0;
-        $user=auth()->user();
+        $user = auth()->user();
         $user_id = $user->id;
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
@@ -1197,7 +1261,7 @@ class HolooController extends Controller
         $productCategory = app('App\Http\Controllers\WCController')->get_wc_category();
 
         $data = $productCategory;
-        $data=['02'=>12];
+        $data = ['02' => 12];
         //dd($data);
 
         $categories = $this->getAllCategory();
@@ -1220,7 +1284,7 @@ class HolooController extends Controller
                     CURLOPT_CUSTOMREQUEST => 'GET',
                     CURLOPT_HTTPHEADER => array(
                         'serial: ' . $userSerial,
-                        'database: '.$user->holooDatabaseName,
+                        'database: ' . $user->holooDatabaseName,
                         'm_groupcode: ' . $category->m_groupcode,
                         'isArticle: true',
                         'access_token: ' . $userApiKey,
@@ -1252,16 +1316,13 @@ class HolooController extends Controller
         curl_close($curl);
         if (count($sheetes) != 0) {
             $excel = new ReportExport($sheetes);
-            $filename= $user_id;
-            $file =asset("/download/".$filename.".xls");
-            Excel::store($excel, $file);
-            return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => $file]]);
-        }
-        else{
+            $filename = $user_id;
+            $file = "download/" . $filename . ".xls";
+            Excel::store($excel, $file, "asset");
+            return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
+        } else {
             return $this->sendResponse('محصولی جهت تولید فایل خروجی یافت نشد', Response::HTTP_OK, ["result" => ["url" => "#"]]);
         }
-
-
 
     }
 
@@ -1272,7 +1333,7 @@ class HolooController extends Controller
 
     public function getAccountBank(Request $config)
     {
-        $user=auth()->user();
+        $user = auth()->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -1285,8 +1346,8 @@ class HolooController extends Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
-                'serial: '.$user->serial,
-                'database: '.$user->holooDatabaseName,
+                'serial: ' . $user->serial,
+                'database: ' . $user->holooDatabaseName,
                 'Authorization: Bearer ' . $this->getNewToken(),
             ),
         ));
@@ -1300,7 +1361,7 @@ class HolooController extends Controller
 
     public function getAccountCash(Request $config)
     {
-        $user=auth()->user();
+        $user = auth()->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -1313,8 +1374,8 @@ class HolooController extends Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
-                'serial: '.$user->serial,
-                'database: '.$user->holooDatabaseName,
+                'serial: ' . $user->serial,
+                'database: ' . $user->holooDatabaseName,
                 'Authorization: Bearer ' . $this->getNewToken(),
             ),
         ));
@@ -1346,11 +1407,11 @@ class HolooController extends Controller
 
     private function getHolooDataTable($table = "customer")
     {
-        $user=auth()->user();
+        $user = auth()->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://sandbox.myholoo.ir/api/Service/".$table."/".$user->holooDatabaseName,
+            CURLOPT_URL => "https://sandbox.myholoo.ir/api/Service/" . $table . "/" . $user->holooDatabaseName,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1359,8 +1420,8 @@ class HolooController extends Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
-                'serial: '.$user->serial,
-                'database: '.$user->holooDatabaseName,
+                'serial: ' . $user->serial,
+                'database: ' . $user->holooDatabaseName,
                 'Authorization: Bearer ' . $this->getNewToken(),
             ),
         ));
@@ -1372,7 +1433,7 @@ class HolooController extends Controller
 
     private function createHolooCustomer($customer, $customerId)
     {
-        $user=auth()->user();
+        $user = auth()->user();
         $curl = curl_init();
         $data = [
             "generalinfo" => [
@@ -1413,8 +1474,8 @@ class HolooController extends Controller
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => array("data" => json_encode($data)),
             CURLOPT_HTTPHEADER => array(
-                'serial: '.$user->serial,
-                'database: '.$user->holooDatabaseName,
+                'serial: ' . $user->serial,
+                'database: ' . $user->holooDatabaseName,
                 "Authorization: Bearer $token",
             ),
         ));
@@ -1427,11 +1488,12 @@ class HolooController extends Controller
         return false;
     }
 
-    public function recordLog($event,$user,$comment=null,$type="info"){
-        $message=$user.' '.$event.' '.$comment;
-        if ($type=="info") {
+    public function recordLog($event, $user, $comment = null, $type = "info")
+    {
+        $message = $user . ' ' . $event . ' ' . $comment;
+        if ($type == "info") {
             Log::info($message);
-        } elseif ($type=="error") {
+        } elseif ($type == "error") {
             Log::error($message);
         }
     }
