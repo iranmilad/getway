@@ -982,7 +982,7 @@ class HolooController extends Controller
                     CURLOPT_POSTFIELDS => array('data' => json_encode($data)),
                     CURLOPT_HTTPHEADER => array(
                         "serial: $userSerial",
-                        'database: '.$user->$user->holooDatabaseName,
+                        'database: '.$user->holooDatabaseName,
                         "Authorization: Bearer $token",
                     ),
                 ));
@@ -1131,7 +1131,7 @@ class HolooController extends Controller
                     CURLOPT_CUSTOMREQUEST => 'GET',
                     CURLOPT_HTTPHEADER => array(
                         'serial: ' . $userSerial,
-                        'database: '.$user->$user->holooDatabaseName,
+                        'database: '.$user->holooDatabaseName,
                         'm_groupcode: ' . $category->m_groupcode,
                         'isArticle: true',
                         'access_token: ' . $userApiKey,
@@ -1220,7 +1220,7 @@ class HolooController extends Controller
                     CURLOPT_CUSTOMREQUEST => 'GET',
                     CURLOPT_HTTPHEADER => array(
                         'serial: ' . $userSerial,
-                        'database: '.$user->$user->holooDatabaseName,
+                        'database: '.$user->holooDatabaseName,
                         'm_groupcode: ' . $category->m_groupcode,
                         'isArticle: true',
                         'access_token: ' . $userApiKey,

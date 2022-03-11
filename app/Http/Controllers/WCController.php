@@ -66,43 +66,87 @@ class WCController extends Controller
     /*
      * Create Single (and simple) product into Woocommerce
      */
-    public function createSingleProduct($param,$categories=null)
+    public function createSingleProduct($param,$categories=null,$type="simple",$cluster=[])
     {
         $user=auth()->user();
+
         $meta = array(
             (object)array(
                 'key' => '_holo_sku',
                 'value' => $param["holooCode"]
             )
         );
-        //$json = json_encode($value);
-        if ($categories !=null) {
-            $category=array(
+        if ($type=="variable") {
+            $options=$this->variableOptions($cluster);
+            $attributes = array(
                 (object)array(
-                    'id' => $categories["id"],
-                    "name" => $categories["name"],
+                    'id'        => 5,
+                    'variation' => true,
+                    'visible'   => true,
+                    'options'   => $options,
                 )
             );
-            $data = array(
-                'name' => $param["holooName"],
-                'type' => 'simple',
-                'regular_price' => $param["holooRegularPrice"],
-                'stock_quantity' => $param["holooStockQuantity"],
-                'status' => 'draft',
-                'meta_data' => $meta,
-                'categories' => $category
-            );
+            if ($categories !=null) {
+                $category=array(
+                    (object)array(
+                        'id' => $categories["id"],
+                        "name" => $categories["name"],
+                    )
+                );
+                $data = array(
+                    'name' => $param["holooName"],
+                    'type' => $type,
+                    'status' => 'draft',
+                    'meta_data' => $meta,
+                    'categories' => $category,
+                    'attributes' => $attributes,
+                );
+            }
+            else{
+                $data = array(
+                    'name' => $param["holooName"],
+                    'type' => $type,
+                    'regular_price' => $param["holooRegularPrice"],
+                    'stock_quantity' => $param["holooStockQuantity"],
+                    'status' => 'draft',
+                    'meta_data' => $meta,
+                    'attributes' => $attributes,
+                );
+            }
         }
-        else{
-            $data = array(
-                'name' => $param["holooName"],
-                'type' => 'simple',
-                'regular_price' => $param["holooRegularPrice"],
-                'stock_quantity' => $param["holooStockQuantity"],
-                'status' => 'draft',
-                'meta_data' => $meta,
-            );
+        else {
+
+            if ($categories !=null) {
+                $category=array(
+                    (object)array(
+                        'id' => $categories["id"],
+                        "name" => $categories["name"],
+                    )
+                );
+                $data = array(
+                    'name' => $param["holooName"],
+                    'type' => $type,
+                    'regular_price' => $param["holooRegularPrice"],
+                    'stock_quantity' => $param["holooStockQuantity"],
+                    'status' => 'draft',
+                    'meta_data' => $meta,
+                    'categories' => $category,
+
+                );
+            }
+            else{
+                $data = array(
+                    'name' => $param["holooName"],
+                    'type' => $type,
+                    'regular_price' => $param["holooRegularPrice"],
+                    'stock_quantity' => $param["holooStockQuantity"],
+                    'status' => 'draft',
+                    'meta_data' => $meta,
+                );
+            }
         }
+
+
         $data = json_encode($data);
         //return response($data);
 
@@ -127,8 +171,11 @@ class WCController extends Controller
 
         curl_close($curl);
         if ($response) {
+
             $decodedResponse = json_decode($response);
-        //            curl_close($curl);
+            if ($type=="variable") {
+                $this->AddProductVariation($decodedResponse->id,$param,$cluster);
+            }
             return $this->sendResponse('محصول مورد نظر با موفقیت در سایت ثبت شد.', Response::HTTP_OK, ['response' => $decodedResponse]);
         }
 
@@ -553,4 +600,168 @@ class WCController extends Controller
         return json_decode($this->getWcConfig(),true)["product_cat"];
     }
 
+    private function variableOptions($clusters){
+        $options=[];
+
+        foreach ( $clusters as $key=>$cluster){
+            $options[]=$cluster->name;
+        }
+
+        return $options;
+
+    }
+
+    private function AddProductVariation($id,$product,$clusters){
+        $user=auth()->user();
+        $curl = curl_init();
+
+        // $data = array(
+        //     'name' => $product["holooName"],
+        //     'type' => $type,
+        //     'regular_price' => $product["holooRegularPrice"],
+        //     'stock_quantity' => $product["holooStockQuantity"],
+        //     'status' => 'draft',
+        //     'meta_data' => $meta,
+        //     'attributes' => $attributes,
+        // );
+        $meta = array(
+            (object)array(
+                'key' => '_holo_sku',
+                'value' => $product["holooCode"]
+            )
+        );
+
+        foreach($clusters as $cluster){
+
+            $data=array(
+                'regular_price' => $product["holooRegularPrice"],
+                'sale_price' => $product["holooRegularPrice"],
+                'stock_quantity' => $cluster->Few,
+                'status' => 'draft',
+                'meta_data' => $meta,
+                'attributes'    => array(
+                    (object) array(
+                        'id' => $cluster->Id,
+                        'option' =>  urlencode($this->arabicToPersian($cluster->Name)),
+                    )
+                )
+
+                // 'weight' => $cluster->,
+                // 'dimensions' => '<string>',
+                //'meta_data' => $meta,
+            );
+            $data = json_encode($data);
+
+            curl_setopt_array($curl, array(
+              CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products/'.$id.'/variations',
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => '',
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 0,
+              CURLOPT_FOLLOWLOCATION => true,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => 'POST',
+              CURLOPT_POSTFIELDS => $data,
+              CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
+              CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+              ),
+            ));
+
+            $response = curl_exec($curl);
+        }
+
+
+        curl_close($curl);
+        return $response;
+
+    }
+
+
+    public function testProductVar(){
+        $HolooProd= (object)[
+            "Name" => "سطح تست بندي",
+            "Few" => 587,
+            "fewspd" => 587,
+            "fewtak" => 587,
+            "BuyPrice" => 245000,
+            "LastBuyPrice" => 245000,
+            "SellPrice" => 560000,
+            "SellPrice2" => 0,
+            "SellPrice3" => 0,
+            "SellPrice4" => 0,
+            "SellPrice5" => 0,
+            "SellPrice6" => 0,
+            "SellPrice7" => 0,
+            "SellPrice8" => 0,
+            "SellPrice9" => 0,
+            "SellPrice10" => 0,
+            "CountInKarton" => 0,
+            "CountInBasteh" => 0,
+            "MainGroupName" => "سطح بندي اصلي",
+            "MainGroupErpCode" => "bBAlfg==",
+            "SideGroupName" => "سطح بندي فرعي",
+            "SideGroupErpCode" => "bBAlNA1jDg0=",
+            "UnitErpCode" => 0,
+            "EtebarTakhfifAz" => "          ",
+            "EtebarTakhfifTa" => "          ",
+            "DiscountPercent" => 0,
+            "DiscountPrice" => 0,
+            "ErpCode" => "bBAlNA1mckd7UB4O",
+            "Poshak" => [
+                [
+                    "Id" => 4,
+                    "Name" => "آبي / کوچک",
+                    "Few" => 200,
+                    "Min" => 0,
+                    "Max" => 0,
+                ],
+                [
+                    "Id" => 5,
+                    "Name" => "آبي / متوسط",
+                    "Few" => 150,
+                    "Min" => 0,
+                    "Max" => 0,
+                ],
+                [
+                    "Id" => 6,
+                    "Name" => "آبي / بزرگ",
+                    "Few" => 120,
+                    "Min" => 0,
+                    "Max" => 0,
+                ],
+                [
+                    "Id" => 7,
+                    "Name" => "سفيد / کوچک",
+                    "Few" => 30,
+                    "Min" => 0,
+                    "Max" => 0,
+                ],
+                [
+                    "Id" => 8,
+                    "Name" => "سفيد / متوسط",
+                    "Few" => 59,
+                    "Min" => 0,
+                    "Max" => 0,
+                ],
+                [
+                    "Id" => 9,
+                    "Name" => "سفيد / بزرگ",
+                    "Few" => 28,
+                    "Min" => 0,
+                    "Max" => 0,
+                ],
+            ],
+        ];
+
+        if(isset($HolooProd->Poshak)){
+            $param = [
+                'id' => $HolooProd->ErpCode,
+                'name' => urlencode($this->arabicToPersian($HolooProd->Name)),
+                'regular_price' => $HolooProd->SellPrice ?? 0,
+                'stock_quantity' => (int) $HolooProd->Few ?? 0,
+            ];
+            $this->createSingleProduct($param,null,"variable",$HolooProd->Poshak);
+        }
+    }
 }
