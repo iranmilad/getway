@@ -56,9 +56,7 @@ class AuthController extends Controller
         if ($User->expireActiveLicense > Carbon::now()) {
             $token = JWTAuth::getToken();
             if (!$token) {
-
                 $token=Auth::attempt($validator->validated());
-
                 if (!$token) {
 
                     $token = auth()->login($User);
