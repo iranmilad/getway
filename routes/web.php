@@ -29,6 +29,7 @@ Route::get('/unauthenticated', function () {
 
 //assistent
 Route::get('migrate', [WCController::class, 'migrate']);
+Route::get('fresh', [WCController::class, 'fresh']);
 Route::get('cashClear', [WCController::class, 'clearCache']);
 
 

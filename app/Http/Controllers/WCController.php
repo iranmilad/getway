@@ -350,6 +350,7 @@ class WCController extends Controller
      */
     public function updateAllProductFromHolooToWC(Request $config)
     {
+        $user=auth()->user();
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         $callApi = $this->fetchAllHolloProds();
         $holooProducts = $callApi;
@@ -383,7 +384,7 @@ class WCController extends Controller
                                         'regular_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ($WCProd->regular_price != $HolooProd->sel_Price) ? $HolooProd->sel_Price ?? 0 : null,
                                         'stock_quantity' =>(isset($config->update_product_stock) && $config->update_product_stock=="1") && (isset($WCProd->stock_quantity) and $WCProd->stock_quantity != $HolooProd->exist_Mandeh) ? (int)$HolooProd->exist_Mandeh ?? 0 : null,
                                     ];
-                                    $user=1;
+
                                     UpdateProductsUser::dispatch($user,$data,$WCProd->meta_data[0]->value)->onQueue('high');
                                     //$this->updateWCSingleProduct($data);
 
@@ -533,6 +534,11 @@ class WCController extends Controller
     public function migrate(){
         Artisan::call('migrate');
         return "migrate run";
+    }
+
+    public function fresh(){
+        Artisan::call('migrate:fresh --seed');
+        return "fresh run";
     }
 
     public function clearCache(){

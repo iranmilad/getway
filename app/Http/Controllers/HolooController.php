@@ -3,58 +3,71 @@
 namespace App\Http\Controllers;
 
 
+use stdClass;
 use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Exports\ReportExport;
 use App\Jobs\AddProductsUser;
 use App\Models\ProductRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
-use App\Exports\ReportExport;
 use Maatwebsite\Excel\Facades\Excel;
-use stdClass;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarDumper\Cloner\Data;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class HolooController extends Controller
 {
     private function getNewToken(): string
     {
+        $user=auth()->user();
 
-        $userSerial = "10304923";
-        $userApiKey = "E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
-        $curl = curl_init();
+        $userSerial = $user->serial;
+        $userApiKey = $user->apiKey;
+        if ($user->cloudTokenExDate > Carbon::now()) {
+            return $user->cloudToken;
+        }
+        else {
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Ticket/RegisterForPartner',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => array('Serial' => $userSerial, 'RefreshToken' => 'false', 'DeleteService' => 'false', 'MakeService' => 'true', 'RefreshKey' => 'false'),
-            CURLOPT_HTTPHEADER => array(
-                'apikey:' . $userApiKey,
-                'Content-Type: multipart/form-data',
-            ),
-        ));
+            $curl = curl_init();
 
-        $response = curl_exec($curl);
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Ticket/RegisterForPartner',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => array('Serial' => $userSerial, 'RefreshToken' => 'false', 'DeleteService' => 'false', 'MakeService' => 'true', 'RefreshKey' => 'false'),
+                CURLOPT_HTTPHEADER => array(
+                    'apikey:' . $userApiKey,
+                    'Content-Type: multipart/form-data',
+                ),
+            ));
 
-        curl_close($curl);
-        $response = json_decode($response);
+            $response = curl_exec($curl);
 
-        return $response->result->apikey;
+            curl_close($curl);
+            $response = json_decode($response);
+            User::where(['id'=>$user->id,])
+            ->update([
+                'cloudTokenExDate' => Carbon::now()->addDay(1),
+                'cloudToken' => $response->result->apikey,
+            ]);
+            return $response->result->apikey;
+        }
     }
 
     private function getAllCategory()
     {
+        $user=auth()->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/M_Group/Holoo1',
+            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/M_Group/'.$user->holooDatabaseName,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -62,7 +75,7 @@ class HolooController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_HTTPHEADER => array(
-                'serial: 10304923',
+                'serial: '.$user->serial,
                 'Authorization: Bearer ' . $this->getNewToken(),
             ),
         ));
@@ -131,11 +144,11 @@ class HolooController extends Controller
 
     public function fetchAllHolloProds()
     {
-
+        $user=auth()->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/Holoo1',
+            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/'.$user->holooDatabaseName,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
@@ -143,8 +156,8 @@ class HolooController extends Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
-                'serial: 10304923',
-                'database: Holoo1',
+                'serial: '.$user->serial,
+                'database: '.$user->holooDatabaseName,
 
                 'Authorization: Bearer ' . $this->getNewToken(),
             ),
@@ -537,7 +550,7 @@ class HolooController extends Controller
                 ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
                 $token = $this->getNewToken();
                 $curl = curl_init();
-                $userSerial = "10304923";
+                $userSerial = $user->serial;
                 curl_setopt_array($curl, array(
                     CURLOPT_URL => 'https://sandbox.myholoo.ir/api/CallApi/InvoicePost',
                     CURLOPT_RETURNTRANSFER => true,
@@ -550,7 +563,7 @@ class HolooController extends Controller
                     CURLOPT_POSTFIELDS => array('data' => json_encode($data)),
                     CURLOPT_HTTPHEADER => array(
                         "serial: $userSerial",
-                        'database: Holoo1',
+                        'database: '.$user->holooDatabaseName,
                         "Authorization: Bearer $token",
                     ),
                 ));
@@ -956,7 +969,7 @@ class HolooController extends Controller
                 ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
                 $token = $this->getNewToken();
                 $curl = curl_init();
-                $userSerial = "10304923";
+                $userSerial = $user->serial;
                 curl_setopt_array($curl, array(
                     CURLOPT_URL => 'https://sandbox.myholoo.ir/api/CallApi/InvoicePost',
                     CURLOPT_RETURNTRANSFER => true,
@@ -969,7 +982,7 @@ class HolooController extends Controller
                     CURLOPT_POSTFIELDS => array('data' => json_encode($data)),
                     CURLOPT_HTTPHEADER => array(
                         "serial: $userSerial",
-                        'database: Holoo1',
+                        'database: '.$user->$user->holooDatabaseName,
                         "Authorization: Bearer $token",
                     ),
                 ));
@@ -1005,14 +1018,14 @@ class HolooController extends Controller
         ini_set('max_execution_time', 120); // 120 (seconds) = 2 Minutes
         $holoo_product_id = $request->holoo_id;
         $wp_product_id = $request->product_id;
-
-        $userSerial = "10304923";
-        $userApiKey = "E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
+        $user=auth()->user();
+        $userSerial = $user->serial;
+        $userApiKey = $user->apiKey;
 
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/Holoo1/' . $holoo_product_id,
+            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/'.$user->holooDatabaseName.'/' . $holoo_product_id,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1044,13 +1057,13 @@ class HolooController extends Controller
 
     public function GetSingleProductHoloo($holoo_id)
     {
-
-        $userSerial = "10304923";
-        $userApiKey = "E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
+        $user=auth()->user();
+        $userSerial = $user->serial;
+        $userApiKey = $user->apiKey;
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/Holoo1/' . $holoo_id,
+            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/'.$user->holooDatabaseName.'/' . $holoo_id,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1074,9 +1087,12 @@ class HolooController extends Controller
 
     public function wcAddAllHolooProductsCategory(Request $request)
     {
-
+        $user=auth()->user();
+        $user_id = $user->id;
+        $userSerial = $user->serial;
+        $userApiKey = $user->apiKey;
         $counter = 0;
-        $user_id = 1;
+
         if (ProductRequest::where(['user_id' => $user_id])->exists()) {
             return $this->sendResponse('شما یک درخواست ثبت محصول در ۲۴ ساعت گذشته ارسال کرده اید لطفا منتظر بمانید تا عملیات قبلی شما تکمیل گردد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
         }
@@ -1090,8 +1106,7 @@ class HolooController extends Controller
         ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
         $token = $this->getNewToken();
         $curl = curl_init();
-        $userSerial = "10304923";
-        $userApiKey = "E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
+
 
         $data = json_decode($request->product_cat, true);
         //dd($data);
@@ -1116,7 +1131,7 @@ class HolooController extends Controller
                     CURLOPT_CUSTOMREQUEST => 'GET',
                     CURLOPT_HTTPHEADER => array(
                         'serial: ' . $userSerial,
-                        'database: Holoo1',
+                        'database: '.$user->$user->holooDatabaseName,
                         'm_groupcode: ' . $category->m_groupcode,
                         'isArticle: true',
                         'access_token: ' . $userApiKey,
@@ -1143,12 +1158,11 @@ class HolooController extends Controller
                         if ((!isset($request->insert_product_with_zero_inventory) && $HolooProd->exist_Mandeh > 0) || (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "0" && $HolooProd->exist_Mandeh > 0)) {
                             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
                             $counter = $counter + 1;
-                            $user = "ali";
                             AddProductsUser::dispatch($user, $param, ['id' => $category->m_groupcode, "name" => $category->m_groupname], $HolooProd->a_Code);
-                        } elseif (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "1") {
+                        }
+                        elseif (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "1") {
                             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
                             $counter = $counter + 1;
-                            $user = "ali";
                             AddProductsUser::dispatch($user, $param, ['id' => $category->m_groupcode, "name" => $category->m_groupname], $HolooProd->a_Code);
                             //dd($allRespose);
                         }
@@ -1171,14 +1185,14 @@ class HolooController extends Controller
     {
 
         $counter = 0;
-        $user_id = 1;
-
+        $user=auth()->user();
+        $user_id = $user->id;
+        $userSerial = $user->serial;
+        $userApiKey = $user->apiKey;
 
         ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
         $token = $this->getNewToken();
         $curl = curl_init();
-        $userSerial = "10304923";
-        $userApiKey = "E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70";
 
         $productCategory = app('App\Http\Controllers\WCController')->get_wc_category();
 
@@ -1206,7 +1220,7 @@ class HolooController extends Controller
                     CURLOPT_CUSTOMREQUEST => 'GET',
                     CURLOPT_HTTPHEADER => array(
                         'serial: ' . $userSerial,
-                        'database: Holoo1',
+                        'database: '.$user->$user->holooDatabaseName,
                         'm_groupcode: ' . $category->m_groupcode,
                         'isArticle: true',
                         'access_token: ' . $userApiKey,
@@ -1258,6 +1272,7 @@ class HolooController extends Controller
 
     public function getAccountBank(Request $config)
     {
+        $user=auth()->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -1270,8 +1285,8 @@ class HolooController extends Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
-                'serial: 10304923',
-                'database: Holoo1',
+                'serial: '.$user->serial,
+                'database: '.$user->holooDatabaseName,
                 'Authorization: Bearer ' . $this->getNewToken(),
             ),
         ));
@@ -1285,6 +1300,7 @@ class HolooController extends Controller
 
     public function getAccountCash(Request $config)
     {
+        $user=auth()->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -1297,8 +1313,8 @@ class HolooController extends Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
-                'serial: 10304923',
-                'database: Holoo1',
+                'serial: '.$user->serial,
+                'database: '.$user->holooDatabaseName,
                 'Authorization: Bearer ' . $this->getNewToken(),
             ),
         ));
@@ -1330,10 +1346,11 @@ class HolooController extends Controller
 
     private function getHolooDataTable($table = "customer")
     {
+        $user=auth()->user();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://sandbox.myholoo.ir/api/Service/$table/Holoo1",
+            CURLOPT_URL => "https://sandbox.myholoo.ir/api/Service/".$table."/".$user->holooDatabaseName,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1342,8 +1359,8 @@ class HolooController extends Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
-                'serial: 10304923',
-                'database: Holoo1',
+                'serial: '.$user->serial,
+                'database: '.$user->holooDatabaseName,
                 'Authorization: Bearer ' . $this->getNewToken(),
             ),
         ));
@@ -1355,6 +1372,7 @@ class HolooController extends Controller
 
     private function createHolooCustomer($customer, $customerId)
     {
+        $user=auth()->user();
         $curl = curl_init();
         $data = [
             "generalinfo" => [
@@ -1395,8 +1413,8 @@ class HolooController extends Controller
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => array("data" => json_encode($data)),
             CURLOPT_HTTPHEADER => array(
-                'serial: 10304923',
-                'database: Holoo1',
+                'serial: '.$user->serial,
+                'database: '.$user->holooDatabaseName,
                 "Authorization: Bearer $token",
             ),
         ));

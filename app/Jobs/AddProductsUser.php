@@ -76,7 +76,7 @@ class AddProductsUser implements ShouldQueue
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products',
+            CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
@@ -86,9 +86,8 @@ class AddProductsUser implements ShouldQueue
             CURLOPT_POSTFIELDS => $data,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
-                'Authorization: Basic Y2tfZGIyY2ZiNDIwMTY1ZDc0MGEyNDIxZDUxZWMwN2NlNmI1MzU0ZmRiNjpjc182YzU3ZmRkNmEzMWQ2NzgwYzRhNTEwOTMyYTM2NDgwZTg3YTkyYTNi'
-                //'Authorization: Basic '. base64_encode("user:password") ali jan baray basic aut bayad in ra janshin konid
             ),
+            CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
         ));
 
         $response = curl_exec($curl);
@@ -102,7 +101,7 @@ class AddProductsUser implements ShouldQueue
      */
     public function uniqueId()
     {
-        return $this->user.'_'.$this->flag;
+        return $this->user->id.'_'.$this->flag;
     }
 
 }

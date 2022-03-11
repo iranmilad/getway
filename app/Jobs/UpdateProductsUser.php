@@ -50,7 +50,7 @@ class UpdateProductsUser implements ShouldQueue, ShouldBeUnique
 
         //$data = json_encode($data);
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://wpdemoo.ir/wordpress/wp-json/wc/v3/products/' . $this->param['id'] .$url,
+            CURLOPT_URL => $this->user->siteUrl.'/wc/v3/products/' . $this->param['id'] .$url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -58,10 +58,7 @@ class UpdateProductsUser implements ShouldQueue, ShouldBeUnique
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'PUT',
-            //CURLOPT_POSTFIELDS => $data,
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Basic Y2tfZGIyY2ZiNDIwMTY1ZDc0MGEyNDIxZDUxZWMwN2NlNmI1MzU0ZmRiNjpjc182YzU3ZmRkNmEzMWQ2NzgwYzRhNTEwOTMyYTM2NDgwZTg3YTkyYTNi'
-            ),
+            CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
         ));
 
         $response = curl_exec($curl);
@@ -77,6 +74,6 @@ class UpdateProductsUser implements ShouldQueue, ShouldBeUnique
      */
     public function uniqueId()
     {
-        return $this->user.'_'.$this->flag;
+        return $this->user->id.'_'.$this->flag;
     }
 }

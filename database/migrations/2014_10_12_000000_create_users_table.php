@@ -17,11 +17,21 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('email')->unique();
             $table->string('siteUrl')->unique();
+            $table->string('holooCustomerID')->unique();
+
             $table->string('activeLicense', 12)->nullable();
             $table->date('expireActiveLicense')->nullable();
-            $table->string('holooDatabaseName');
-            $table->string('holooCustomerID')->unique();
-            $table->string('wordpressToken')->nullable();
+
+
+            $table->string('serial')->default('10304923');
+            $table->string('holooDatabaseName')->default('Holoo1');
+            $table->string('apiKey')->default('E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70');
+
+            $table->text('cloudToken')->nullable();
+            $table->date('cloudTokenExDate')->nullable();
+
+            $table->text('wordpressToken')->nullable();
+
             $table->string('consumerKey')->nullable();
             $table->string('consumerSecret')->nullable();
 
