@@ -138,8 +138,8 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function refresh() {
-
-        return $this->createNewToken(auth()->refresh());
+        $response=$this->createNewToken(auth()->refresh());
+        return $this->sendResponse("توکن به روز گردید", Response::HTTP_OK,$response);
     }
 
     /**
