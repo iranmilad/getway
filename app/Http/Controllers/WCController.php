@@ -370,6 +370,7 @@ class WCController extends Controller
             "stock_quantity"=>$params['stock_quantity'],
             "name"=>$params['name'],
         ];
+        $this->recordLog('update single product',$user->siteUrl,$data);
         $url="?";
         $url=($data['name']!=null) ? $url.'name='.$data['name'] : $url;
         $url=($data['regular_price']!=null) ? $url.'&regular_price='.$data['regular_price'] .'&sale_price='.$data['sale_price']: $url;
@@ -770,4 +771,15 @@ class WCController extends Controller
             $this->createSingleProduct($param,null,"variable",$HolooProd->Poshak);
         }
     }
+
+    public function recordLog($event, $user, $comment = null, $type = "info")
+    {
+        $message = $user . ' ' . $event . ' ' . $comment;
+        if ($type == "info") {
+            Log::info($message);
+        } elseif ($type == "error") {
+            Log::error($message);
+        }
+    }
+
 }
