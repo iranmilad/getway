@@ -72,7 +72,7 @@ Route::group([
 
 });
 
-Route::middleware(['auth:api:cors'])->group(function () {
+Route::middleware(['auth:api','cors'])->group(function () {
     Route::post('/wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
     Route::get('/wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
 });
