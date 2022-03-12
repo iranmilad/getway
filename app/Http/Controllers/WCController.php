@@ -370,7 +370,7 @@ class WCController extends Controller
             "stock_quantity"=>$params['stock_quantity'],
             "name"=>$params['name'],
         ];
-        $this->recordLog('update single product',$user->siteUrl,$data);
+        $this->recordLog('update single product',$user->siteUrl,json_encode($data));
         $url="?";
         $url=($data['name']!=null) ? $url.'name='.$data['name'] : $url;
         $url=($data['regular_price']!=null) ? $url.'&regular_price='.$data['regular_price'] .'&sale_price='.$data['sale_price']: $url;
