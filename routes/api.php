@@ -58,8 +58,7 @@ Route::group([
     Route::post('/updateAllProductFromHolooToWC', [WCController::class, 'updateAllProductFromHolooToWC']);
     Route::post('/wcSingleProductUpdate', [HolooController::class, 'wcSingleProductUpdate']);
     Route::post('/wcAddAllHolooProductsCategory', [HolooController::class, 'wcAddAllHolooProductsCategory']);
-    Route::post('/wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
-    Route::get('/wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
+
     Route::post('/wcGetBankAccount', [HolooController::class, 'getAccountBank']);
     Route::post('/wcGetCashAccount', [HolooController::class, 'getAccountCash']);
 
@@ -71,4 +70,9 @@ Route::group([
     Route::post('/wcInvoicePayed', [HolooController::class, 'wcInvoicePayed']);
     Route::post('/addToCart', [HolooController::class, 'addToCart']);
 
+});
+
+Route::middleware(['auth:api:cors'])->group(function () {
+    Route::post('/wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
+    Route::get('/wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
 });
