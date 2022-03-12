@@ -1176,7 +1176,7 @@ class HolooController extends Controller
         $token = $this->getNewToken();
         $curl = curl_init();
 
-        $data = json_decode($request->product_cat, true);
+        $data = $request->product_cat;
         //dd($data);
 
         $categories = $this->getAllCategory();
