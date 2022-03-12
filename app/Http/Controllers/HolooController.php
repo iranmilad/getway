@@ -1115,7 +1115,7 @@ class HolooController extends Controller
 
         $param = [
             'id' => $wp_product_id,
-            'name' => urlencode($this->arabicToPersian($HolooProd->a_Name)),
+            'name' => $this->arabicToPersian($HolooProd->a_Name),
             'regular_price' => $HolooProd->sel_Price ?? 0,
             'stock_quantity' => (int) $HolooProd->exist_Mandeh ?? 0,
         ];

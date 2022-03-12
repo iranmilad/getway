@@ -440,7 +440,7 @@ class WCController extends Controller
                                     ];
 
                                     UpdateProductsUser::dispatch($user,$data,$WCProd->meta_data[0]->value)->onQueue('high');
-                                    //$this->updateWCSingleProduct($data);
+
 
                                     array_push($response_product,$WCProd->meta_data[0]->value);
 
@@ -512,7 +512,7 @@ class WCController extends Controller
                     //return $holooProduct;
                     $param = [
                         'id' => $wcProduct->id,
-                        'name' => urlencode($this->arabicToPersian($holooProduct->result->a_Name)),
+                        'name' => $this->arabicToPersian($holooProduct->result->a_Name),
                         'regular_price' => $holooProduct->result->sel_Price ?? 0,
                         'stock_quantity' => (int) $holooProduct->result->exist_Mandeh ?? 0,
                     ];
