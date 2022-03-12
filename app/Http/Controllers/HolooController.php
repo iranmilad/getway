@@ -1261,7 +1261,7 @@ class HolooController extends Controller
         $productCategory = app('App\Http\Controllers\WCController')->get_wc_category();
 
         $data = $productCategory;
-        $data = ['02' => 12];
+        //$data = ['02' => 12];
         //dd($data);
 
         $categories = $this->getAllCategory();
@@ -1318,7 +1318,7 @@ class HolooController extends Controller
             $excel = new ReportExport($sheetes);
             $filename = $user_id;
             $file = "download/" . $filename . ".xls";
-            Excel::store($excel, $file, "asset");
+            \Excel::store($excel, $file, "asset");
             return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
         } else {
             return $this->sendResponse('محصولی جهت تولید فایل خروجی یافت نشد', Response::HTTP_OK, ["result" => ["url" => "#"]]);
