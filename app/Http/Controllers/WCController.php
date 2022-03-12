@@ -388,7 +388,7 @@ class WCController extends Controller
             CURLOPT_HTTPHEADER => array(
               'Content-Type: multipart/form-data',
             ),
-          ));
+        ));
         $response = curl_exec($curl);
 
 

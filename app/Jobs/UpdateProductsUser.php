@@ -43,22 +43,22 @@ class UpdateProductsUser implements ShouldQueue, ShouldBeUnique
             "stock_quantity"=>$this->param['stock_quantity'],
             "name"=>$this->param['name'],
         ];
-        $url="?";
-        $url=($data['name']!=null) ? $url.'name='.$data['name'] : $url;
-        $url=($data['regular_price']!=null) ? $url.'&regular_price='.$data['regular_price'] .'&sale_price='.$data['sale_price']: $url;
-        $url=($data['stock_quantity']!=null) ? $url.'&stock_quantity='.$data['stock_quantity'] : $url;
 
         //$data = json_encode($data);
         curl_setopt_array($curl, array(
-            CURLOPT_URL => $this->user->siteUrl.'/wc/v3/products/' . $this->param['id'] .$url,
+            CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products/'. $this->param['id'],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'PUT',
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $data,
             CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
+            CURLOPT_HTTPHEADER => array(
+              'Content-Type: multipart/form-data',
+            ),
         ));
 
         $response = curl_exec($curl);
