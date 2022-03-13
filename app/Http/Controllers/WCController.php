@@ -822,10 +822,10 @@ class WCController extends Controller
         // "sel_Price10": 0,
 
         if($price_field==1){
-            return $HolooProd->sel_Price;
+            return (string) $HolooProd->sel_Price;
         }
         else{
-            return $HolooProd->{"sel_Price".$price_field};
+            return (string) $HolooProd->{"sel_Price".$price_field};
         }
     }
 }
