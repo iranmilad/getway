@@ -544,7 +544,7 @@ class WCController extends Controller
                     $response = $this->updateWCSingleProduct($param);
 
                 }
-                else if ($request->MsgType==0) {
+                else if ($request->MsgType==0 && $config->insert_new_product==1) {
                     $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
                     $holooProduct=json_decode($holooProduct);
 
