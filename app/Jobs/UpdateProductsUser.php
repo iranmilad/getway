@@ -37,13 +37,22 @@ class UpdateProductsUser implements ShouldQueue, ShouldBeUnique
     {
 
         $curl = curl_init();
+        $meta = array(
+            (object)array(
+                'key' => 'wholesale_customer_wholesale_price',
+                'value' => $this->param["wholesale_customer_wholesale_price"]
+            )
+        );
         $data=[
             "regular_price"=>$this->param['regular_price'],
-            "sale_price"=>$this->param['regular_price'],
+            "sale_price"=>$this->param['sale_price'],
+            "price" =>$this->param['price'],
             "stock_quantity"=>$this->param['stock_quantity'],
+            //'wholesale_customer_wholesale_price' => $this->param['wholesale_customer_wholesale_price'],
             "name"=>$this->param['name'],
+            "meta_data"=>$meta,
         ];
-
+        $data = json_encode($data);
         //$data = json_encode($data);
         curl_setopt_array($curl, array(
             CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products/'. $this->param['id'],
@@ -57,7 +66,8 @@ class UpdateProductsUser implements ShouldQueue, ShouldBeUnique
             CURLOPT_POSTFIELDS => $data,
             CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
             CURLOPT_HTTPHEADER => array(
-              'Content-Type: multipart/form-data',
+              //'Content-Type: multipart/form-data',
+              'Content-Type: application/json',
             ),
         ));
 

@@ -40,6 +40,10 @@ class AddProductsUser implements ShouldQueue
             (object)array(
                 'key' => '_holo_sku',
                 'value' => $this->param["holooCode"]
+            ),
+            (object)array(
+                'key' => 'wholesale_customer_wholesale_price',
+                'value' => $this->param["wholesale_customer_wholesale_price"]
             )
         );
         //$json = json_encode($value);
@@ -51,10 +55,12 @@ class AddProductsUser implements ShouldQueue
                 )
             );
             $data = array(
-                'name' => $this->param["holooName"],
+                'name' => $this->param["name"],
                 'type' => 'simple',
-                'regular_price' => $this->param["holooRegularPrice"],
-                'stock_quantity' => $this->param["holooStockQuantity"],
+                'regular_price' => $this->param["regular_price"],
+                'price' => $this->param["price"],
+                'sale_price' => $this->param["sale_price"],
+                'stock_quantity' => $this->param["stock_quantity"],
                 'status' => 'draft',
                 'meta_data' => $meta,
                 'categories' => $category
@@ -62,10 +68,10 @@ class AddProductsUser implements ShouldQueue
         }
         else{
             $data = array(
-                'name' => $this->param["holooName"],
+                'name' => $this->param["name"],
                 'type' => 'simple',
-                'regular_price' => $this->param["holooRegularPrice"],
-                'stock_quantity' => $this->param["holooStockQuantity"],
+                'regular_price' => $this->param["regular_price"],
+                'stock_quantity' => $this->param["stock_quantity"],
                 'status' => 'draft',
                 'meta_data' => $meta,
             );
