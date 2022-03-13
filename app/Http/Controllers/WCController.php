@@ -106,8 +106,8 @@ class WCController extends Controller
                 $data = array(
                     'name' => $param["holooName"],
                     'type' => $type,
-                    'regular_price' => $param["holooRegularPrice"],
-                    'stock_quantity' => $param["holooStockQuantity"],
+                    'regular_price' => $param["regular_price"],
+                    'stock_quantity' => $param["stock_quantity"],
                     'status' => 'draft',
                     'meta_data' => $meta,
                     'attributes' => $attributes,
@@ -126,8 +126,8 @@ class WCController extends Controller
                 $data = array(
                     'name' => $param["holooName"],
                     'type' => $type,
-                    'regular_price' => $param["holooRegularPrice"],
-                    'stock_quantity' => $param["holooStockQuantity"],
+                    'regular_price' => $param["regular_price"],
+                    'stock_quantity' => $param["stock_quantity"],
                     'status' => 'draft',
                     'meta_data' => $meta,
                     'categories' => $category,
@@ -138,8 +138,8 @@ class WCController extends Controller
                 $data = array(
                     'name' => $param["holooName"],
                     'type' => $type,
-                    'regular_price' => $param["holooRegularPrice"],
-                    'stock_quantity' => $param["holooStockQuantity"],
+                    'regular_price' => $param["regular_price"],
+                    'stock_quantity' => $param["stock_quantity"],
                     'status' => 'draft',
                     'meta_data' => $meta,
                 );
@@ -170,16 +170,17 @@ class WCController extends Controller
         $response = curl_exec($curl);
 
         curl_close($curl);
-        if ($response) {
+        $decodedResponse = ($response) ?? json_decode($response);
+        if ($response && isset($decodedResponse->id)){
 
-            $decodedResponse = json_decode($response);
             if ($type=="variable") {
-                $this->AddProductVariation($decodedResponse->id,$param,$cluster);
+               $a= $this->AddProductVariation($decodedResponse->id,$param,$cluster);
+               return $this->sendResponse('محصول متغییر مورد نظر با موفقیت در سایت ثبت شد.', Response::HTTP_OK, ['response' => $a]);
             }
             return $this->sendResponse('محصول مورد نظر با موفقیت در سایت ثبت شد.', Response::HTTP_OK, ['response' => $decodedResponse]);
         }
 
-        return $this->sendResponse('مشکل در ارسال و دریافت ریسپانس', Response::HTTP_NOT_ACCEPTABLE, null);
+        return $this->sendResponse('مشکل در ارسال و دریافت ریسپانس', Response::HTTP_NOT_ACCEPTABLE, $response);
 
     }
 
@@ -521,7 +522,7 @@ class WCController extends Controller
             $HolooUser=$Dbname[0];
             $HolooDb=$Dbname[1];
             $HolooIDs=explode(",",$request->MsgValue);
-            $config=$this->getWcConfig();
+            $config=json_decode($this->getWcConfig());
             foreach($HolooIDs as $holooID){
 
 
@@ -534,10 +535,10 @@ class WCController extends Controller
                     $param = [
                         'id' => $wcProduct->id,
                         'name' =>$this->arabicToPersian($holooProduct->result->a_Name),
-                        'regular_price' => $this->get_price_type($request->sales_price_field,$holooProduct->result),
-                        'price' => $this->get_price_type($request->special_price_field,$holooProduct->result),
-                        'sale_price' => $this->get_price_type($request->special_price_field,$holooProduct->result),
-                        'wholesale_customer_wholesale_price' => $this->get_price_type($request->wholesale_price_field,$holooProduct->result),
+                        'regular_price' => $this->get_price_type($config->sales_price_field,$holooProduct->result),
+                        'price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
+                        'sale_price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
+                        'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
                         'stock_quantity' => (int) $holooProduct->result->exist_Mandeh ?? 0,
                     ];
                     $response = $this->updateWCSingleProduct($param);
@@ -551,10 +552,20 @@ class WCController extends Controller
                     $param = [
                         "holooCode" => $holooID,
                         "holooName" => $this->arabicToPersian($holooProduct->result->a_Name),
-                        "holooRegularPrice" => (string) $holooProduct->result->sel_Price ?? 0,
-                        "holooStockQuantity" => (string) $holooProduct->result->exist_Mandeh ?? 0,
+                        'regular_price' => $this->get_price_type($config->sales_price_field,$holooProduct->result),
+                        'price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
+                        'sale_price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
+                        'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
+                        'stock_quantity' => (int) $holooProduct->result->exist_Mandeh ?? 0,
                     ];
-                    $response=$this->createSingleProduct($param);
+
+                    if(isset($holooProduct->Poshak)){
+                        $response=$this->createSingleProduct($param,null,"variable",$holooProduct->Poshak);
+                    }
+                    else{
+                        $response=$this->createSingleProduct($param);
+                    }
+
 
                 }
 
@@ -634,7 +645,7 @@ class WCController extends Controller
         $options=[];
 
         foreach ( $clusters as $key=>$cluster){
-            $options[]=$cluster->name;
+            $options[]=$cluster->Name;
         }
 
         return $options;
@@ -648,8 +659,8 @@ class WCController extends Controller
         // $data = array(
         //     'name' => $product["holooName"],
         //     'type' => $type,
-        //     'regular_price' => $product["holooRegularPrice"],
-        //     'stock_quantity' => $product["holooStockQuantity"],
+        //     'regular_price' => $product["regular_price"],
+        //     'stock_quantity' => $product["stock_quantity"],
         //     'status' => 'draft',
         //     'meta_data' => $meta,
         //     'attributes' => $attributes,
@@ -664,17 +675,13 @@ class WCController extends Controller
         foreach($clusters as $cluster){
 
             $data=array(
-                'regular_price' => $product["holooRegularPrice"],
-                'sale_price' => $product["holooRegularPrice"],
+                'description' => $this->arabicToPersian($cluster->Name),
+                'regular_price' => $product["regular_price"],
+                'sale_price' => $product["regular_price"],
                 'stock_quantity' => $cluster->Few,
-                'status' => 'draft',
+                //'status' => 'draft',
                 'meta_data' => $meta,
-                'attributes'    => array(
-                    (object) array(
-                        'id' => $cluster->Id,
-                        'option' =>  urlencode($this->arabicToPersian($cluster->Name)),
-                    )
-                )
+
 
                 // 'weight' => $cluster->,
                 // 'dimensions' => '<string>',
@@ -699,6 +706,7 @@ class WCController extends Controller
             ));
 
             $response = curl_exec($curl);
+            //return $response;
         }
 
 
@@ -739,59 +747,65 @@ class WCController extends Controller
             "DiscountPrice" => 0,
             "ErpCode" => "bBAlNA1mckd7UB4O",
             "Poshak" => [
-                [
+                (object)[
                     "Id" => 4,
                     "Name" => "آبي / کوچک",
                     "Few" => 200,
                     "Min" => 0,
                     "Max" => 0,
                 ],
-                [
+                (object)[
                     "Id" => 5,
                     "Name" => "آبي / متوسط",
                     "Few" => 150,
                     "Min" => 0,
                     "Max" => 0,
                 ],
-                [
+                (object)[
                     "Id" => 6,
                     "Name" => "آبي / بزرگ",
                     "Few" => 120,
                     "Min" => 0,
                     "Max" => 0,
                 ],
-                [
+                (object)[
                     "Id" => 7,
                     "Name" => "سفيد / کوچک",
                     "Few" => 30,
                     "Min" => 0,
                     "Max" => 0,
                 ],
-                [
+                (object)[
                     "Id" => 8,
                     "Name" => "سفيد / متوسط",
                     "Few" => 59,
                     "Min" => 0,
                     "Max" => 0,
                 ],
-                [
+                (object)[
                     "Id" => 9,
                     "Name" => "سفيد / بزرگ",
                     "Few" => 28,
                     "Min" => 0,
                     "Max" => 0,
                 ],
+
             ],
         ];
 
         if(isset($HolooProd->Poshak)){
+
             $param = [
-                'id' => $HolooProd->ErpCode,
-                'name' => urlencode($this->arabicToPersian($HolooProd->Name)),
-                'regular_price' => $HolooProd->SellPrice ?? 0,
+                "holooCode" => $HolooProd->ErpCode,
+                'holooName' => $HolooProd->Name,
+                'regular_price' => (string)$HolooProd->SellPrice ?? 0,
+                'price' => (string)$HolooProd->SellPrice ?? 0,
+                'sale_price' => (string)$HolooProd->SellPrice ?? 0,
+                'wholesale_customer_wholesale_price' => (string)$HolooProd->SellPrice ?? 0,
                 'stock_quantity' => (int) $HolooProd->Few ?? 0,
             ];
-            $this->createSingleProduct($param,null,"variable",$HolooProd->Poshak);
+           //$this->AddProductVariation(3538,$param,$HolooProd->Poshak);
+           $this->createSingleProduct($param,null,"variable",$HolooProd->Poshak);
         }
     }
 

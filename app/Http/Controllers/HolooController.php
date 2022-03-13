@@ -1236,11 +1236,22 @@ class HolooController extends Controller
                         if ((!isset($request->insert_product_with_zero_inventory) && $HolooProd->exist_Mandeh > 0) || (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "0" && $HolooProd->exist_Mandeh > 0)) {
                             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
                             $counter = $counter + 1;
-                            AddProductsUser::dispatch($user, $param, ['id' => $category->m_groupcode, "name" => $category->m_groupname], $HolooProd->a_Code);
-                        } elseif (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "1") {
+                            if (isset($HolooProd->Poshak)) {
+                                AddProductsUser::dispatch($user, $param, ['id' => $category->m_groupcode, "name" => $category->m_groupname], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
+                            }
+                            else{
+                                AddProductsUser::dispatch($user, $param, ['id' => $category->m_groupcode, "name" => $category->m_groupname], $HolooProd->a_Code);
+                            }
+                        }
+                        elseif (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "1") {
                             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
                             $counter = $counter + 1;
-                            AddProductsUser::dispatch($user, $param, ['id' => $category->m_groupcode, "name" => $category->m_groupname], $HolooProd->a_Code);
+                            if (isset($HolooProd->Poshak)) {
+                                AddProductsUser::dispatch($user, $param, ['id' => $category->m_groupcode, "name" => $category->m_groupname], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
+                            }
+                            else{
+                                AddProductsUser::dispatch($user, $param, ['id' => $category->m_groupcode, "name" => $category->m_groupname], $HolooProd->a_Code);
+                            }
                             //dd($allRespose);
                         }
                     }

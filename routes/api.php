@@ -43,6 +43,10 @@ Route::group([
     Route::get('/logout', [AuthController::class, 'logout']);
 
     Route::post('/updateUser', [AuthController::class, 'updateWordpressSettings']);
+
+    Route::get('/test', [WCController::class, 'testProductVar']);
+
+
 });
 
 
