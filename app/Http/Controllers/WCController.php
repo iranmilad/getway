@@ -805,7 +805,7 @@ class WCController extends Controller
         }
     }
 
-    private function get_price_type(int $price_field,$HolooProd){
+    private function get_price_type($price_field,$HolooProd){
         // "sales_price_field": "1",
         // "special_price_field": "2",
         // "wholesale_price_field": "3",
