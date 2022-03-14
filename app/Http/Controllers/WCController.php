@@ -846,4 +846,6 @@ class WCController extends Controller
             return (string) $HolooProd->{"sel_Price".$price_field};
         }
     }
+
+
 }

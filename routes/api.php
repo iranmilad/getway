@@ -63,11 +63,16 @@ Route::group([
     Route::post('/wcSingleProductUpdate', [HolooController::class, 'wcSingleProductUpdate']);
     Route::post('/wcAddAllHolooProductsCategory', [HolooController::class, 'wcAddAllHolooProductsCategory']);
 
-    Route::post('/wcGetBankAccount', [HolooController::class, 'getAccountBank']);
-    Route::post('/wcGetCashAccount', [HolooController::class, 'getAccountCash']);
+    Route::post('/GetBankAccount', [HolooController::class, 'getAccountBank']);
+    Route::post('/GetCashAccount', [HolooController::class, 'getAccountCash']);
+    Route::post('/GetAllAccount', [HolooController::class, 'get_all_accounts']);
+
+
 
     Route::post('/getProductCategory', [HolooController::class, 'getProductCategory']);
     Route::get('/getAllHolooProducts', [HolooController::class, 'getAllHolooProducts']);
+
+
 
     //woocomrece webhook event
     Route::post('/wcInvoiceRegistration', [HolooController::class, 'wcInvoiceRegistration']);
