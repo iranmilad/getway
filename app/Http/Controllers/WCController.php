@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Jobs\UpdateProductsUser;
 use Illuminate\Support\Facades\Log;
@@ -521,6 +522,9 @@ class WCController extends Controller
             $Dbname=explode("_",$request->Dbname);
             $HolooUser=$Dbname[0];
             $HolooDb=$Dbname[1];
+            $user = User::where(['holooDatabaseName'=>$HolooDb,'holooCustomerID'=>$HolooUser,])
+            ->first();
+            auth()->login($user);
             $HolooIDs=explode(",",$request->MsgValue);
             $config=json_decode($this->getWcConfig());
             foreach($HolooIDs as $holooID){
