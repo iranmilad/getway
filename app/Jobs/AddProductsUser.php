@@ -128,7 +128,7 @@ class AddProductsUser implements ShouldQueue
             CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
+            CURLOPT_TIMEOUT => 20,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
