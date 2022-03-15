@@ -37,47 +37,47 @@ class UpdateProductsUser implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('Emailed order ' . $this->flag);
+        Log::info('update product for flag ' . $this->flag);
 
-        // $curl = curl_init();
-        // $meta = array(
-        //     (object)array(
-        //         'key' => 'wholesale_customer_wholesale_price',
-        //         'value' => $this->param["wholesale_customer_wholesale_price"]
-        //     )
-        // );
-        // $data=[
-        //     "regular_price"=>$this->param['regular_price'],
-        //     "sale_price"=>$this->param['sale_price'],
-        //     "price" =>$this->param['price'],
-        //     "stock_quantity"=>$this->param['stock_quantity'],
-        //     //'wholesale_customer_wholesale_price' => $this->param['wholesale_customer_wholesale_price'],
-        //     "name"=>$this->param['name'],
-        //     "meta_data"=>$meta,
-        // ];
-        // $data = json_encode($data);
-        // //$data = json_encode($data);
-        // curl_setopt_array($curl, array(
-        //     CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products/'. $this->param['id'],
-        //     CURLOPT_RETURNTRANSFER => true,
-        //     CURLOPT_ENCODING => '',
-        //     CURLOPT_MAXREDIRS => 10,
-        //     CURLOPT_TIMEOUT => 0,
-        //     CURLOPT_FOLLOWLOCATION => true,
-        //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        //     CURLOPT_CUSTOMREQUEST => 'POST',
-        //     CURLOPT_POSTFIELDS => $data,
-        //     CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
-        //     CURLOPT_HTTPHEADER => array(
-        //       //'Content-Type: multipart/form-data',
-        //       'Content-Type: application/json',
-        //     ),
-        // ));
+        $curl = curl_init();
+        $meta = array(
+            (object)array(
+                'key' => 'wholesale_customer_wholesale_price',
+                'value' => $this->param["wholesale_customer_wholesale_price"]
+            )
+        );
+        $data=[
+            "regular_price"=>$this->param['regular_price'],
+            "sale_price"=>$this->param['sale_price'],
+            "price" =>$this->param['price'],
+            "stock_quantity"=>$this->param['stock_quantity'],
+            //'wholesale_customer_wholesale_price' => $this->param['wholesale_customer_wholesale_price'],
+            "name"=>$this->param['name'],
+            "meta_data"=>$meta,
+        ];
+        $data = json_encode($data);
+        //$data = json_encode($data);
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products/'. $this->param['id'],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
+            CURLOPT_HTTPHEADER => array(
+              //'Content-Type: multipart/form-data',
+              'Content-Type: application/json',
+            ),
+        ));
 
-        // $response = curl_exec($curl);
+        $response = curl_exec($curl);
 
 
-        // curl_close($curl);
+        curl_close($curl);
     }
 
     /**
