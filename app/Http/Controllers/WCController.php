@@ -417,7 +417,7 @@ class WCController extends Controller
      */
     public function updateAllProductFromHolooToWC(Request $config)
     {
-
+        return $config->special_price_field;
         $user=auth()->user();
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         $callApi = $this->fetchAllHolloProds();
