@@ -462,7 +462,7 @@ class WCController extends Controller
                                         'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($WCProd->wholesale_price_field) && $WCProd->wholesale_price_field != $this->get_price_type($config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($config->wholesale_price_field,$HolooProd)  : 0,
                                         'stock_quantity' => (int) $HolooProd->exist_Mandeh ?? 0,
                                     ];
-                                    UpdateProductsUser::dispatch($user,$data,$WCProd->meta_data[0]->value)->onQueue('high');
+                                    UpdateProductsUser::dispatch($user,$data,$WCProd->meta_data[0]->value);
 
 
                                     array_push($response_product,$WCProd->meta_data[0]->value);
