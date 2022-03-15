@@ -91,6 +91,12 @@ return [
             'prefix_indexes' => true,
         ],
 
+        'redis' => [
+            'driver' => 'redis',
+            'connection' => 'default',
+            'queue' => '{default}',
+            'retry_after' => 90,
+        ],
     ],
 
     /*
@@ -119,7 +125,7 @@ return [
 
     'redis' => [
 
-        'client' => env('REDIS_CLIENT', 'phpredis'),
+        'client' => env('REDIS_CLIENT', 'predis'),
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
