@@ -121,7 +121,7 @@ class WCController extends Controller
                 $category=array(
                     (object)array(
                         'id' => $categories["id"],
-                        "name" => $categories["name"],
+                        //"name" => $categories["name"],
                     )
                 );
                 $data = array(
@@ -564,6 +564,7 @@ class WCController extends Controller
                         'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
                         'stock_quantity' => (int) $holooProduct->result->exist_Mandeh ?? 0,
                     ];
+                    //$category=['id' => $data[$category->m_groupcode], "name" => ""];
 
                     if(isset($holooProduct->Poshak)){
                         $response=$this->createSingleProduct($param,null,"variable",$holooProduct->Poshak);

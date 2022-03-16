@@ -93,7 +93,7 @@ class AddProductsUser implements ShouldQueue
                 $category=array(
                     (object)array(
                         'id' => $this->categories["id"],
-                        "name" => $this->categories["name"],
+                        //"name" => $this->categories["name"],
                     )
                 );
                 $data = array(
