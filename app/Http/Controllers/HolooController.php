@@ -1166,15 +1166,10 @@ class HolooController extends Controller
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
         $counter = 0;
-
         if (ProductRequest::where(['user_id' => $user_id])->exists()) {
             return $this->sendResponse('شما یک درخواست ثبت محصول در ۲۴ ساعت گذشته ارسال کرده اید لطفا منتظر بمانید تا عملیات قبلی شما تکمیل گردد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
-        } else {
-            $productRequest = new ProductRequest;
-            $productRequest->user_id = $user_id;
-            $productRequest->request_time = Carbon::now();
-            $productRequest->save();
         }
+
 
         ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
         $token = $this->getNewToken();
@@ -1265,6 +1260,12 @@ class HolooController extends Controller
         if ($counter == 0) {
             return $this->sendResponse("تمامی محصولات به روز هستند", Response::HTTP_OK, ["result" => ["msg_code" => 2]]);
         }
+
+        $productRequest = new ProductRequest;
+        $productRequest->user_id = $user_id;
+        $productRequest->request_time = Carbon::now();
+        $productRequest->save();
+
         return $this->sendResponse(" درخواست ثبت " . $counter . 'محصولات جدید با موفقیت ثبت گردید. ', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
     }
 
