@@ -1189,7 +1189,7 @@ class HolooController extends Controller
         $allRespose = [];
         $sheetes = [];
         foreach ($categories->result as $key => $category) {
-            if (array_key_exists($category->m_groupcode, $data)) {
+            if (array_key_exists($category->m_groupcode, $data) && $data[$category->m_groupcode]!="") {
                 $sheetes[$category->m_groupname] = array();
 
                 curl_setopt_array($curl, array(
