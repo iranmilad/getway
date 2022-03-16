@@ -1,10 +1,10 @@
 {
 	"name" : "WC Holo",
 	"slug" : "wc-holo-main",
-	"author" : "<a href='https://soalwp.com'>soalwp</a>",
-	"author_profile" : "https://soalwp.com/about",
+	"author" : "<a href='https://laravel.clawar-services.org'>clawar-services</a>",
+	"author_profile" : "https://laravel.clawar-services.org/about",
 	"version" : "1.5",
-	"download_url" : "https://wpdemoo.ir.wc-holo-main.zip",
+	"download_url" : "https://laravel.clawar-services.org/update/wc-holo-main.zip",
 	"requires" : "5.0",
 	"tested" : "5.9.2",
 	"requires_php" : "5.4",
