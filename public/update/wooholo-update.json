@@ -1,0 +1,24 @@
+{
+	"name" : "WC Holo",
+	"slug" : "wc-holo-main",
+	"author" : "<a href='https://soalwp.com'>soalwp</a>",
+	"author_profile" : "https://soalwp.com/about",
+	"version" : "1.5",
+	"download_url" : "https://wpdemoo.ir.wc-holo-main.zip",
+	"requires" : "5.0",
+	"tested" : "5.9.2",
+	"requires_php" : "5.4",
+	"last_updated" : "2022-03-16 17:10:00",
+	"upgrade_notice":"",
+	"rating":121,
+	"num_ratings":4.8,
+	"sections" : {
+		"description" : "This simple plugin does nothing, only gets updates from a custom server",
+		"installation" : "Click the activate button and that's it.",
+		"changelog" : "<h4>1.0 –  1 august 2021</h4><ul><li>Bug fixes.</li><li>Initital release.</li></ul>"
+	},
+	"banners" : {
+		"low" : "https://www.laravel.clawar-services.org/image/holoplugin.png",
+		"high" : "https://www.laravel.clawar-services.org/image/holoplugin.png"
+	}
+}
