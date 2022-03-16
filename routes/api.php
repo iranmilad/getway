@@ -66,7 +66,7 @@ Route::group([
     Route::post('/GetBankAccount', [HolooController::class, 'getAccountBank']);
     Route::post('/GetCashAccount', [HolooController::class, 'getAccountCash']);
     Route::post('/GetAllAccount', [HolooController::class, 'get_all_accounts']);
-
+    Route::post('/GetShippingAccount', [HolooController::class, 'get_shipping_accounts']);
 
 
     Route::post('/getProductCategory', [HolooController::class, 'getProductCategory']);
