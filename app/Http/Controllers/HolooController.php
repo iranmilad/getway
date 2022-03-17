@@ -1272,7 +1272,7 @@ class HolooController extends Controller
         $productRequest->request_time = Carbon::now();
         $productRequest->save();
 
-        return $this->sendResponse(" درخواست ثبت " . $counter . 'محصولات جدید با موفقیت ثبت گردید. ', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
+        return $this->sendResponse(" درخواست ثبت محصولات جدید با موفقیت ثبت گردید. ", Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
     }
 
     public function wcGetExcelProducts()
