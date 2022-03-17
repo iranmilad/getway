@@ -1181,10 +1181,10 @@ class HolooController extends Controller
 
         $wcHolooExistCode = app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
         $param = [
-            'regular_price' => $request->sales_price_field,
-            'price' => $request->special_price_field,
-            'sale_price' => $request->special_price_field,
-            'wholesale_customer_wholesale_price' => $request->wholesale_price_field,
+            'sales_price_field' => $request->sales_price_field,
+            'special_price_field' => $request->special_price_field,
+            'special_price_field' => $request->special_price_field,
+            'wholesale_price_field' => $request->wholesale_price_field,
             'insert_product_with_zero_inventory' =>$request->insert_product_with_zero_inventory,
             'product_cat' => $request->product_cat
         ];
