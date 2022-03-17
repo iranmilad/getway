@@ -1263,9 +1263,9 @@ class HolooController extends Controller
 
         curl_close($curl);
 
-        if ($counter == 0) {
-            return $this->sendResponse("تمامی محصولات به روز هستند", Response::HTTP_OK, ["result" => ["msg_code" => 2]]);
-        }
+        // if ($counter == 0) {
+        //     return $this->sendResponse("تمامی محصولات به روز هستند", Response::HTTP_OK, ["result" => ["msg_code" => 2]]);
+        // }
 
         $productRequest = new ProductRequest;
         $productRequest->user_id = $user_id;
