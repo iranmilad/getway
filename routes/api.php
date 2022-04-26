@@ -24,10 +24,12 @@ use App\Http\Controllers\AuthenticationController;
 
 
 
+
 Route::group([
     'middleware' => 'api',
 
 ], function ($router) {
+
 
     //holoo webhook event
     Route::post('/webhook', [WCController::class, 'holooWebHook']);

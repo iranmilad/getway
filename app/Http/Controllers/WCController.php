@@ -518,7 +518,8 @@ class WCController extends Controller
         //     "MsgError": "",
         //     "Message": "ویرایش"
         //   }
-
+        log::info($request);
+        log::info("webhook resived");
 
         if($request->Table=="Article" && ($request->MsgType==1 or $request->MsgType==0)){
             $Dbname=explode("_",$request->Dbname);
