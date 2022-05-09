@@ -1697,7 +1697,7 @@ class HolooController extends Controller
 
         $response2 = curl_exec($curl);
         $response2 = json_decode($response2);
-
+        return $this->sendResponse('لیست حسابهای', Response::HTTP_OK,  $response2);
         $obj = (object)array_merge_recursive((array)$response2->data , (array)$response->data);
         curl_close($curl);
         return $this->sendResponse('لیست حسابهای', Response::HTTP_OK,  $obj);
