@@ -1191,7 +1191,7 @@ class HolooController extends Controller
 
         foreach ($categories->result as $key => $category) {
             if (array_key_exists($category->s_groupcode, $data) && $data[$category->s_groupcode]!="") {
-                FindProductInCategory::dispatch($user,$category,$token,$wcHolooExistCode,$param,$category->m_groupcode);
+                FindProductInCategory::dispatch($user,$category,$token,$wcHolooExistCode,$param,$category->s_groupcode);
 
                 // curl_setopt_array($curl, array(
                 //     CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
@@ -1205,7 +1205,7 @@ class HolooController extends Controller
                 //     CURLOPT_HTTPHEADER => array(
                 //         'serial: ' . $user->serial,
                 //         'database: ' . $user->holooDatabaseName,
-                //         'm_groupcode: ' . $category->m_groupcode,
+                //         'm_groupcode: ' . $category->s_groupcode,
                 //         'isArticle: true',
                 //         'access_token: ' . $user->apiKey,
                 //         'Authorization: Bearer ' . $token,
@@ -1235,25 +1235,25 @@ class HolooController extends Controller
                 //             'stock_quantity' => (int) $HolooProd->exist_Mandeh ?? 0,
                 //         ];
                 //         if ((!isset($request->insert_product_with_zero_inventory) && $HolooProd->exist_Mandeh > 0) || (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "0" && $HolooProd->exist_Mandeh > 0)) {
-                //             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
+                //             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->s_groupcode,"name" => $category->m_groupname]);
                 //             $counter = $counter + 1;
                 //             if (isset($HolooProd->Poshak)) {
-                //                 AddProductsUser::dispatch($user, $param, ['id' => $data[$category->m_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
+                //                 AddProductsUser::dispatch($user, $param, ['id' => $data[$category->s_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
                 //             }
                 //             else{
-                //                 AddProductsUser::dispatch($user, $param, ['id' => $data[$category->m_groupcode], "name" => ""], $HolooProd->a_Code);
+                //                 AddProductsUser::dispatch($user, $param, ['id' => $data[$category->s_groupcode], "name" => ""], $HolooProd->a_Code);
                 //             }
                 //         }
                 //         elseif (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "1") {
-                //             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->m_groupcode,"name" => $category->m_groupname]);
+                //             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->s_groupcode,"name" => $category->m_groupname]);
                 //             $counter = $counter + 1;
                 //             if (isset($HolooProd->Poshak)) {
-                //                 AddProductsUser::dispatch($user, $param, ['id' => $data[$category->m_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
+                //                 AddProductsUser::dispatch($user, $param, ['id' => $data[$category->s_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
                 //             }
                 //             else{
-                //                 AddProductsUser::dispatch($user, $param, ['id' => $data[$category->m_groupcode], "name" => ""], $HolooProd->a_Code);
+                //                 AddProductsUser::dispatch($user, $param, ['id' => $data[$category->s_groupcode], "name" => ""], $HolooProd->a_Code);
                 //             }
-                //             //dd($data[$category->m_groupcode]);
+                //             //dd($data[$category->s_groupcode]);
                 //         }
                 //     }
 
@@ -1300,7 +1300,7 @@ class HolooController extends Controller
         $allRespose = [];
         $sheetes = [];
         foreach ($categories->result as $key => $category) {
-            if (array_key_exists($category->m_groupcode, $data)) {
+            if (array_key_exists($category->s_groupcode, $data)) {
                 $sheetes[$category->m_groupname] = array();
 
                 curl_setopt_array($curl, array(
@@ -1315,7 +1315,7 @@ class HolooController extends Controller
                     CURLOPT_HTTPHEADER => array(
                         'serial: ' . $userSerial,
                         'database: ' . $user->holooDatabaseName,
-                        'm_groupcode: ' . $category->m_groupcode,
+                        'm_groupcode: ' . $category->s_groupcode,
                         'isArticle: true',
                         'access_token: ' . $userApiKey,
                         'Authorization: Bearer ' . $token,
