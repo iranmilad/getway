@@ -24,8 +24,10 @@ class HolooController extends Controller
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
         if ($user->cloudTokenExDate > Carbon::now()) {
+            
             return $user->cloudToken;
-        } else {
+        } 
+        else {
 
             $curl = curl_init();
 
@@ -49,11 +51,14 @@ class HolooController extends Controller
 
             curl_close($curl);
             $response = json_decode($response);
+            dd($response);
+
             User::where(['id' => $user->id])
                 ->update([
                     'cloudTokenExDate' => Carbon::now()->addDay(1),
                     'cloudToken' => $response->result->apikey,
                 ]);
+               
             return $response->result->apikey;
         }
     }
@@ -1178,7 +1183,7 @@ class HolooController extends Controller
         //dd($data);
 
         $categories = $this->getAllCategory();
-
+        return $categories;
         $wcHolooExistCode = app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
         $param = [
             'sales_price_field' => $request->sales_price_field,
