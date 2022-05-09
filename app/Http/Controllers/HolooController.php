@@ -62,8 +62,8 @@ class HolooController extends Controller
                 return $response->result->apikey;
             }
             else {
-                // dd($response);
-                dd("problem in get token");
+                return $this->sendResponse('اتصال به سرویس کلاد هلو دچار اختلال گردیده', Response::HTTP_UNAUTHORIZED, []);
+
             }
         }
     }
