@@ -51,7 +51,7 @@ class HolooController extends Controller
 
             curl_close($curl);
             $response = json_decode($response);
-            dd("33$response");
+            // dd("33$response");
 
             User::where(['id' => $user->id])
                 ->update([
