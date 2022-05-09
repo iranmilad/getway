@@ -127,7 +127,30 @@ class AuthController extends Controller
     public function logout() {
 
         auth()->logout();
-        return $this->sendResponse('خروج از حساب با موفقیت انجام گردید', Response::HTTP_OK,null);
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://myholoo.ir/api/Ticket/RegisterForPartner',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => array('Serial' => '10304923','RefreshToken' => 'false','DeleteService' => 'true','MakeService' => 'false'),
+        CURLOPT_HTTPHEADER => array(
+        'apikey: E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70',
+        'Authorization: Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjE0Mjc5IiwiVGl0bGUiOiJTYW5kQm94IiwiTGljZW5zZSI6IjEwMzA0OTIzIiwibmJmIjoxNjUyMTM4NDUyLCJleHAiOjE2NTIzMTEyNTIsImlzcyI6Imh0dHA6Ly9jbG91ZC5ob2xvby5jb20iLCJhdWQiOiJodHRwOi8vY2xvdWQuaG9sb28uY29tIn0.u0d9Lre7XXCUmWa-H2WEnrNtSagGzaQbA2DplMSwMV8'
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+
+        return $this->sendResponse('خروج از حساب با موفقیت انجام گردید', Response::HTTP_OK,$response);
 
     }
     /**
