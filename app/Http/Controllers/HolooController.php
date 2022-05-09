@@ -24,9 +24,9 @@ class HolooController extends Controller
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
         if ($user->cloudTokenExDate > Carbon::now()) {
-            
+
             return $user->cloudToken;
-        } 
+        }
         else {
 
             $curl = curl_init();
@@ -51,14 +51,14 @@ class HolooController extends Controller
 
             curl_close($curl);
             $response = json_decode($response);
-            dd($response);
+            dd("33$response");
 
             User::where(['id' => $user->id])
                 ->update([
                     'cloudTokenExDate' => Carbon::now()->addDay(1),
                     'cloudToken' => $response->result->apikey,
                 ]);
-               
+
             return $response->result->apikey;
         }
     }
