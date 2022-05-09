@@ -62,7 +62,7 @@ class HolooController extends Controller
                 return $response->result->apikey;
             }
             else {
-                dd($response);
+                // dd($response);
                 dd("problem in get token");
             }
         }
