@@ -1190,7 +1190,7 @@ class HolooController extends Controller
         ];
 
         foreach ($categories->result as $key => $category) {
-            if (array_key_exists($category->m_groupcode, $data) && $data[$category->m_groupcode]!="") {
+            if (array_key_exists($category->s_groupcode, $data) && $data[$category->s_groupcode]!="") {
                 FindProductInCategory::dispatch($user,$category,$token,$wcHolooExistCode,$param,$category->m_groupcode);
 
                 // curl_setopt_array($curl, array(

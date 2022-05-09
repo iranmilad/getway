@@ -530,7 +530,7 @@ class WCController extends Controller
             auth()->login($user);
             $HolooIDs=explode(",",$request->MsgValue);
             $config=json_decode($this->getWcConfig());
-      $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($HolooDb);
+            $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($HolooDb);
             $holooProduct=json_decode($holooProduct);
 
             foreach($HolooIDs as $holooID){
