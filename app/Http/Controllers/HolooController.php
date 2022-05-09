@@ -51,15 +51,20 @@ class HolooController extends Controller
 
             curl_close($curl);
             $response = json_decode($response);
-            // dd("33$response");
 
-            User::where(['id' => $user->id])
+            if ($response) {
+                User::where(['id' => $user->id])
                 ->update([
                     'cloudTokenExDate' => Carbon::now()->addDay(1),
                     'cloudToken' => $response->result->apikey,
                 ]);
 
-            return $response->result->apikey;
+                return $response->result->apikey;
+            }
+            else {
+                dd($response);
+                dd("problem in get token");
+            }
         }
     }
 
