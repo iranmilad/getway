@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Client\HttpClientException;
-
+use phpDocumentor\Reflection\Types\This;
 
 class WCController extends Controller
 {
@@ -530,14 +530,15 @@ class WCController extends Controller
             auth()->login($user);
             $HolooIDs=explode(",",$request->MsgValue);
             $config=json_decode($this->getWcConfig());
-            foreach($HolooIDs as $holooID){
+      $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($HolooDb);
+            $holooProduct=json_decode($holooProduct);
 
+            foreach($HolooIDs as $holooID){
 
                 if ($request->MsgType==1) {
                     $wcProduct=$this->getWcProductWithHolooId($holooID);
-                    $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
-                    $holooProduct=json_decode($holooProduct);
                     //return $holooProduct;
+                    $holooProduct==$this->findProduct($holooProduct,$holooID);
 
                     $param = [
                         'id' => $wcProduct->id,
@@ -552,10 +553,10 @@ class WCController extends Controller
 
                 }
                 else if ($request->MsgType==0 && $config->insert_new_product==1) {
-                    $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
-                    $holooProduct=json_decode($holooProduct);
 
 
+
+                    $holooProduct==$this->findProduct($holooProduct,$holooID);
                     $param = [
                         "holooCode" => $holooID,
                         "holooName" => $this->arabicToPersian($holooProduct->result->a_Name),
@@ -851,5 +852,12 @@ class WCController extends Controller
         }
     }
 
-
+    private function findProduct($products,$holooCode){
+        foreach ($products as $product) {
+            if ($product->a_Code==$holooCode) {
+                return $product;
+            }
+        }
+        return null;
+    }
 }

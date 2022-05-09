@@ -30,7 +30,7 @@ class HolooController extends Controller
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Ticket/RegisterForPartner',
+                CURLOPT_URL => 'https://myholoo.ir/api/Ticket/RegisterForPartner',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -64,7 +64,7 @@ class HolooController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/M_Group/' . $user->holooDatabaseName,
+            CURLOPT_URL => 'https://myholoo.ir/api/Service/S_Group/' . $user->holooDatabaseName,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -145,7 +145,7 @@ class HolooController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/' . $user->holooDatabaseName,
+            CURLOPT_URL => 'https://myholoo.ir/api/Service/article/' . $user->holooDatabaseName,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
@@ -549,7 +549,7 @@ class HolooController extends Controller
                 $curl = curl_init();
                 $userSerial = $user->serial;
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => 'https://sandbox.myholoo.ir/api/CallApi/InvoicePost',
+                    CURLOPT_URL => 'https://myholoo.ir/api/CallApi/InvoicePost',
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
                     CURLOPT_MAXREDIRS => 10,
@@ -826,7 +826,7 @@ class HolooController extends Controller
             "invoice_items_no_holo_code" => "0",
         );
 
-        $orderInvoice->request->add($order);
+        //$orderInvoice->request->add($order);
 
         if ($orderInvoice->save_sale_invoice) {
             $_data = (object) $orderInvoice->input("date_paid");
@@ -967,7 +967,7 @@ class HolooController extends Controller
                 $curl = curl_init();
                 $userSerial = $user->serial;
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => 'https://sandbox.myholoo.ir/api/CallApi/InvoicePost',
+                    CURLOPT_URL => 'https://myholoo.ir/api/CallApi/InvoicePost',
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
                     CURLOPT_MAXREDIRS => 10,
@@ -1054,7 +1054,7 @@ class HolooController extends Controller
         $curl = curl_init();
         $userSerial = $user->serial;
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/CallApi/InvoicePost',
+            CURLOPT_URL => 'https://myholoo.ir/api/CallApi/InvoicePost',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1096,7 +1096,7 @@ class HolooController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/' . $user->holooDatabaseName . '/' . $holoo_product_id,
+            CURLOPT_URL => 'https://myholoo.ir/api/Service/article/' . $user->holooDatabaseName . '/' . $holoo_product_id,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1138,7 +1138,7 @@ class HolooController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Service/article/' . $user->holooDatabaseName . '/' . $holoo_id,
+            CURLOPT_URL => 'https://myholoo.ir/api/Service/article/' . $user->holooDatabaseName . '/' . $holoo_id,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1194,7 +1194,7 @@ class HolooController extends Controller
                 FindProductInCategory::dispatch($user,$category,$token,$wcHolooExistCode,$param,$category->m_groupcode);
 
                 // curl_setopt_array($curl, array(
-                //     CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Article/SearchArticles?from.date=2022',
+                //     CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
                 //     CURLOPT_RETURNTRANSFER => true,
                 //     CURLOPT_ENCODING => '',
                 //     CURLOPT_MAXREDIRS => 10,
@@ -1304,7 +1304,7 @@ class HolooController extends Controller
                 $sheetes[$category->m_groupname] = array();
 
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Article/SearchArticles?from.date=2022',
+                    CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
                     CURLOPT_MAXREDIRS => 10,
@@ -1367,7 +1367,7 @@ class HolooController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Bank/GetBank',
+            CURLOPT_URL => 'https://myholoo.ir/api/Bank/GetBank',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1395,7 +1395,7 @@ class HolooController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Cash/GetCash',
+            CURLOPT_URL => 'https://myholoo.ir/api/Cash/GetCash',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1441,7 +1441,7 @@ class HolooController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://sandbox.myholoo.ir/api/Service/" . $table . "/" . $user->holooDatabaseName,
+            CURLOPT_URL => "https://myholoo.ir/api/Service/" . $table . "/" . $user->holooDatabaseName,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1494,7 +1494,7 @@ class HolooController extends Controller
         $token = $this->getNewToken();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://sandbox.myholoo.ir/api/CallApi/CustomerPost",
+            CURLOPT_URL => "https://myholoo.ir/api/CallApi/CustomerPost",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1612,7 +1612,7 @@ class HolooController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Bank/GetBank',
+            CURLOPT_URL => 'https://myholoo.ir/api/Bank/GetBank',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1632,7 +1632,7 @@ class HolooController extends Controller
 
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Cash/GetCash',
+            CURLOPT_URL => 'https://myholoo.ir/api/Cash/GetCash',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1660,7 +1660,7 @@ class HolooController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Bank/GetBank',
+            CURLOPT_URL => 'https://myholoo.ir/api/Bank/GetBank',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1680,7 +1680,7 @@ class HolooController extends Controller
 
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Cash/GetCash',
+            CURLOPT_URL => 'https://myholoo.ir/api/Cash/GetCash',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
