@@ -44,7 +44,7 @@ class FindProductInCategory implements ShouldQueue
     public function handle(){
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox.myholoo.ir/api/Article/SearchArticles?from.date=2022',
+            CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
