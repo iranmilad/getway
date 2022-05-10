@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Jobs\AddProductsUser;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -82,6 +83,7 @@ class FindProductInCategory implements ShouldQueue
                         AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
                     }
                     else{
+                        Log::info(['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""]);
                         AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""], $HolooProd->a_Code);
                     }
                 }
