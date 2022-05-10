@@ -1130,7 +1130,7 @@ class HolooController extends Controller
             'price' => $this->get_price_type($request->special_price_field,$HolooProd),
             'sale_price' => $this->get_price_type($request->special_price_field,$HolooProd),
             'wholesale_customer_wholesale_price' => $this->get_price_type($request->wholesale_price_field,$HolooProd),
-            'stock_quantity' => (int) $HolooProd->exist_Mandeh ?? 0,
+            'stock_quantity' => (int) $HolooProd->exist ?? 0,
         ];
 
         $response = $this->updateWCSingleProduct($param);
@@ -1224,14 +1224,14 @@ class HolooController extends Controller
 
                 // foreach ($HolooProds as $HolooProd) {
                 //     if (!in_array($HolooProd->a_Code, $wcHolooExistCode)
-                //     ) { //&& $HolooProd->exist_Mandeh>0
+                //     ) { //&& $HolooProd->exist>0
 
 
                 //         // $param = [
                 //         //     "holooCode" => $HolooProd->a_Code,
                 //         //     "holooName" => $this->arabicToPersian($HolooProd->a_Name),
                 //         //     "holooRegularPrice" => (string) $HolooProd->sel_Price ?? 0,
-                //         //     "holooStockQuantity" => (string) $HolooProd->exist_Mandeh ?? 0,
+                //         //     "holooStockQuantity" => (string) $HolooProd->exist ?? 0,
                 //         // ];
                 //         $param = [
                 //             "holooCode" => $HolooProd->a_Code,
@@ -1240,9 +1240,9 @@ class HolooController extends Controller
                 //             'price' => $this->get_price_type($request->special_price_field,$HolooProd),
                 //             'sale_price' => $this->get_price_type($request->special_price_field,$HolooProd),
                 //             'wholesale_customer_wholesale_price' => $this->get_price_type($request->wholesale_price_field,$HolooProd),
-                //             'stock_quantity' => (int) $HolooProd->exist_Mandeh ?? 0,
+                //             'stock_quantity' => (int) $HolooProd->exist ?? 0,
                 //         ];
-                //         if ((!isset($request->insert_product_with_zero_inventory) && $HolooProd->exist_Mandeh > 0) || (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "0" && $HolooProd->exist_Mandeh > 0)) {
+                //         if ((!isset($request->insert_product_with_zero_inventory) && $HolooProd->exist > 0) || (isset($request->insert_product_with_zero_inventory) && $request->insert_product_with_zero_inventory == "0" && $HolooProd->exist > 0)) {
                 //             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->s_groupcode,"name" => $category->m_groupname]);
                 //             $counter = $counter + 1;
                 //             if (isset($HolooProd->Poshak)) {
@@ -1340,7 +1340,7 @@ class HolooController extends Controller
                             "holooCode" => $HolooProd->a_Code,
                             "holooName" => $this->arabicToPersian($HolooProd->a_Name),
                             "holooRegularPrice" => (string) $HolooProd->sel_Price ?? 0,
-                            "holooStockQuantity" => (string) $HolooProd->exist_Mandeh ?? 0,
+                            "holooStockQuantity" => (string) $HolooProd->exist ?? 0,
                         ];
 
                         $sheetes[$category->m_groupname][] = $param;
