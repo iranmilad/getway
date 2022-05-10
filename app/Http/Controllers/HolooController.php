@@ -99,7 +99,7 @@ class HolooController extends Controller
             $category = [];
 
             foreach ($response->result as $row) {
-                array_push($category, array("m_groupcode" => $row->s_groupcode, "m_groupname" => $this->arabicToPersian($row->s_groupname)));
+                array_push($category, array("m_groupcode" => $row->m_groupcode."-".$row->s_groupcode, "m_groupname" => $this->arabicToPersian($row->s_groupname)));
             }
             return $this->sendResponse('دریافت گروه بندی محصولات', Response::HTTP_OK, ['result' => $category]);
         }
