@@ -29,12 +29,12 @@ class HolooController extends Controller
         }
         else {
 
+
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
                 CURLOPT_URL => 'https://myholoo.ir/api/Ticket/RegisterForPartner',
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 0,
                 CURLOPT_FOLLOWLOCATION => true,
@@ -43,12 +43,10 @@ class HolooController extends Controller
                 CURLOPT_POSTFIELDS => array('Serial' => $userSerial, 'RefreshToken' => 'false', 'DeleteService' => 'false', 'MakeService' => 'true', 'RefreshKey' => 'false'),
                 CURLOPT_HTTPHEADER => array(
                     'apikey:' . $userApiKey,
-                    'Content-Type: multipart/form-data',
                 ),
             ));
 
             $response = curl_exec($curl);
-
             curl_close($curl);
             $response = json_decode($response);
 
@@ -62,7 +60,7 @@ class HolooController extends Controller
                 return $response->result->apikey;
             }
             else {
-                return $this->sendResponse('اتصال به سرویس کلاد هلو دچار اختلال گردیده', Response::HTTP_UNAUTHORIZED, []);
+                dd("توکن دریافت نشد", $response);
 
             }
         }
@@ -1188,7 +1186,7 @@ class HolooController extends Controller
         //dd($data);
 
         $categories = $this->getAllCategory();
-        return $categories;
+        //return $categories;
         $wcHolooExistCode = app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
         $param = [
             'sales_price_field' => $request->sales_price_field,

@@ -726,6 +726,32 @@ class WCController extends Controller
 
 
     public function testProductVar(){
+
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://myholoo.ir/api/Ticket/RegisterForPartner',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 1000,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array('Serial' => '10304923','RefreshToken' => 'false','DeleteService' => 'false','MakeService' => 'true','RefreshKey' => 'false'),
+            CURLOPT_HTTPHEADER => array(
+                'apikey: E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70'
+            ),
+            CURLOPT_HEADER  , true
+        ));
+
+        $response = curl_exec($curl);
+        $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        //dd($response);
+        dd($http_status);
+        $response = json_decode($response);
+
+
+
         $HolooProd= (object)[
             "Name" => "سطح تست بندي",
             "Few" => 587,
