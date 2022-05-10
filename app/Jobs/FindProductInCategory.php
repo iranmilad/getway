@@ -74,9 +74,9 @@ class FindProductInCategory implements ShouldQueue
                     'price' => $this->get_price_type($this->request["special_price_field"],$HolooProd),
                     'sale_price' => $this->get_price_type($this->request["special_price_field"],$HolooProd),
                     'wholesale_customer_wholesale_price' => $this->get_price_type($this->request["wholesale_price_field"],$HolooProd),
-                    'stock_quantity' => (int) $HolooProd->exist_Mandeh ?? 0,
+                    'stock_quantity' => (int) $HolooProd->exist ?? 0,
                 ];
-                if ((!isset($this->request["insert_product_with_zero_inventory"]) && $HolooProd->exist_Mandeh > 0) || (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "0" && $HolooProd->exist_Mandeh > 0)) {
+                if ((!isset($this->request["insert_product_with_zero_inventory"]) && $HolooProd->exist > 0) || (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "0" && $HolooProd->exist > 0)) {
 
                     if (isset($HolooProd->Poshak)) {
                         AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
