@@ -79,7 +79,7 @@ class FindProductInCategory implements ShouldQueue
                     'price' => $this->get_price_type($this->request["special_price_field"],$HolooProd),
                     'sale_price' => $this->get_price_type($this->request["special_price_field"],$HolooProd),
                     'wholesale_customer_wholesale_price' => $this->get_price_type($this->request["wholesale_price_field"],$HolooProd),
-                    'stock_quantity' => (int) $HolooProd->exist ?? 0,
+                    'stock_quantity' => (int) $HolooProd->exist>0 ?? 0,
                 ];
                 if ((!isset($this->request["insert_product_with_zero_inventory"]) && $HolooProd->exist > 0) || (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "0" && $HolooProd->exist > 0)) {
 

@@ -1130,7 +1130,7 @@ class HolooController extends Controller
             'price' => $this->get_price_type($request->special_price_field,$HolooProd),
             'sale_price' => $this->get_price_type($request->special_price_field,$HolooProd),
             'wholesale_customer_wholesale_price' => $this->get_price_type($request->wholesale_price_field,$HolooProd),
-            'stock_quantity' => (int) $HolooProd->exist ?? 0,
+            'stock_quantity' => (int) $HolooProd->exist>0 ?? 0,
         ];
 
         $response = $this->updateWCSingleProduct($param);
