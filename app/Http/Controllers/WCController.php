@@ -203,7 +203,7 @@ class WCController extends Controller
             }
             if (count($WCProd->meta_data)>0) {
                 $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
-                return $wcHolooCode;
+                dd($wcHolooCode);
                 if ($wcHolooCode) {
                     if ($wcHolooCode!=null) {
                         $messages = [];
