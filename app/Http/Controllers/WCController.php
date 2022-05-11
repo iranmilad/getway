@@ -194,8 +194,8 @@ class WCController extends Controller
 
 
         $callApi = $this->fetchCategoryHolloProds($config->product_cat);
-        $HolooProds = $callApi;
-        //return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  $HolooProds);
+        $HolooProds = (object)$callApi;
+        return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  $HolooProds);
         $counter_confid=0;
         $products = [];
         foreach ($WCProds as $WCProd) {
@@ -215,7 +215,7 @@ class WCController extends Controller
 
                     $productFind = false;
                     foreach ($HolooProds as $key=>$HolooProd) {
-                        dd($HolooProd["a_Code"]);
+
                         //0 "قیمت محصول با هلو منطبق نیست"
                         //1 "نام محصول با هلو منطبق نیست"
                         //2 "مقدار موجودی محصول با هلو منطبق نیست"
