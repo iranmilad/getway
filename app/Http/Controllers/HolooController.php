@@ -188,7 +188,7 @@ class HolooController extends Controller
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
                     CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 10,
+                    CURLOPT_TIMEOUT => 3,
                     CURLOPT_FOLLOWLOCATION => true,
                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                     CURLOPT_CUSTOMREQUEST => 'GET',
@@ -207,11 +207,12 @@ class HolooController extends Controller
             $response = curl_exec($curl);
             $HolooProds = json_decode($response);
             if($response){
-                if(count($totalProduct)>1){
+                if(count($totalProduct)>2){
                     dd($totalProduct);
                 }
-                $totalProduct[]= $HolooProds;
+                $totalProduct= array_merge($HolooProds,$totalProduct);
             }
+            sleep(1);
 
         }
 
