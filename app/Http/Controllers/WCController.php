@@ -460,7 +460,7 @@ class WCController extends Controller
                                         'price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ($WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :0,
                                         'sale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ($WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :0,
                                         'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($WCProd->wholesale_price_field) && $WCProd->wholesale_price_field != $this->get_price_type($config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($config->wholesale_price_field,$HolooProd)  : 0,
-                                        'stock_quantity' => (int) $HolooProd->exist>0 ?? 0,
+                                        'stock_quantity' => (int) $HolooProd->exist ?? 0,
                                     ];
                                     $s=UpdateProductsUser::dispatch($user,$data,$WCProd->meta_data[0]->value)->onConnection('redis');
 
