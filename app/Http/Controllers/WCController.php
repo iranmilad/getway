@@ -299,7 +299,7 @@ class WCController extends Controller
     private function fetchCategoryHolloProds($cat){
 
         $response=app('App\Http\Controllers\HolooController')->fetchCategoryHolloProds($cat);
-        return json_decode($response);
+        return $response;
     }
 
     private function fetchAllWCProds($published=false)
