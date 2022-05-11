@@ -593,11 +593,11 @@ class WCController extends Controller
                     $param = [
                         "holooCode" => $holooID,
                         "holooName" => $this->arabicToPersian($holooProduct->result->a_Name),
-                        'regular_price' => $this->get_price_type($config->sales_price_field,$holooProduct->result),
+                        'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct->result),
                         'price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
-                        'sale_price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
+                        'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct->result),
                         'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
-                        'stock_quantity' => (int) $holooProduct->result->exist>0 ?? 0,
+                        'stock_quantity' => ($holooProduct->result->exist>0) ? (int)$holooProduct->result->exist : 0,
                     ];
                     //$category=['id' => $data[$category->m_groupcode], "name" => ""];
 
