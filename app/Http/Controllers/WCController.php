@@ -202,8 +202,10 @@ class WCController extends Controller
                 break;
             }
             if (count($WCProd->meta_data)>0) {
-                if ($WCProd->meta_data[0]->key == '_holo_sku') {
-                    if ($WCProd->meta_data[0]->value!=null) {
+                $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
+                return $wcHolooCode;
+                if ($wcHolooCode) {
+                    if ($wcHolooCode!=null) {
                         $messages = [];
                         $messages_code = [];
 
@@ -896,6 +898,17 @@ class WCController extends Controller
         foreach ($products as $product) {
             if ($product->a_Code==$holooCode) {
                 return $product;
+            }
+        }
+        return null;
+    }
+
+
+    private function findKey($array, $key)
+    {
+        foreach ($array as $k => $v) {
+            if (isset($k->key) and $k->key == $key) {
+                return $v->value;
             }
         }
         return null;
