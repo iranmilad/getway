@@ -464,7 +464,8 @@ class WCController extends Controller
                                         'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($WCProd->wholesale_price_field) && (int)$WCProd->wholesale_price_field != $this->get_price_type($config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($config->wholesale_price_field,$HolooProd)  : 0,
                                         'stock_quantity' => (int) $HolooProd->exist ?? 0,
                                     ];
-                                    $test=((int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd));
+
+                                    $test=[(int)$WCProd->regular_price,$this->get_price_type($config->sales_price_field,$HolooProd),((int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd))];
                                     return $this->sendResponse('همه محصولات به روز رسانی شدند.', Response::HTTP_OK, $test);
                                     $s=UpdateProductsUser::dispatch($user,$data,$WCProd->meta_data[0]->value)->onConnection('redis');
                                     //dispatch((new UpdateProductsUser($user,$data,$WCProd->meta_data[0]->value))->onConnection('queue')->onQueue('high'));
