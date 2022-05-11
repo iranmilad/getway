@@ -187,7 +187,7 @@ class WCController extends Controller
 
     public function compareProductsFromWoocommerceToHoloo(Request $config){
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
-        Log::error(json_encode($config));
+        //Log::error(json_encode($config));
 
         $callApi = $this->fetchAllWCProds(true);
         $WCProds = $callApi;
