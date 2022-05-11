@@ -548,7 +548,7 @@ class WCController extends Controller
         log::info($request);
         log::info("webhook resived");
 
-        if($request->Table=="Article" && ($request->MsgType==1 or $request->MsgType==0)){
+        if(isset($request->Table) && $request->Table=="Article" && ($request->MsgType==1 or $request->MsgType==0)){
             $Dbname=explode("_",$request->Dbname);
             $HolooUser=$Dbname[0];
             $HolooDb=$Dbname[1];
@@ -563,6 +563,8 @@ class WCController extends Controller
             foreach($HolooIDs as $holooID){
 
                 if ($request->MsgType==1) {
+
+                    //update product
                     $wcProduct=$this->getWcProductWithHolooId($holooID);
                     //return $holooProduct;
                     $holooProduct==$this->findProduct($holooProduct,$holooID);
