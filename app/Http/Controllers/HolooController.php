@@ -179,10 +179,10 @@ class HolooController extends Controller
         $user = auth()->user();
         $curl = curl_init();
         foreach ($categorys as $category_key=>$category_value) {
-            dd($category_key);
             if ($category_value != "") {
                 $m_groupcode=explode("-",$category_key)[0];
                 $s_groupcode=explode("-",$category_key)[1];
+                dd([$m_groupcode,$s_groupcode]);
                 curl_setopt_array($curl, array(
                     CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
                     CURLOPT_RETURNTRANSFER => true,
