@@ -173,6 +173,45 @@ class HolooController extends Controller
         return $response;
     }
 
+    public function fetchCategoryHolloProds($categorys)
+    {
+        $totalProduct=[];
+        $user = auth()->user();
+        $curl = curl_init();
+        foreach ($categorys as $category_key=>$category_value) {
+            if ($category_value != "") {
+                $m_groupcode=expload($category_key, "-")[0];
+                $s_groupcode=expload($category_key, "-")[1];
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                    CURLOPT_HTTPHEADER => array(
+                        'serial: ' . $user->serial,
+                        'database: ' . $user->holooDatabaseName,
+                        'Authorization: Bearer ' . $this->getNewToken(),
+                        'm_groupcode: ' . $m_groupcode,
+                        's_groupcode: ' . $s_groupcode,
+                        'isArticle: true',
+                        'access_token: ' .$user->apiKey,
+
+                    ),
+                ));
+            }
+
+            $response = curl_exec($curl);
+
+            $totalProduct[]= $response;
+        }
+
+        return $totalProduct;
+    }
+
     private function updateWCSingleProduct($data)
     {
 
