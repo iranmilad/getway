@@ -567,19 +567,22 @@ class WCController extends Controller
                     $wcProduct=$this->getWcProductWithHolooId($holooID);
                     // //return $holooProduct;
                     // $holooProduct=$this->findProduct($holooProduct,$holooID);
+                    if($wcProduct){
+                        $param = [
+                            'id' => $wcProduct->id,
+                            'name' =>$this->arabicToPersian($holooProduct->result->a_Name),
+                            'regular_price' => $this->get_price_type($config->sales_price_field,$holooProduct->result),
+                            'price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
+                            'sale_price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
+                            'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
+                            'stock_quantity' => (int) $holooProduct->result->exist>0 ?? 0,
+                        ];
+                        $response = $this->updateWCSingleProduct($param);
+                    }
+                    else{
+                        continue;
+                    }
 
-
-                    $param = [
-                        'id' => $wcProduct->id,
-                        'name' =>$this->arabicToPersian($holooProduct->result->a_Name),
-                        'regular_price' => $this->get_price_type($config->sales_price_field,$holooProduct->result),
-                        'price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
-                        'sale_price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
-                        'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
-                        'stock_quantity' => (int) $holooProduct->result->exist>0 ?? 0,
-                    ];
-                    $response = $this->updateWCSingleProduct($param);
-                    $this->sendResponse('محصول با موفقیت دریافت شدند', Response::HTTP_OK,$response);
                 }
                 else if ($request->MsgType==0 && $config->insert_new_product==1) {
 
@@ -629,7 +632,13 @@ class WCController extends Controller
 
         $response = curl_exec($curl);
         curl_close($curl);
-        return json_decode($response)[0];
+        if ($response) {
+            $response=json_decode($response)[0];
+            return $response;
+        }
+        else{
+            return null;
+        }
 
 
 
