@@ -1607,11 +1607,11 @@ class HolooController extends Controller
         // "sel_Price9": 0,
         // "sel_Price10": 0,
 
-        if($price_field==1){
-            return (string)$HolooProd->sel_Price;
+        if((int)$price_field==1){
+            return (int)(float) $HolooProd->sel_Price;
         }
         else{
-            return (string)$HolooProd->{"sel_Price".$price_field};
+            return (int)(float) $HolooProd->{"sel_Price".$price_field};
         }
     }
 
