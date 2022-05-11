@@ -486,7 +486,7 @@ class WCController extends Controller
                                     'price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                     'sale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                     'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($WCProd->wholesale_price_field) && (int)$WCProd->wholesale_price_field != $this->get_price_type($config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($config->wholesale_price_field,$HolooProd)  : ((isset($WCProd->wholesale_price_field)) ? (int)$WCProd->wholesale_price_field : null),
-                                    'stock_quantity' => (int) $HolooProd->exist ?? 0,
+                                    'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1" && (int) $HolooProd->exist>0 and isset($WCProd->stock_quantity)) ? (int) $HolooProd->exist : 0,
                                 ];
 
                                 //$data=[(int)$WCProd->sale_price  ,$this->get_price_type($config->special_price_field,$HolooProd),((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)),$config->special_price_field];
@@ -564,19 +564,22 @@ class WCController extends Controller
                 if ($request->MsgType==1) {
 
                     //update product
-                    $wcProduct=$this->getWcProductWithHolooId($holooID);
+                    $WCProd=$this->getWcProductWithHolooId($holooID);
                     // //return $holooProduct;
                     // $holooProduct=$this->findProduct($holooProduct,$holooID);
-                    if($wcProduct){
+                    if($WCProd){
                         $param = [
-                            'id' => $wcProduct->id,
-                            'name' =>$this->arabicToPersian($holooProduct->result->a_Name),
-                            'regular_price' =>(string) $this->get_price_type($config->sales_price_field,$holooProduct->result),
-                            'price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
-                            'sale_price' =>(string) $this->get_price_type($config->special_price_field,$holooProduct->result),
-                            'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
-                            'stock_quantity' => ($holooProduct->result->exist>0) ? (int)$holooProduct->result->exist : 0 ,
+                            'id' => $WCProd->id,
+                            'name' =>(isset($config->update_product_name) && $config->update_product_name=="1") ? $this->arabicToPersian($holooProduct->result->a_Name) : $WCProd->name,
+                            'regular_price' =>(isset($config->update_product_price) && $config->update_product_price=="1")  ? (string) $this->get_price_type($config->sales_price_field,$holooProduct->result): (int)$WCProd->regular_price,
+                            'price' => (isset($config->update_product_price) && $config->update_product_price=="1") ? $this->get_price_type($config->special_price_field,$holooProduct->result) :(int)$WCProd->sale_price ,
+                            'sale_price' =>(isset($config->update_product_price) && $config->update_product_price=="1") ? (string) $this->get_price_type($config->special_price_field,$holooProduct->result):(int)$WCProd->sale_price,
+                            'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($WCProd->wholesale_price_field)) ? $this->get_price_type($config->wholesale_price_field,$holooProduct->result): ((isset($WCProd->wholesale_price_field)) ? (int)$WCProd->wholesale_price_field : null),
+                            'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1" && (int) $holooProduct->result->exist>0 and isset($WCProd->stock_quantity)) ? (int) $holooProduct->result->exist : 0
                         ];
+
+
+
                         $response = $this->updateWCSingleProduct($param);
                         log::info(json_encode($response));
                     }
