@@ -548,7 +548,7 @@ class WCController extends Controller
         log::info($request);
         log::info("webhook resived");
 
-        if(isset($request->Table) && $request->Table=="Article" && ($request->MsgType==1 or $request->MsgType==0)){
+        if(isset($request->Table) && strtolower($request->Table)=="article" && ($request->MsgType==1 or $request->MsgType==0)){
             $Dbname=explode("_",$request->Dbname);
             $HolooUser=$Dbname[0];
             $HolooDb=$Dbname[1];
