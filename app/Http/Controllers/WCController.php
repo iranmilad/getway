@@ -575,9 +575,10 @@ class WCController extends Controller
                             'price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
                             'sale_price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
                             'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
-                            'stock_quantity' => (int) $holooProduct->result->exist>0 ?? 0,
+                            'stock_quantity' => (int) $holooProduct->result->exist>0 ,
                         ];
                         $response = $this->updateWCSingleProduct($param);
+                        log::info($response);
                     }
                     else{
                         continue;
