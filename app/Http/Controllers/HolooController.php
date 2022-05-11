@@ -214,7 +214,7 @@ class HolooController extends Controller
 
         }
 
-        dd( $totalProduct);
+
         return $totalProduct;
     }
 
