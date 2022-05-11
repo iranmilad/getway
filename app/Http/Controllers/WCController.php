@@ -195,7 +195,7 @@ class WCController extends Controller
 
         $callApi = $this->fetchCategoryHolloProds($config->product_cat);
         $HolooProds = $callApi;
-        //return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK, ['result' => $HolooProds]);
+        #return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK, ['result' => $HolooProds]);
         $counter_confid=0;
         $products = [];
         foreach ($WCProds as $WCProd) {
@@ -299,7 +299,7 @@ class WCController extends Controller
     private function fetchCategoryHolloProds($cat){
 
         $response=app('App\Http\Controllers\HolooController')->fetchCategoryHolloProds($cat);
-        return $response;
+        return json_decode($response);
     }
 
     private function fetchAllWCProds($published=false)
