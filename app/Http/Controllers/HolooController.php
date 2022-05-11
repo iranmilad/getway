@@ -179,6 +179,7 @@ class HolooController extends Controller
         $user = auth()->user();
         $curl = curl_init();
         foreach ($categorys as $category_key=>$category_value) {
+            dd($category_key);
             if ($category_value != "") {
                 $m_groupcode=explode("-",$category_key)[0];
                 $s_groupcode=explode("-",$category_key)[1];
@@ -205,7 +206,7 @@ class HolooController extends Controller
             }
 
             $response = curl_exec($curl);
-            dd($response);
+
             if($response){
                 $totalProduct[]= $response;
             }
