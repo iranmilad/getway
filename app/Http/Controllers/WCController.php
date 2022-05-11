@@ -195,7 +195,7 @@ class WCController extends Controller
 
         $callApi = $this->fetchCategoryHolloProds($config->product_cat);
         $HolooProds = (object)$callApi;
-        return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  $HolooProds);
+        //return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  $HolooProds);
         $counter_confid=0;
         $products = [];
         foreach ($WCProds as $WCProd) {
