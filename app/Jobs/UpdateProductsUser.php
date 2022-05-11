@@ -55,6 +55,7 @@ class UpdateProductsUser implements ShouldQueue
             "name"=>$this->param['name'],
             "meta_data"=>$meta,
         ];
+        log::info($data);
         $data = json_encode($data);
         //$data = json_encode($data);
         curl_setopt_array($curl, array(
