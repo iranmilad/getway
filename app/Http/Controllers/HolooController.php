@@ -199,14 +199,14 @@ class HolooController extends Controller
                         'm_groupcode: ' . $m_groupcode,
                         's_groupcode: ' . $s_groupcode,
                         'isArticle: true',
-                        'access_token: ' .$user->apiKey,
-
+                        'access_token: ' .$user->apiKey
                     ),
                 ));
             }
 
             $response = curl_exec($curl);
-            dd($response);
+            $HolooProds = json_decode($response);
+            dd($HolooProds);
             if($response){
                 $totalProduct[]= $response;
             }
