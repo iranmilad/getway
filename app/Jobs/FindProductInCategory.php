@@ -65,6 +65,7 @@ class FindProductInCategory implements ShouldQueue
         ));
         $response = curl_exec($curl);
         $HolooProds = json_decode($response);
+        log::info($HolooProds);
 
         foreach ($HolooProds as $HolooProd) {
             if (!in_array($HolooProd->a_Code, $this->wcHolooExistCode)) {
