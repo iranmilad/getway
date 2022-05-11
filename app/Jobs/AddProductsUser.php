@@ -83,6 +83,7 @@ class AddProductsUser implements ShouldQueue
                     'regular_price' => $this->param["holooRegularPrice"],
                     'stock_quantity' => $this->param["holooStockQuantity"],
                     'status' => 'draft',
+                    "manage_stock" => true,
                     'meta_data' => $meta,
                     'attributes' => $attributes,
                 );
@@ -102,7 +103,8 @@ class AddProductsUser implements ShouldQueue
                     'regular_price' => $this->param["regular_price"],
                     'price' => $this->param["price"],
                     'sale_price' => $this->param["sale_price"],
-                    'stock_quantity' => $this->param["stock_quantity"],
+                    'stock_quantity' =>$this->param["stock_quantity"],
+                    "manage_stock" => true,
                     'status' => 'draft',
                     'meta_data' => $meta,
                     'categories' => $category
@@ -114,6 +116,7 @@ class AddProductsUser implements ShouldQueue
                     'type' => 'simple',
                     'regular_price' => $this->param["regular_price"],
                     'stock_quantity' => $this->param["stock_quantity"],
+                    "manage_stock" => true,
                     'status' => 'draft',
                     'meta_data' => $meta,
                 );
@@ -184,6 +187,7 @@ class AddProductsUser implements ShouldQueue
                 'regular_price' => $product["holooRegularPrice"],
                 'sale_price' => $product["holooRegularPrice"],
                 'stock_quantity' => $cluster->Few,
+                "manage_stock" => true,
                 //'status' => 'draft',
                 'meta_data' => $meta,
 
