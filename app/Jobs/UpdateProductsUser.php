@@ -76,7 +76,7 @@ class UpdateProductsUser implements ShouldQueue
 
         $response = curl_exec($curl);
 
-        log::info($response);
+        log::info(json_encode($response));
 
         curl_close($curl);
     }
