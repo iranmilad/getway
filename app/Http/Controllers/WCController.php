@@ -579,7 +579,7 @@ class WCController extends Controller
                         'stock_quantity' => (int) $holooProduct->result->exist>0 ?? 0,
                     ];
                     $response = $this->updateWCSingleProduct($param);
-
+                    $this->sendResponse('محصول با موفقیت دریافت شدند', Response::HTTP_OK,$response);
                 }
                 else if ($request->MsgType==0 && $config->insert_new_product==1) {
 
