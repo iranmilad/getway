@@ -560,7 +560,7 @@ class WCController extends Controller
             foreach($HolooIDs as $holooID){
                 $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
                 $holooProduct=json_decode($holooProduct);
-                $this->sendResponse('محصول با موفقیت دریافت شدند', Response::HTTP_OK,$holooProduct);
+                dd($holooProduct);
 
                 if ($request->MsgType==1) {
 
