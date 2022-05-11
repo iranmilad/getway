@@ -557,17 +557,17 @@ class WCController extends Controller
             auth()->login($user);
             $HolooIDs=explode(",",$request->MsgValue);
             $config=json_decode($this->getWcConfig());
-            $this->sendResponse('محصول با موفقیت دریافت شدند', Response::HTTP_OK,$holooProduct);
-            $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($HolooDb);
-            $holooProduct=json_decode($holooProduct);
             foreach($HolooIDs as $holooID){
+                $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
+                $this->sendResponse('محصول با موفقیت دریافت شدند', Response::HTTP_OK,$holooProduct);
+                $holooProduct=json_decode($holooProduct);
 
                 if ($request->MsgType==1) {
 
                     //update product
                     $wcProduct=$this->getWcProductWithHolooId($holooID);
                     //return $holooProduct;
-                    $holooProduct==$this->findProduct($holooProduct,$holooID);
+                    $holooProduct=$this->findProduct($holooProduct,$holooID);
 
                     $param = [
                         'id' => $wcProduct->id,
