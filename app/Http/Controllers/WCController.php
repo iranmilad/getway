@@ -216,10 +216,22 @@ class WCController extends Controller
                             //3 "کد هلو ثبت شده برای این محصول در نرم افزار هلو یافت نشد"
 
                             if ($WCProd->meta_data[0]->value == $HolooProd->a_Code) {
-                                if ((isset($config->update_product_price) && $config->update_product_price=="1") && $WCProd->regular_price != $HolooProd->sel_Price) {
+                                if (
+                                (
+                                    isset($config->update_product_price) && $config->update_product_price=="1") &&
+                                (
+                                (isset($config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd)) or
+                                (isset($config->special_price_field) && (int)$WCProd->sale_price  != $this->get_stock_type($config->special_price_field,$HolooProd)) or
+                                ((isset($config->wholesale_price_field) && (int)$WCProd->wholesale_price_field  != $this->get_stock_type($config->wholesale_price_field,$HolooProd)))
+                                )
+
+                                ) {
                                     array_push($messages, 'قیمت محصول با هلو منطبق نیست.');
                                     array_push($messages_code, 0);
                                 }
+
+
+
                                 if ((isset($config->update_product_name) && $config->update_product_name=="1") && $WCProd->name != trim($this->arabicToPersian($HolooProd->a_Name))) {
                                     //dd($WCProd->name.'-'.trim($this->arabicToPersian($HolooProd->a_Name)));
                                     array_push($messages, 'نام محصول با هلو منطبق نیست.');
