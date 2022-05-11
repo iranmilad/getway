@@ -874,7 +874,7 @@ class WCController extends Controller
         // "sel_Price9": 0,
         // "sel_Price10": 0,
 
-        if($price_field==1){
+        if((int)$price_field==1){
             return (int)(float) $HolooProd->sel_Price;
         }
         else{
