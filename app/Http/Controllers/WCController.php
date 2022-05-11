@@ -192,8 +192,8 @@ class WCController extends Controller
         $callApi = $this->fetchAllWCProds(true);
         $WCProds = $callApi;
 
+        dd($config->product_cat);
         $callApi = $this->fetchCategoryHolloProds($config->product_cat);
-        dd($callAp);
         $HolooProds = $callApi;
         $counter_confid=0;
         $products = [];
