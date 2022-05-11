@@ -560,7 +560,6 @@ class WCController extends Controller
             foreach($HolooIDs as $holooID){
                 $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
                 $holooProduct=json_decode($holooProduct);
-                dd($holooProduct);
 
                 if ($request->MsgType==1) {
 
@@ -568,6 +567,7 @@ class WCController extends Controller
                     $wcProduct=$this->getWcProductWithHolooId($holooID);
                     //return $holooProduct;
                     $holooProduct=$this->findProduct($holooProduct,$holooID);
+
 
                     $param = [
                         'id' => $wcProduct->id,
@@ -909,6 +909,7 @@ class WCController extends Controller
 
     private function findProduct($products,$holooCode){
         foreach ($products as $product) {
+            dd($product);
             if ($product->a_Code==$holooCode) {
                 return $product;
             }
