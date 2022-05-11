@@ -176,6 +176,7 @@ class HolooController extends Controller
     public function fetchCategoryHolloProds($categorys)
     {
         $totalProduct=[];
+
         $user = auth()->user();
         $curl = curl_init();
         foreach ($categorys as $category_key=>$category_value) {
@@ -203,10 +204,9 @@ class HolooController extends Controller
                     ),
                 ));
                 $response = curl_exec($curl);
-
+                $HolooProds = json_decode($response);
                 if($response){
-
-                    $totalProduct= array_merge($response,$totalProduct);
+                    $totalProduct=array_merge(json_decode($HolooProds, true),$totalProduct);
                 }
 
             }
@@ -215,7 +215,7 @@ class HolooController extends Controller
         }
 
 
-        return $totalProduct;
+        return json_encode($totalProduct);
     }
 
     private function updateWCSingleProduct($data)
