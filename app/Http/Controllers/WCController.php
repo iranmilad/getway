@@ -578,7 +578,7 @@ class WCController extends Controller
                             'stock_quantity' => (int) $holooProduct->result->exist>0 ,
                         ];
                         $response = $this->updateWCSingleProduct($param);
-                        log::info($response);
+                        log::info(json_decode($response));
                     }
                     else{
                         continue;
