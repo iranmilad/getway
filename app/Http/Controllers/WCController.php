@@ -565,8 +565,8 @@ class WCController extends Controller
 
                     //update product
                     $wcProduct=$this->getWcProductWithHolooId($holooID);
-                    //return $holooProduct;
-                    $holooProduct=$this->findProduct($holooProduct,$holooID);
+                    // //return $holooProduct;
+                    // $holooProduct=$this->findProduct($holooProduct,$holooID);
 
 
                     $param = [
@@ -585,7 +585,7 @@ class WCController extends Controller
 
 
 
-                    $holooProduct==$this->findProduct($holooProduct,$holooID);
+                    // $holooProduct==$this->findProduct($holooProduct,$holooID);
                     $param = [
                         "holooCode" => $holooID,
                         "holooName" => $this->arabicToPersian($holooProduct->result->a_Name),
