@@ -205,8 +205,10 @@ class HolooController extends Controller
             }
 
             $response = curl_exec($curl);
-
-            $totalProduct[]= $response;
+            dd($response);
+            if($response){
+                $totalProduct[]= $response;
+            }
         }
 
         return $totalProduct;
