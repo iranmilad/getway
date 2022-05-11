@@ -203,10 +203,10 @@ class HolooController extends Controller
                     ),
                 ));
                 $response = curl_exec($curl);
-                $HolooProds = json_decode($response);
+
                 if($response){
 
-                    $totalProduct= array_merge($HolooProds,$totalProduct);
+                    $totalProduct= array_merge($response,$totalProduct);
                 }
 
             }
