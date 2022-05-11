@@ -207,11 +207,14 @@ class HolooController extends Controller
             $response = curl_exec($curl);
             $HolooProds = json_decode($response);
             if($response){
+                if(count($totalProduct)>1){
+                    dd($totalProduct);
+                }
                 $totalProduct[]= $HolooProds;
             }
-            sleep(1);
+
         }
-        dd($totalProduct);
+
 
         return $totalProduct;
     }
