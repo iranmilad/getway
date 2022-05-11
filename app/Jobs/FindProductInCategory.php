@@ -56,7 +56,8 @@ class FindProductInCategory implements ShouldQueue
             CURLOPT_HTTPHEADER => array(
                 'serial: ' . $this->user->serial,
                 'database: ' . $this->user->holooDatabaseName,
-                // 'm_groupcode: ' . $this->category->s_groupcode,
+                'm_groupcode: ' . $this->category->m_groupcode,
+                's_groupcode: ' . $this->category->s_groupcode,
                 'isArticle: true',
                 'access_token: ' . $this->user->apiKey,
                 'Authorization: Bearer ' .$this->token,
