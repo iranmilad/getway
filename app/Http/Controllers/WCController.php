@@ -202,6 +202,8 @@ class WCController extends Controller
                 break;
             }
             if (count($WCProd->meta_data)>0) {
+                dd($WCProd->meta_data);
+
                 $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
                 dd($wcHolooCode);
                 if ($wcHolooCode) {
