@@ -83,7 +83,7 @@ class FindProductInCategory implements ShouldQueue
                         AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
                     }
                     else{
-                        Log::info(['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""]);
+                        //Log::info(['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""]);
                         AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""], $HolooProd->a_Code);
                     }
                 }
