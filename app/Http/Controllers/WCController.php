@@ -909,7 +909,7 @@ class WCController extends Controller
     private function findKey($array, $key)
     {
         foreach ($array as $k => $v) {
-            if (isset($k->key) and $k->key == $key) {
+            if (isset($v->key) and $v->key == $key) {
                 return $v->value;
             }
         }
