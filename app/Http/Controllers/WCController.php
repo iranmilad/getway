@@ -215,7 +215,7 @@ class WCController extends Controller
 
                     $productFind = false;
                     foreach ($HolooProds as $key=>$HolooProd) {
-                $HolooProd=(object) $HolooProd;
+                        $HolooProd=(object) $HolooProd;
                         //0 "قیمت محصول با هلو منطبق نیست"
                         //1 "نام محصول با هلو منطبق نیست"
                         //2 "مقدار موجودی محصول با هلو منطبق نیست"
@@ -442,7 +442,8 @@ class WCController extends Controller
         //return $config->special_price_field;
         $user=auth()->user();
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
-        $callApi = $this->fetchAllHolloProds();
+        //$callApi = $this->fetchAllHolloProds();
+        $callApi = $this->fetchCategoryHolloProds($config->product_cat);
         $holooProducts = $callApi;
 
         $callApi = $this->fetchAllWCProds();
@@ -458,6 +459,7 @@ class WCController extends Controller
 
                     $productFind = false;
                     foreach ($holooProducts->result as $HolooProd) {
+                        $HolooProd=(object) $HolooProd;
                         if ($wcHolooCode == $HolooProd->a_Code) {
                             $productFind = true;
 
