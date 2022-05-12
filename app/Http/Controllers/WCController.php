@@ -636,7 +636,7 @@ class WCController extends Controller
                     else{
                         $response=$this->createSingleProduct($param);
                     }
-
+                    log::info(json_encode($response));
 
                 }
 
