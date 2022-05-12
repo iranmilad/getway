@@ -1764,4 +1764,100 @@ class HolooController extends Controller
         return $this->sendResponse('لیست حسابهای', Response::HTTP_OK,  $obj);
     }
 
+    public function get_shipping_accounts_by_product(){
+        $user = auth()->user();
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://myholoo.ir/api/Bank/GetBank',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'serial: ' . $user->serial,
+                'database: ' . $user->holooDatabaseName,
+                'Authorization: Bearer ' . $this->getNewToken(),
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $response = json_decode($response);
+
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://myholoo.ir/api/Cash/GetCash',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'serial: ' . $user->serial,
+                'database: ' . $user->holooDatabaseName,
+                'Authorization: Bearer ' . $this->getNewToken(),
+            ),
+        ));
+
+        $response2 = curl_exec($curl);
+        $response2 = json_decode($response2);
+        // return $this->sendResponse('لیست حسابهای', Response::HTTP_OK,  $response2);
+        $obj = (object)array_merge_recursive((array)$response2->data , (array)$response->data);
+        curl_close($curl);
+        return $this->sendResponse('لیست حسابهای', Response::HTTP_OK,  $obj);
+    }
+
+
+    public function get_all_wc_products_code(){
+        $user=auth()->user();
+
+        $status= "";
+
+        $curl = curl_init();
+        $page = 1;
+        $products = [];
+        $all_products = [];
+        do{
+          try {
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products?'.$status.'page='.$page.'&per_page=100',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
+            ));
+
+            $response = curl_exec($curl);
+            $products = json_decode($response);
+            $all_products = array_merge($all_products,$products);
+          }
+          catch(\Throwable $th){
+            break;
+          }
+          $page++;
+        } while (count($products) > 0);
+
+        curl_close($curl);
+
+        $response_products=[];
+        foreach ($all_products as $WCProd) {
+            if (count($WCProd->meta_data)>0) {
+                $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
+                if ($wcHolooCode) {
+                    $response_products[]=$wcHolooCode;
+                }
+            }
+        }
+
+        return $response_products;
+    }
+
 }
