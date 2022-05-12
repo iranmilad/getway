@@ -1809,7 +1809,11 @@ class HolooController extends Controller
             if (count($WCProd->meta_data)>0) {
                 $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
                 if ($wcHolooCode) {
-                    $response_products[]=$wcHolooCode;
+                    $json=[
+                        "sarfasl_Code"=> $wcHolooCode,
+                        "sarfasl_Name"=> $WCProd->name,
+                    ];
+                    $response_products[]=(object) $json;
                 }
             }
         }
