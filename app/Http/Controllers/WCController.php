@@ -600,7 +600,7 @@ class WCController extends Controller
 
 
                     $holooProduct=$this->findProduct($HolooProds,$holooID);
-                    log::info(json_encode($holooProduct));
+
                     if(!$holooProduct) continue;
 
 
@@ -630,7 +630,7 @@ class WCController extends Controller
                     else{
                         continue;
                     }
-
+                    log::info(json_encode($param));
 
                     if(isset($holooProduct->Poshak)){
                         $response=$this->createSingleProduct($param,null,"variable",$holooProduct->Poshak);
