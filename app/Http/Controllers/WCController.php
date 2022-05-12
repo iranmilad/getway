@@ -600,28 +600,30 @@ class WCController extends Controller
 
 
                     $holooProduct=$this->findProduct($HolooProds,$holooID);
+                    log::info(json_encode($holooProduct));
+                    if(!$holooProduct) continue;
 
 
                     if ((!isset($this->request["insert_product_with_zero_inventory"]) && $holooProduct->exist > 0) || (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "0" && $holooProduct->exist > 0)) {
                         $param = [
                             "holooCode" => $holooID,
-                            "holooName" => $this->arabicToPersian($holooProduct->result->a_Name),
-                            'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct->result),
-                            'price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
-                            'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct->result),
-                            'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
-                            'stock_quantity' => ($holooProduct->result->exist>0) ? (int)$holooProduct->result->exist : 0,
+                            "holooName" => $this->arabicToPersian($holooProduct->a_Name),
+                            'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct),
+                            'price' => $this->get_price_type($config->special_price_field,$holooProduct),
+                            'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct),
+                            'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct),
+                            'stock_quantity' => ($holooProduct->exist>0) ? (int)$holooProduct->exist : 0,
                         ];
                     }
                     elseif (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "1") {
                         $param = [
                             "holooCode" => $holooID,
-                            "holooName" => $this->arabicToPersian($holooProduct->result->a_Name),
-                            'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct->result),
-                            'price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
-                            'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct->result),
-                            'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
-                            'stock_quantity' => ($holooProduct->result->exist>0) ? (int)$holooProduct->result->exist : 0,
+                            "holooName" => $this->arabicToPersian($holooProduct->a_Name),
+                            'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct),
+                            'price' => $this->get_price_type($config->special_price_field,$holooProduct),
+                            'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct),
+                            'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct),
+                            'stock_quantity' => ($holooProduct->exist>0) ? (int)$holooProduct->exist : 0,
                         ];
 
                     }
@@ -636,6 +638,7 @@ class WCController extends Controller
                     else{
                         $response=$this->createSingleProduct($param);
                     }
+
                     log::info(json_encode($response));
 
                 }
