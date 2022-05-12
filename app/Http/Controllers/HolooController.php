@@ -1805,6 +1805,11 @@ class HolooController extends Controller
         curl_close($curl);
 
         $response_products=[];
+        $json=[
+            "sarfasl_Code"=> "",
+            "sarfasl_Name"=> "غیرفعال",
+        ];
+        $response_products[]=(object) $json;
         foreach ($all_products as $WCProd) {
             if (count($WCProd->meta_data)>0) {
                 $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
@@ -1817,11 +1822,7 @@ class HolooController extends Controller
                 }
             }
         }
-        $json=[
-            "sarfasl_Code"=> "",
-            "sarfasl_Name"=> "غیرفعال",
-        ];
-        $response_products[]=(object) $json;
+
 
         return (object)$response_products;
     }
