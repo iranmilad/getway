@@ -101,6 +101,7 @@ class WCController extends Controller
                     'meta_data' => $meta,
                     'categories' => $category,
                     'attributes' => $attributes,
+                    "manage_stock" => true,
                 );
             }
             else{
@@ -112,6 +113,7 @@ class WCController extends Controller
                     'status' => 'draft',
                     'meta_data' => $meta,
                     'attributes' => $attributes,
+                    "manage_stock" => true,
                 );
             }
         }
@@ -132,7 +134,7 @@ class WCController extends Controller
                     'status' => 'draft',
                     'meta_data' => $meta,
                     'categories' => $category,
-
+                    "manage_stock" => true,
                 );
             }
             else{
@@ -143,6 +145,7 @@ class WCController extends Controller
                     'stock_quantity' => $param["stock_quantity"],
                     'status' => 'draft',
                     'meta_data' => $meta,
+                    "manage_stock" => true,
                 );
             }
         }
