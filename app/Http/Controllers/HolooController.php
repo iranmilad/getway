@@ -464,7 +464,8 @@ class HolooController extends Controller
             "invoice_items_no_holo_code" => "0",
         );
 
-        $orderInvoice->request->add($order);
+        #$orderInvoice->request->add($order);
+        log::info("order: ".json_encode($orderInvoice));
 
         if ($orderInvoice->save_sale_invoice) {
             $_data = (object) $orderInvoice->input("date_created");
@@ -489,6 +490,7 @@ class HolooController extends Controller
 
             $custid = $this->getHolooCustomerID($orderInvoice->billing, $orderInvoice->customer_id);
             if (!$custid) {
+                log::info("کد مشتری یافت نشد");
                 return $this->sendResponse("ثبت فاکتور انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
             }
 
@@ -497,7 +499,8 @@ class HolooController extends Controller
             $payment_methos = $orderInvoice->payment_method;
             if (is_string($orderInvoice->payment)) {
                 $payment = json_decode($orderInvoice->payment);
-            } elseif (is_array($orderInvoice->payment)) {
+            }
+            elseif (is_array($orderInvoice->payment)) {
                 $payment = (object) $orderInvoice->payment;
             }
 
@@ -915,7 +918,8 @@ class HolooController extends Controller
             $payment_methos = $orderInvoice->payment_method;
             if (is_string($orderInvoice->payment)) {
                 $payment = json_decode($orderInvoice->payment);
-            } elseif (is_array($orderInvoice->payment)) {
+            }
+            else if (is_array($orderInvoice->payment)) {
                 $payment = (object) $orderInvoice->payment;
             }
 
@@ -1008,7 +1012,7 @@ class HolooController extends Controller
                 if ($payment_type == "bank") {
                     $data["generalinfo"]["dto"]["invoiceinfo"]["Bank"] = $sum_total;
                     $data["generalinfo"]["dto"]["invoiceinfo"]["BankSarfasl"] = $payment->number;
-                } elseif ($payment_type == "cash") {
+                } else if ($payment_type == "cash") {
                     $data["generalinfo"]["dto"]["invoiceinfo"]["Cash"] = $sum_total;
                     $data["generalinfo"]["dto"]["invoiceinfo"]["CashSarfas"] = $payment->number;
                 } else {
@@ -1518,6 +1522,9 @@ class HolooController extends Controller
     {
         $user = auth()->user();
         $curl = curl_init();
+        $customer_account=1030001;
+
+
         $data = [
             "generalinfo" => [
                 "apiname" => "CustomerPost",
@@ -1526,11 +1533,12 @@ class HolooController extends Controller
                         [
                             "code" => $customerId,
                             "id" => $customerId,
+                            "bedsarfasl" => $customer_account,
                             "name" => $customer->first_name . ' ' . $customer->last_name,
                             "ispurchaser" => true,
                             "isseller" => false,
                             "custtype" => 0,
-                            "Kind" => 2,
+                            "Kind" => 3,
                             "tel" => "",
                             "mobile" => $customer->phone,
                             "city" => $customer->city,
