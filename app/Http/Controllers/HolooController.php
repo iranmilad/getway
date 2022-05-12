@@ -1817,6 +1817,11 @@ class HolooController extends Controller
                 }
             }
         }
+        $json=[
+            "sarfasl_Code"=> "",
+            "sarfasl_Name"=> "غیرفعال",
+        ];
+        $response_products[]=(object) $json;
 
         return (object)$response_products;
     }
