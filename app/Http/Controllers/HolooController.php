@@ -1816,5 +1816,13 @@ class HolooController extends Controller
 
         return $response_products;
     }
-
+    private function findKey($array, $key)
+    {
+        foreach ($array as $k => $v) {
+            if (isset($v->key) and $v->key == $key) {
+                return $v->value;
+            }
+        }
+        return null;
+    }
 }
