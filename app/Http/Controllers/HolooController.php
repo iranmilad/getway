@@ -1765,50 +1765,7 @@ class HolooController extends Controller
     }
 
     public function get_shipping_accounts_by_product(){
-        $user = auth()->user();
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://myholoo.ir/api/Bank/GetBank',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'serial: ' . $user->serial,
-                'database: ' . $user->holooDatabaseName,
-                'Authorization: Bearer ' . $this->getNewToken(),
-            ),
-        ));
-
-        $response = curl_exec($curl);
-        $response = json_decode($response);
-
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://myholoo.ir/api/Cash/GetCash',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'serial: ' . $user->serial,
-                'database: ' . $user->holooDatabaseName,
-                'Authorization: Bearer ' . $this->getNewToken(),
-            ),
-        ));
-
-        $response2 = curl_exec($curl);
-        $response2 = json_decode($response2);
-        // return $this->sendResponse('لیست حسابهای', Response::HTTP_OK,  $response2);
-        $obj = (object)array_merge_recursive((array)$response2->data , (array)$response->data);
-        curl_close($curl);
+        $obj=$this->get_all_wc_products_code();
         return $this->sendResponse('لیست حسابهای', Response::HTTP_OK,  $obj);
     }
 
