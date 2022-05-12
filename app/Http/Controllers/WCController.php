@@ -230,7 +230,8 @@ class WCController extends Controller
                             (
                             (isset($config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd)) or
                             (isset($config->special_price_field) && (int)$WCProd->sale_price  != $this->get_price_type($config->special_price_field,$HolooProd)) or
-                            (isset($config->wholesale_price_field) && (int)$WCProd->wholesale_price_field  != $this->get_price_type($config->wholesale_price_field,$HolooProd))
+                            (isset($config->wholesale_price_field) &&
+                            (int)$WCProd->wholesale_price_field  != $this->get_price_type($config->wholesale_price_field,$HolooProd))
                             )
 
                             ) {
