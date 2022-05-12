@@ -604,7 +604,7 @@ class WCController extends Controller
                     if(!$holooProduct) continue;
 
 
-                    if ((!isset($this->request["insert_product_with_zero_inventory"]) && $holooProduct->exist > 0) || (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "0" && $holooProduct->exist > 0)) {
+                    if ((!isset($config->insert_product_with_zero_inventory) && $holooProduct->exist > 0) || (isset($config->insert_product_with_zero_inventory) && $config->insert_product_with_zero_inventory == "0" && $holooProduct->exist > 0)) {
                         $param = [
                             "holooCode" => $holooID,
                             "holooName" => $this->arabicToPersian($holooProduct->a_Name),
@@ -615,7 +615,7 @@ class WCController extends Controller
                             'stock_quantity' => ($holooProduct->exist>0) ? (int)$holooProduct->exist : 0,
                         ];
                     }
-                    elseif (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "1") {
+                    elseif (isset($config->insert_product_with_zero_inventory) && $config->insert_product_with_zero_inventory == "1") {
                         $param = [
                             "holooCode" => $holooID,
                             "holooName" => $this->arabicToPersian($holooProduct->a_Name),
@@ -630,7 +630,7 @@ class WCController extends Controller
                     else{
                         continue;
                     }
-                    log::info(json_encode($param));
+
 
                     if(isset($holooProduct->Poshak)){
                         $response=$this->createSingleProduct($param,null,"variable",$holooProduct->Poshak);
