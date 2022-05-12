@@ -465,7 +465,9 @@ class HolooController extends Controller
         );
 
         #$orderInvoice->request->add($order);
-        log::info("order: ".json_encode($orderInvoice));
+        log::info("order: ".json_encode($orderInvoice->request->all()));
+        return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+
 
         if ($orderInvoice->save_sale_invoice) {
             $_data = (object) $orderInvoice->input("date_created");
@@ -484,7 +486,8 @@ class HolooController extends Controller
             // }
             if (!$orderInvoice->save_sale_invoice || $orderInvoice->save_sale_invoice == 0) {
                 return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
-            } else {
+            }
+            else {
                 $type = $orderInvoice->save_sale_invoice;
             }
 
@@ -1826,6 +1829,7 @@ class HolooController extends Controller
 
         return (object)$response_products;
     }
+
     private function findKey($array, $key)
     {
         foreach ($array as $k => $v) {
