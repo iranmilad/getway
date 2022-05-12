@@ -557,12 +557,20 @@ class WCController extends Controller
             auth()->login($user);
             $HolooIDs=explode(",",$request->MsgValue);
             $config=json_decode($this->getWcConfig());
+
+
+
+            if ($request->MsgType==0 && $config->insert_new_product==1) {
+                $HolooProds  = $this->fetchCategoryHolloProds($config->product_cat);
+            }
+
+
             foreach($HolooIDs as $holooID){
-                $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
-                $holooProduct=json_decode($holooProduct);
 
                 if ($request->MsgType==1) {
 
+                    $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
+                    $holooProduct=json_decode($holooProduct);
                     //update product
                     $WCProd=$this->getWcProductWithHolooId($holooID);
                     // //return $holooProduct;
@@ -591,18 +599,36 @@ class WCController extends Controller
                 else if ($request->MsgType==0 && $config->insert_new_product==1) {
 
 
+                    $holooProduct=$this->findProduct($HolooProds,$holooID);
 
-                    // $holooProduct==$this->findProduct($holooProduct,$holooID);
-                    $param = [
-                        "holooCode" => $holooID,
-                        "holooName" => $this->arabicToPersian($holooProduct->result->a_Name),
-                        'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct->result),
-                        'price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
-                        'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct->result),
-                        'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
-                        'stock_quantity' => ($holooProduct->result->exist>0) ? (int)$holooProduct->result->exist : 0,
-                    ];
-                    //$category=['id' => $data[$category->m_groupcode], "name" => ""];
+
+                    if ((!isset($this->request["insert_product_with_zero_inventory"]) && $holooProduct->exist > 0) || (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "0" && $holooProduct->exist > 0)) {
+                        $param = [
+                            "holooCode" => $holooID,
+                            "holooName" => $this->arabicToPersian($holooProduct->result->a_Name),
+                            'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct->result),
+                            'price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
+                            'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct->result),
+                            'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
+                            'stock_quantity' => ($holooProduct->result->exist>0) ? (int)$holooProduct->result->exist : 0,
+                        ];
+                    }
+                    elseif (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "1") {
+                        $param = [
+                            "holooCode" => $holooID,
+                            "holooName" => $this->arabicToPersian($holooProduct->result->a_Name),
+                            'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct->result),
+                            'price' => $this->get_price_type($config->special_price_field,$holooProduct->result),
+                            'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct->result),
+                            'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct->result),
+                            'stock_quantity' => ($holooProduct->result->exist>0) ? (int)$holooProduct->result->exist : 0,
+                        ];
+
+                    }
+                    else{
+                        continue;
+                    }
+
 
                     if(isset($holooProduct->Poshak)){
                         $response=$this->createSingleProduct($param,null,"variable",$holooProduct->Poshak);
@@ -922,7 +948,8 @@ class WCController extends Controller
 
     private function findProduct($products,$holooCode){
         foreach ($products as $product) {
-            dd($product);
+            $product=(object) $product;
+
             if ($product->a_Code==$holooCode) {
                 return $product;
             }
