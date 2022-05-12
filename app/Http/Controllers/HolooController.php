@@ -1818,7 +1818,7 @@ class HolooController extends Controller
             }
         }
 
-        return $response_products;
+        return (object)$response_products;
     }
     private function findKey($array, $key)
     {
