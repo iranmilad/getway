@@ -396,7 +396,7 @@ class HolooController extends Controller
                 else {
                     //return $this->sendResponse('test', Response::HTTP_OK,$response);
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish wrong", "error");
-                    $this->recordLog("Invoice Registration", $user->siteUrl, $response, "error");
+                    $this->recordLog("Invoice Registration", $user->siteUrl, json_encode($response), "error");
                 }
 
                 return $this->sendResponse($response->message, Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
