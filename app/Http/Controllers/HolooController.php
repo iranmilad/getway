@@ -492,7 +492,7 @@ class HolooController extends Controller
             }
 
             $custid = $this->getHolooCustomerID($orderInvoice->billing, $orderInvoice->customer_id);
-            return $this->sendResponse('test', Response::HTTP_OK, $custid);
+
             if (!$custid) {
                 log::info("کد مشتری یافت نشد");
                 return $this->sendResponse("ثبت فاکتور انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
@@ -509,6 +509,7 @@ class HolooController extends Controller
             }
 
             $payment = (object) $payment->$payment_methos;
+            return $this->sendResponse('test', Response::HTTP_OK, $payment);
 
             foreach ($orderInvoice->line_items as $item) {
                 if (is_array($item)) {
@@ -650,6 +651,7 @@ class HolooController extends Controller
 
         // return response()->json($this->genericFee("#102564#25000%3", 25000));
         log::info("order: ".json_encode($orderInvoice->request->all()));
+
         $order = array(
             "id" => 4656,
             "parent_id" => 0,
@@ -1487,12 +1489,12 @@ class HolooController extends Controller
         }
         $holooCustomers = $this->getHolooDataTable();
 
-        // dd($holooCustomers);
         foreach ($holooCustomers->result as $holloCustomer) {
             if ($holloCustomer->c_Mobile == $customer->phone) {
                 return $holloCustomer->c_Code;
             }
         }
+        //dd($customer);
 
         return $this->createHolooCustomer($customer, $customerId);
 
@@ -1573,13 +1575,15 @@ class HolooController extends Controller
             CURLOPT_HTTPHEADER => array(
                 'serial: ' . $user->serial,
                 'database: ' . $user->holooDatabaseName,
+                'access_token:' . $user->apiKey,
                 "Authorization: Bearer $token",
             ),
         ));
 
         $response = curl_exec($curl);
         $response = json_decode($response);
-        if ($response->success) {
+        log::info("customer: ".json_encode($response));
+        if (isset($response->success) and $response->success) {
             return $this->getHolooCustomerID($customer, $customerId);
         }
         return false;
