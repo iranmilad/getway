@@ -552,6 +552,7 @@ class WCController extends Controller
         //   }
         log::info($request);
         log::info("webhook resived");
+        $this->sendResponse('محصول با موفقیت دریافت شدند', Response::HTTP_OK,"ok");
 
         if(isset($request->Table) && strtolower($request->Table)=="article" && ($request->MsgType==1 or $request->MsgType==0)){
             $Dbname=explode("_",$request->Dbname);
@@ -587,7 +588,7 @@ class WCController extends Controller
                     else{
                         $wholesale_customer_wholesale_price=0;
                     }
-                    $this->sendResponse('محصول با موفقیت دریافت شدند', Response::HTTP_OK,$WCProd);
+
                     // //return $holooProduct;
                     // $holooProduct=$this->findProduct($holooProduct,$holooID);
                     if(isset($WCProd->id) and $WCProd->id){
@@ -679,7 +680,7 @@ class WCController extends Controller
         ));
 
         $response = curl_exec($curl);
-$response=json_decode($response);
+        $response=json_decode($response);
         curl_close($curl);
         if (isset($response) && count($response)>0) {
             log::info(json_encode($response));
