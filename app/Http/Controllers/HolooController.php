@@ -230,239 +230,6 @@ class HolooController extends Controller
         $user = auth()->user();
         $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration receive");
 
-        $order = array(
-            "id" => 4656,
-            "parent_id" => 0,
-            "status" => "cancelled",
-            "currency" => "USD",
-            "version" => "6.2.0",
-            "prices_include_tax" => false,
-            "date_created" => array(
-                "date" => "2022-03-06 19:20:35.000000",
-                "timezone_type" => 3,
-                "timezone" => "Atlantic/Azores",
-            ),
-            "date_modified" => array(
-                "date" => "2022-03-06 20:38:39.000000",
-                "timezone_type" => 3,
-                "timezone" => "Atlantic/Azores",
-            ),
-            "discount_total" => "0",
-            "discount_tax" => "0",
-            "shipping_total" => "0",
-            "shipping_tax" => "0",
-            "cart_tax" => "0",
-            "total" => "8000.00",
-            "total_tax" => "0",
-            "customer_id" => 2,
-            "order_key" => "wc_order_9ukFS1c8klNMe",
-            "billing" => array(
-                "first_name" => "milad",
-                "last_name" => "kazemi",
-                "company" => "ثث",
-                "address_1" => "تهران",
-                "address_2" => "ثقثق",
-                "city" => "تهران",
-                "state" => "THR",
-                "postcode" => "1937933613",
-                "country" => "IR",
-                "email" => "kazemi.milad@gmail.com",
-                "phone" => "09189997745",
-            ),
-            "shipping" => array(
-                "first_name" => "",
-                "last_name" => "",
-                "company" => "",
-                "address_1" => "",
-                "address_2" => "",
-                "city" => "",
-                "state" => "",
-                "postcode" => "",
-                "country" => "",
-                "phone" => "",
-            ),
-            "payment_method" => "bankmellat",
-            "payment_method_title" => "بانک ملت",
-            "transaction_id" => "",
-            "customer_ip_address" => "5.112.133.167",
-            "customer_user_agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
-            "created_via" => "checkout",
-            "customer_note" => "",
-            "date_completed" => null,
-            "date_paid" => null,
-            "cart_hash" => "7fd3c40c67e5797ec4482b019a058dbb",
-            "number" => "4656",
-            "meta_data" => array(
-                array(
-                    "id" => 83643,
-                    "key" => "is_vat_exempt",
-                    "value" => "no",
-                ),
-                array(
-                    "id" => 83644,
-                    "key" => "holo_status",
-                    "value" => "ثبت فاکتور فروش انجام شد",
-                ),
-
-            ),
-            "line_items" => array(
-                0 => array(
-                    'id' => 315,
-                    'name' => 'Woo Single #1',
-                    'product_id' => 93,
-                    'variation_id' => 0,
-                    'quantity' => 2,
-                    'tax_class' => '',
-                    'subtotal' => '6.00',
-                    'subtotal_tax' => '0.45',
-                    'total' => '6.00',
-                    'total_tax' => '0.45',
-                    'taxes' => array(
-                        0 => array(
-                            'id' => 75,
-                            'total' => '0.45',
-                            'subtotal' => '0.45',
-                        ),
-                    ),
-                    'meta_data' => array(
-                    ),
-                    'sku' => '',
-                    'price' => 3,
-                ),
-                1 => array(
-                    'id' => 316,
-                    'name' => 'Ship Your Idea &ndash; Color: Black, Size: M Test',
-                    'product_id' => 22,
-                    'variation_id' => 23,
-                    'quantity' => 2,
-                    'tax_class' => '',
-                    'subtotal' => '12.00',
-                    'subtotal_tax' => '0.90',
-                    'total' => '24.00',
-                    'total_tax' => '0.90',
-                    'taxes' => array(
-                        0 => array(
-                            'id' => 75,
-                            'total' => '0.9',
-                            'subtotal' => '0.9',
-                        ),
-                    ),
-                    'meta_data' => array(
-                        0 => array(
-                            'id' => 2095,
-                            'key' => 'pa_color',
-                            'value' => 'black',
-                        ),
-                        1 => array(
-                            'id' => 2096,
-                            'key' => 'size',
-                            'value' => 'M Test',
-                        ),
-                        array(
-                            "id" => 83644,
-                            "key" => "_holo_sku",
-                            "value" => "0101004",
-                        ),
-                    ),
-                    'sku' => 'Bar3',
-                    'price' => 12,
-                ),
-            ),
-            "tax_lines" => array(),
-            "shipping_lines" => array(),
-            "fee_lines" => array(),
-            "coupon_lines" => array(),
-            "token" => "35|hhpYiw8fz53470WHlCa1D8w9EAAlKyx7ZS6KXYZ9",
-            "licence_status" => "active",
-            "licence_key" => "pMEufCKJAj3N",
-            "woo_holo_change" => "update_product",
-            "holo_status" => "ok",
-            "holo_token" => "35|hhpYiw8fz53470WHlCa1D8w9EAAlKyx7ZS6KXYZ9",
-            "payment" => array(
-                "cod" => array(
-                    "number" => "10100010001",
-                    "fee" => "",
-                    "vat" => "1",
-                ),
-                "bankmellat" => array(
-                    "number" => "10200010001",
-                    "fee" => "",
-                    "vat" => "1",
-                ),
-                "WC_payping" => array(
-                    "number" => "10200010001",
-                    "fee" => "",
-                    "vat" => "1",
-                ),
-                "WC_ZPal" => array(
-                    "number" => "10200010001",
-                    "fee" => "",
-                    "vat" => "1",
-                ),
-                "wallet" => array(
-                    "number" => "10200010001",
-                    "fee" => "",
-                    "vat" => "1",
-                ),
-            ),
-            "holo_categories" => array(
-                array(
-                    "m_groupcode" => "01",
-                    "m_groupname" => "خدمات",
-                ),
-                array(
-                    "m_groupcode" => "02",
-                    "m_groupname" => "ایده نگار",
-                ),
-                array(
-                    "m_groupcode" => "03",
-                    "m_groupname" => "سخت افزار",
-                ),
-                array(
-                    "m_groupcode" => "04",
-                    "m_groupname" => "اینترنت",
-                ),
-                array(
-                    "m_groupcode" => "05",
-                    "m_groupname" => "دخان",
-                ),
-                array(
-                    "m_groupcode" => "06",
-                    "m_groupname" => "محصولات اولیه",
-                ),
-                array(
-                    "m_groupcode" => "07",
-                    "m_groupname" => "بهداشتی",
-                ),
-                array(
-                    "m_groupcode" => "08",
-                    "m_groupname" => "سی دی",
-                ),
-            ),
-            "product_cat" => array(
-                "01" => "",
-                "02" => "",
-                "03" => "",
-                "04" => "",
-                "05" => "",
-                "06" => "",
-                "07" => "",
-                "08" => "",
-            ),
-            "update_product_price" => "0",
-            "update_product_stock" => "0",
-            "update_product_name" => "0",
-            "insert_new_product" => "0",
-            "status_place_payment" => "cash",
-            "sales_price_field" => "1",
-            "product_stock_field" => "1",
-            "save_sale_invoice" => "1",
-            "special_price_field" => "2",
-            "wholesale_price_field" => "3",
-            "save_pre_sale_invoice" => "0",
-            "insert_product_with_zero_inventory" => "0",
-            "invoice_items_no_holo_code" => "0",
-        );
         log::info("order: ".json_encode($orderInvoice->request->all()));
         #$orderInvoice->request->add($order);
         #return $this->sendResponse('test', Response::HTTP_OK, $orderInvoice);
@@ -647,7 +414,7 @@ class HolooController extends Controller
 
         }
 
-        return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+        return $this->sendResponse('ثبت پیش فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
     }
 
     public function wcInvoicePayed(Request $orderInvoice)
@@ -658,252 +425,12 @@ class HolooController extends Controller
         // return response()->json($this->genericFee("#102564#25000%3", 25000));
         log::info("order: ".json_encode($orderInvoice->request->all()));
 
-        $order = array(
-            "id" => 4656,
-            "parent_id" => 0,
-            "status" => "cancelled",
-            "currency" => "USD",
-            "version" => "6.2.0",
-            "prices_include_tax" => false,
-            "date_created" => array(
-                "date" => "2022-03-06 19:20:35.000000",
-                "timezone_type" => 3,
-                "timezone" => "Atlantic/Azores",
-            ),
-            "date_modified" => array(
-                "date" => "2022-03-06 20:38:39.000000",
-                "timezone_type" => 3,
-                "timezone" => "Atlantic/Azores",
-            ),
-            "discount_total" => "0",
-            "discount_tax" => "0",
-            "shipping_total" => "0",
-            "shipping_tax" => "0",
-            "cart_tax" => "0",
-            "total" => "8000.00",
-            "total_tax" => "0",
-            "customer_id" => 12,
-            "order_key" => "wc_order_9ukFS1c8klNMe",
-            "billing" => array(
-                "first_name" => "milad",
-                "last_name" => "kazemi",
-                "company" => "ثث",
-                "address_1" => "تهران",
-                "address_2" => "ثقثق",
-                "city" => "تهران",
-                "state" => "THR",
-                "postcode" => "1937933613",
-                "country" => "IR",
-                "email" => "kazemi.milad@gmail.com",
-                "phone" => "09189997740",
-            ),
-            "shipping" => array(
-                "first_name" => "",
-                "last_name" => "",
-                "company" => "",
-                "address_1" => "",
-                "address_2" => "",
-                "city" => "",
-                "state" => "",
-                "postcode" => "",
-                "country" => "",
-                "phone" => "",
-            ),
-            "payment_method" => "bankmellat",
-            "payment_method_title" => "بانک ملت",
-            "transaction_id" => "",
-            "customer_ip_address" => "5.112.133.167",
-            "customer_user_agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
-            "created_via" => "checkout",
-            "customer_note" => "",
-            "date_completed" => null,
-            "date_paid" => array(
-                "date" => "2022-03-06 20:38:39.000000",
-                "timezone_type" => 3,
-                "timezone" => "Atlantic/Azores",
-            ),
-            "cart_hash" => "7fd3c40c67e5797ec4482b019a058dbb",
-            "number" => "4656",
-            "meta_data" => array(
-                array(
-                    "id" => 83643,
-                    "key" => "is_vat_exempt",
-                    "value" => "no",
-                ),
-                array(
-                    "id" => 83644,
-                    "key" => "holo_status",
-                    "value" => "ثبت فاکتور فروش انجام شد",
-                ),
-
-            ),
-            "line_items" => array(
-                0 => array(
-                    'id' => 315,
-                    'name' => 'Woo Single #1',
-                    'product_id' => 93,
-                    'variation_id' => 0,
-                    'quantity' => 2,
-                    'tax_class' => '',
-                    'subtotal' => '6.00',
-                    'subtotal_tax' => '0.45',
-                    'total' => '6.00',
-                    'total_tax' => '0.45',
-                    'taxes' => array(
-                        0 => array(
-                            'id' => 75,
-                            'total' => '0.45',
-                            'subtotal' => '0.45',
-                        ),
-                    ),
-                    'meta_data' => array(
-                    ),
-                    'sku' => '',
-                    'price' => 3,
-                ),
-                1 => array(
-                    'id' => 316,
-                    'name' => 'Ship Your Idea &ndash; Color: Black, Size: M Test',
-                    'product_id' => 22,
-                    'variation_id' => 23,
-                    'quantity' => 2,
-                    'tax_class' => '',
-                    'subtotal' => '12.00',
-                    'subtotal_tax' => '0.90',
-                    'total' => '24.00',
-                    'total_tax' => '0.90',
-                    'taxes' => array(
-                        0 => array(
-                            'id' => 75,
-                            'total' => '0.9',
-                            'subtotal' => '0.9',
-                        ),
-                    ),
-                    'meta_data' => array(
-                        0 => array(
-                            'id' => 2095,
-                            'key' => 'pa_color',
-                            'value' => 'black',
-                        ),
-                        1 => array(
-                            'id' => 2096,
-                            'key' => 'size',
-                            'value' => 'M Test',
-                        ),
-                        array(
-                            "id" => 83644,
-                            "key" => "_holo_sku",
-                            "value" => "0101004",
-                        ),
-                    ),
-                    'sku' => 'Bar3',
-                    'price' => 12,
-                ),
-            ),
-            "tax_lines" => array(),
-            "shipping_lines" => array(),
-            "fee_lines" => array(),
-            "coupon_lines" => array(),
-            "token" => "35|hhpYiw8fz53470WHlCa1D8w9EAAlKyx7ZS6KXYZ9",
-            "licence_status" => "active",
-            "licence_key" => "pMEufCKJAj3N",
-            "woo_holo_change" => "update_product",
-            "holo_status" => "ok",
-            "holo_token" => "35|hhpYiw8fz53470WHlCa1D8w9EAAlKyx7ZS6KXYZ9",
-            "payment" => array(
-                "cod" => array(
-                    "number" => "10100010001",
-                    "fee" => "",
-                    "vat" => "1",
-                ),
-                "bankmellat" => array(
-                    "number" => "10200010001",
-                    "fee" => "#102564#25000%3",
-                    "vat" => "1",
-                ),
-                "WC_payping" => array(
-                    "number" => "10200010001",
-                    "fee" => "",
-                    "vat" => "1",
-                ),
-                "WC_ZPal" => array(
-                    "number" => "10200010001",
-                    "fee" => "",
-                    "vat" => "1",
-                ),
-                "wallet" => array(
-                    "number" => "10200010001",
-                    "fee" => "",
-                    "vat" => "1",
-                ),
-            ),
-            "holo_categories" => array(
-                array(
-                    "m_groupcode" => "01",
-                    "m_groupname" => "خدمات",
-                ),
-                array(
-                    "m_groupcode" => "02",
-                    "m_groupname" => "ایده نگار",
-                ),
-                array(
-                    "m_groupcode" => "03",
-                    "m_groupname" => "سخت افزار",
-                ),
-                array(
-                    "m_groupcode" => "04",
-                    "m_groupname" => "اینترنت",
-                ),
-                array(
-                    "m_groupcode" => "05",
-                    "m_groupname" => "دخان",
-                ),
-                array(
-                    "m_groupcode" => "06",
-                    "m_groupname" => "محصولات اولیه",
-                ),
-                array(
-                    "m_groupcode" => "07",
-                    "m_groupname" => "بهداشتی",
-                ),
-                array(
-                    "m_groupcode" => "08",
-                    "m_groupname" => "سی دی",
-                ),
-            ),
-            "product_cat" => array(
-                "01" => "",
-                "02" => "",
-                "03" => "",
-                "04" => "",
-                "05" => "",
-                "06" => "",
-                "07" => "",
-                "08" => "",
-            ),
-            "update_product_price" => "0",
-            "update_product_stock" => "0",
-            "update_product_name" => "0",
-            "insert_new_product" => "0",
-            "status_place_payment" => "cash",
-            "sales_price_field" => "1",
-            "product_stock_field" => "1",
-            "save_sale_invoice" => "1",
-            "special_price_field" => "2",
-            "wholesale_price_field" => "3",
-            "save_pre_sale_invoice" => "0",
-            "insert_product_with_zero_inventory" => "0",
-            "invoice_items_no_holo_code" => "0",
-        );
-
-        //$orderInvoice->request->add($order);
 
         if ($orderInvoice->save_sale_invoice) {
-            $_data = (object) $orderInvoice->input("date_paid");
-            $DateString = Carbon::parse($_data->date ?? now(), $_data->timezone);
 
+            $_data = (object) $orderInvoice->input("date_created");
+            $DateString = Carbon::parse($_data->date ?? now(), $_data->timezone);
             $DateString->setTimezone('Asia/Tehran');
-            // return $DateString;
             //return $DateString->format('Y-m-d');
 
             // if (isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid == "paid") {
@@ -917,14 +444,16 @@ class HolooController extends Controller
             // }
             if (!$orderInvoice->save_sale_invoice || $orderInvoice->save_sale_invoice == 0) {
                 return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
-            } else {
+            }
+            else {
                 $type = $orderInvoice->save_sale_invoice;
             }
 
             $custid = $this->getHolooCustomerID($orderInvoice->billing, $orderInvoice->customer_id);
 
             if (!$custid) {
-                return $this->sendResponse("ثبت فاکتوdsd انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+                log::info("کد مشتری یافت نشد");
+                return $this->sendResponse("ثبت فاکتور انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
             }
 
             $items = array();
@@ -933,62 +462,62 @@ class HolooController extends Controller
             if (is_string($orderInvoice->payment)) {
                 $payment = json_decode($orderInvoice->payment);
             }
-            else if (is_array($orderInvoice->payment)) {
+            elseif (is_array($orderInvoice->payment)) {
                 $payment = (object) $orderInvoice->payment;
             }
 
             $payment = (object) $payment->$payment_methos;
-
-            foreach ($orderInvoice->line_items as $item) {
+            $orderInvoiceFull=app('App\Http\Controllers\WCController')->get_invoice($orderInvoice->id);
+            $fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
+            foreach ($orderInvoiceFull->line_items as $item) {
                 if (is_array($item)) {
                     $item = (object) $item;
                 }
+                $HoloID=app('App\Http\Controllers\WCController')->get_product_holooCode($fetchAllWCProds,$item->product_id);
 
-                if (isset($item->meta_data) && is_array($item->meta_data)) {
-                    foreach ($item->meta_data as $meta) {
 
-                        if (is_array($meta)) {
-                            $meta = (object) $meta;
-                        }
-                        if ($meta->key == "_holo_sku") {
-                            $total = $this->getAmount($item->total, $orderInvoice->currency);
-                            $lazy = 0;
-                            $scot = 0;
-                            if ($payment->vat) {
-                                $lazy = $total * 6 / 100;
-                                $scot = $total * 3 / 100;
-                            }
-                            $items[] = array(
-                                'id' => $meta->value,
-                                'Productid' => $meta->value,
-                                'few' => $item->quantity,
-                                'price' => $item->price,
-                                'discount' => '0',
-                                'levy' => $lazy,
-                                'scot' => $scot,
-                            );
-                            $sum_total += $total;
-                        }
-
+                if ($HoloID) {
+                    $total = $this->getAmount($item->total, $orderInvoiceFull->currency);
+                    $lazy = 0;
+                    $scot = 0;
+                    if ($payment->vat) {
+                        $lazy = $total * 6 / 100;
+                        $scot = $total * 3 / 100;
                     }
+                    $items[] = array(
+                        'id' => $HoloID,
+                        'Productid' => $HoloID,
+                        'few' => $item->quantity,
+                        'price' => $this->getAmount($item->price, $orderInvoiceFull->currency),
+                        'discount' => '0',
+                        'levy' => $lazy,
+                        'scot' => $scot,
+                    );
+                    $sum_total += $total;
+
+                }
+                elseif($orderInvoice->invoice_items_no_holo_code){
+                    return $this->sendResponse('ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
                 }
 
             }
 
+            //hazineh haml be sorat kala azafe shavad
             if ($orderInvoice->product_shipping) {
-                $shipping_lines = $orderInvoice->shipping_lines[0] ?? null;
+                $shipping_lines = $orderInvoiceFull->shipping_lines[0] ?? null;
                 if ($shipping_lines) {
+
                     if (is_array($shipping_lines)) {
                         $shipping_lines = (object) $shipping_lines;
                     }
 
-                    $total = $this->getAmount($shipping_lines->total, $orderInvoice->currency);
-                    $scot = $this->getAmount($shipping_lines->total_tax, $orderInvoice->currency);
+                    $total = $this->getAmount($shipping_lines->total, $orderInvoiceFull->currency);
+                    $scot = $this->getAmount($shipping_lines->total_tax, $orderInvoiceFull->currency);
                     $items[] = array(
                         'id' => $orderInvoice->product_shipping,
                         'Productid' => $orderInvoice->product_shipping,
                         'few' => 1,
-                        'price' => $total,
+                        'price' => $total-$scot,
                         'discount' => 0,
                         'levy' => 0,
                         'scot' => $scot,
@@ -999,11 +528,15 @@ class HolooController extends Controller
 
             }
 
+
+
+
             if (sizeof($items) > 0) {
                 $payment_type = "bank";
                 if ($orderInvoice->status_place_payment == "Installment") {
                     $payment_type = "nesiyeh";
-                } else if (substr($payment->number, 0, 3) == "101") {
+                }
+                else if (substr($payment->number, 0, 3) == "101") {
                     $payment_type = "cash";
                 }
                 $data = array(
@@ -1012,8 +545,8 @@ class HolooController extends Controller
                         'dto' => array(
                             'invoiceinfo' => array(
                                 'id' => $orderInvoice->input("id"), //$oreder->id
-                                'Type' => 1, //1 faktor frosh 2 pish factor,
-                                'kind' => $type,
+                                'Type' => 1, //1 faktor frosh 2 pish factor, 3 sefaresh =>$type
+                                'kind' => 4,
                                 'Date' => $DateString->format('Y-m-d'),
                                 'Time' => $DateString->format('H:i:s'),
                                 'custid' => $custid,
@@ -1023,10 +556,11 @@ class HolooController extends Controller
                     ),
                 );
 
+
                 if ($payment_type == "bank") {
                     $data["generalinfo"]["dto"]["invoiceinfo"]["Bank"] = $sum_total;
                     $data["generalinfo"]["dto"]["invoiceinfo"]["BankSarfasl"] = $payment->number;
-                } else if ($payment_type == "cash") {
+                } elseif ($payment_type == "cash") {
                     $data["generalinfo"]["dto"]["invoiceinfo"]["Cash"] = $sum_total;
                     $data["generalinfo"]["dto"]["invoiceinfo"]["CashSarfas"] = $payment->number;
                 } else {
@@ -1034,9 +568,8 @@ class HolooController extends Controller
                 }
 
                 ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
-                $token = $this->getNewToken();
+
                 $curl = curl_init();
-                $userSerial = $user->serial;
                 curl_setopt_array($curl, array(
                     CURLOPT_URL => 'https://myholoo.ir/api/CallApi/InvoicePost',
                     CURLOPT_RETURNTRANSFER => true,
@@ -1048,29 +581,25 @@ class HolooController extends Controller
                     CURLOPT_CUSTOMREQUEST => 'POST',
                     CURLOPT_POSTFIELDS => array('data' => json_encode($data)),
                     CURLOPT_HTTPHEADER => array(
-                        "serial: $userSerial",
+                        "serial: ".$user->serial,
                         'database: ' . $user->holooDatabaseName,
-                        "Authorization: Bearer $token",
+                        "Authorization: Bearer ".$this->getNewToken(),
+                        'access_token:' . $user->apiKey,
                     ),
                 ));
                 $response = curl_exec($curl);
                 $response = json_decode($response);
                 curl_close($curl);
-                if ($response->success) {
-
-                    if ($payment->fee && $payment->fee != "") {
-                        $fee = $this->genericFee($payment->fee, $sum_total);
-                        if ($fee && $fee->amount > 0) {
-                            $this->wcInvoiceBank($orderInvoice, $fee, $custid, $DateString, $type);
-                        }
-                    }
-
-                    $this->recordLog("Invoice Payed", $user->siteUrl, "Invoice Payed finish succsessfuly");
+                if (isset($response->success) and $response->success) {
+                    $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish succsessfuly");
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
-                } else {
-                    $this->recordLog("Invoice Payed", $user->siteUrl, "Invoice Payed finish wrong", "error");
-                    $this->recordLog("Invoice Payed", $user->siteUrl, $response, "error");
                 }
+                else {
+                    return $this->sendResponse('test', Response::HTTP_OK,$response);
+                    $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish wrong", "error");
+                    $this->recordLog("Invoice Registration", $user->siteUrl, $response, "error");
+                }
+
                 return $this->sendResponse($response->message, Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
             }
 
