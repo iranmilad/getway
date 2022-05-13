@@ -589,7 +589,7 @@ class WCController extends Controller
                     }
                     // //return $holooProduct;
                     // $holooProduct=$this->findProduct($holooProduct,$holooID);
-                    if($WCProd){
+                    if(isset($WCProd->id) and $WCProd->id){
                         $param = [
                             'id' => $WCProd->id,
                             'name' =>(isset($config->update_product_name) && $config->update_product_name=="1") ? $this->arabicToPersian($holooProduct->result->a_Name) : $WCProd->name,
