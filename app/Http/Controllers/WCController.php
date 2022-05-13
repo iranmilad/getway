@@ -581,7 +581,12 @@ class WCController extends Controller
                     $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
                     $holooProduct=json_decode($holooProduct);
                     $WCProd=$this->getWcProductWithHolooId($holooID);
-                    $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
+                    if(isset($WCProd->meta_data) and count($WCProd->meta_data)>0){
+                        $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
+                    }
+                    else{
+                        $wholesale_customer_wholesale_price=0;
+                    }
                     // //return $holooProduct;
                     // $holooProduct=$this->findProduct($holooProduct,$holooID);
                     if($WCProd){
