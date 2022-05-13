@@ -1028,11 +1028,11 @@ class HolooController extends Controller
 
         foreach ($holooCustomers->result as $holloCustomer) {
             if ($holloCustomer->c_Mobile == $customer->phone) {
-                return $holloCustomer->c_Code;
+                log::info("get customer: ".json_encode($holloCustomer));
+                return $holloCustomer->c_Code_C;
             }
         }
         //dd($customer);
-
         return $this->createHolooCustomer($customer, $customerId);
 
     }
