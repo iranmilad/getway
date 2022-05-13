@@ -400,11 +400,11 @@ class WCController extends Controller
             )
         );
         $data=[
-            "regular_price"=>$params['regular_price'],
+            "regular_price"=>(string)$params['regular_price'],
             "price"=>$params['price'],
             "sale_price"=>((int)$params['regular_price']==0) ? null : (string) $params['price'] ,
             //"wholesale_customer_wholesale_price"=>$params['wholesale_customer_wholesale_price'],
-            "stock_quantity"=>$params['stock_quantity'],
+            "stock_quantity"=>(int)$params['stock_quantity'],
             "name"=>$params['name'],
             "meta_data"=>$meta,
         ];
