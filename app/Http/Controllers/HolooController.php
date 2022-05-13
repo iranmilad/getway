@@ -398,7 +398,7 @@ class HolooController extends Controller
                 }
                 else {
                     //return $this->sendResponse('test', Response::HTTP_OK,$response);
-                    $this->recordLog("Invoice Registration", $user->siteUrl, ['data' => json_encode($data)], "error");
+             $this->recordLog("Invoice Registration", $user->siteUrl, json_encode(['data' => $data]), "error");
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish wrong", "error");
                     $this->recordLog("Invoice Registration", $user->siteUrl, json_encode($response), "error");
                 }
@@ -593,7 +593,7 @@ class HolooController extends Controller
                 }
                 else {
                     //return $this->sendResponse('test', Response::HTTP_OK,$response);
-                    $this->recordLog("Invoice Registration", $user->siteUrl, ['data' => json_encode($data)], "error");
+                    $this->recordLog("Invoice Registration", $user->siteUrl, json_encode(['data' => $data]), "error");
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish wrong", "error");
                     $this->recordLog("Invoice Registration", $user->siteUrl, json_encode($response), "error");
                 }
