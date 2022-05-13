@@ -649,7 +649,7 @@ class HolooController extends Controller
         $this->recordLog("Invoice Payed", $user->siteUrl, "Invoice Payed receive");
 
         // return response()->json($this->genericFee("#102564#25000%3", 25000));
-
+        log::info("order: ".json_encode($orderInvoice->request->all()));
         $order = array(
             "id" => 4656,
             "parent_id" => 0,
