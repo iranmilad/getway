@@ -463,13 +463,13 @@ class HolooController extends Controller
             "insert_product_with_zero_inventory" => "0",
             "invoice_items_no_holo_code" => "0",
         );
-
+        //log::info("order: ".json_encode($orderInvoice->request->all()));
         #$orderInvoice->request->add($order);
-        log::info("order: ".json_encode($orderInvoice->request->all()));
-        return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+    return $this->sendResponse('test', Response::HTTP_OK, $orderInvoice);
 
 
-        if ($orderInvoice->save_sale_invoice) {
+        if ($orderInvoice->save_pre_sale_invoice) {
+
             $_data = (object) $orderInvoice->input("date_created");
             $DateString = Carbon::parse($_data->date ?? now(), $_data->timezone);
             $DateString->setTimezone('Asia/Tehran');
@@ -484,14 +484,15 @@ class HolooController extends Controller
             // } else {
             //     return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             // }
-            if (!$orderInvoice->save_sale_invoice || $orderInvoice->save_sale_invoice == 0) {
+            if (!$orderInvoice->save_pre_sale_invoice || $orderInvoice->save_pre_sale_invoice == 0) {
                 return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
             else {
-                $type = $orderInvoice->save_sale_invoice;
+                $type = $orderInvoice->save_pre_sale_invoice;
             }
 
             $custid = $this->getHolooCustomerID($orderInvoice->billing, $orderInvoice->customer_id);
+            return $this->sendResponse('test', Response::HTTP_OK, $custid);
             if (!$custid) {
                 log::info("کد مشتری یافت نشد");
                 return $this->sendResponse("ثبت فاکتور انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
@@ -638,6 +639,8 @@ class HolooController extends Controller
             }
 
         }
+
+        return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
     }
 
     public function wcInvoicePayed(Request $orderInvoice)
