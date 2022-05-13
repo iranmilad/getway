@@ -621,7 +621,7 @@ class WCController extends Controller
 
                     $holooProduct=$this->findProduct($HolooProds,$holooID);
                     //dd($holooProduct);
-                    if($holooProduct) continue;
+                    if(!$holooProduct) continue;
 
                     $param = [
                         "holooCode" => $holooID,
