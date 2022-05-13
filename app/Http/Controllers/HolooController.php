@@ -509,58 +509,57 @@ class HolooController extends Controller
             }
 
             $payment = (object) $payment->$payment_methos;
-            return $this->sendResponse('test', Response::HTTP_OK, $payment);
-
-            foreach ($orderInvoice->line_items as $item) {
+            $orderInvoiceFull=app('App\Http\Controllers\WCController')->get_invoice($orderInvoice->id);
+            $fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
+            foreach ($orderInvoiceFull->line_items as $item) {
                 if (is_array($item)) {
                     $item = (object) $item;
                 }
+                $HoloID=app('App\Http\Controllers\WCController')->get_product_holooCode($fetchAllWCProds,$item->product_id);
 
-                if (isset($item->meta_data) && is_array($item->meta_data)) {
-                    foreach ($item->meta_data as $meta) {
 
-                        if (is_array($meta)) {
-                            $meta = (object) $meta;
-                        }
-                        if ($meta->key == "_holo_sku") {
-                            $total = $this->getAmount($item->total, $orderInvoice->currency);
-                            $lazy = 0;
-                            $scot = 0;
-                            if ($payment->vat) {
-                                $lazy = $total * 6 / 100;
-                                $scot = $total * 3 / 100;
-                            }
-                            $items[] = array(
-                                'id' => $meta->value,
-                                'Productid' => $meta->value,
-                                'few' => $item->quantity,
-                                'price' => $item->price,
-                                'discount' => '0',
-                                'levy' => $lazy,
-                                'scot' => $scot,
-                            );
-                            $sum_total += $total;
-                        }
-
+                if ($HoloID) {
+                    $total = $this->getAmount($item->total, $orderInvoiceFull->currency);
+                    $lazy = 0;
+                    $scot = 0;
+                    if ($payment->vat) {
+                        $lazy = $total * 6 / 100;
+                        $scot = $total * 3 / 100;
                     }
+                    $items[] = array(
+                        'id' => $HoloID,
+                        'Productid' => $HoloID,
+                        'few' => $item->quantity,
+                        'price' => $this->getAmount($item->price, $orderInvoiceFull->currency),
+                        'discount' => '0',
+                        'levy' => $lazy,
+                        'scot' => $scot,
+                    );
+                    $sum_total += $total;
+
+                }
+                elseif($orderInvoice->invoice_items_no_holo_code){
+                    return $this->sendResponse('ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
                 }
 
             }
 
+            //hazineh haml be sorat kala azafe shavad
             if ($orderInvoice->product_shipping) {
-                $shipping_lines = $orderInvoice->shipping_lines[0] ?? null;
+                $shipping_lines = $orderInvoiceFull->shipping_lines[0] ?? null;
                 if ($shipping_lines) {
+
                     if (is_array($shipping_lines)) {
                         $shipping_lines = (object) $shipping_lines;
                     }
 
-                    $total = $this->getAmount($shipping_lines->total, $orderInvoice->currency);
-                    $scot = $this->getAmount($shipping_lines->total_tax, $orderInvoice->currency);
+                    $total = $this->getAmount($shipping_lines->total, $orderInvoiceFull->currency);
+                    $scot = $this->getAmount($shipping_lines->total_tax, $orderInvoiceFull->currency);
                     $items[] = array(
                         'id' => $orderInvoice->product_shipping,
                         'Productid' => $orderInvoice->product_shipping,
                         'few' => 1,
-                        'price' => $total,
+                        'price' => $total-$scot,
                         'discount' => 0,
                         'levy' => 0,
                         'scot' => $scot,
@@ -571,11 +570,15 @@ class HolooController extends Controller
 
             }
 
+
+
+
             if (sizeof($items) > 0) {
                 $payment_type = "bank";
                 if ($orderInvoice->status_place_payment == "Installment") {
                     $payment_type = "nesiyeh";
-                } else if (substr($payment->number, 0, 3) == "101") {
+                }
+                else if (substr($payment->number, 0, 3) == "101") {
                     $payment_type = "cash";
                 }
                 $data = array(
@@ -584,8 +587,8 @@ class HolooController extends Controller
                         'dto' => array(
                             'invoiceinfo' => array(
                                 'id' => $orderInvoice->input("id"), //$oreder->id
-                                'Type' => 2, //1 faktor frosh 2 pish factor,
-                                'kind' => $type,
+                                'Type' => 1, //1 faktor frosh 2 pish factor, 3 sefaresh =>$type
+                                'kind' => 4,
                                 'Date' => $DateString->format('Y-m-d'),
                                 'Time' => $DateString->format('H:i:s'),
                                 'custid' => $custid,
@@ -594,6 +597,7 @@ class HolooController extends Controller
                         ),
                     ),
                 );
+
 
                 if ($payment_type == "bank") {
                     $data["generalinfo"]["dto"]["invoiceinfo"]["Bank"] = $sum_total;
@@ -606,9 +610,8 @@ class HolooController extends Controller
                 }
 
                 ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
-                $token = $this->getNewToken();
+
                 $curl = curl_init();
-                $userSerial = $user->serial;
                 curl_setopt_array($curl, array(
                     CURLOPT_URL => 'https://myholoo.ir/api/CallApi/InvoicePost',
                     CURLOPT_RETURNTRANSFER => true,
@@ -620,18 +623,21 @@ class HolooController extends Controller
                     CURLOPT_CUSTOMREQUEST => 'POST',
                     CURLOPT_POSTFIELDS => array('data' => json_encode($data)),
                     CURLOPT_HTTPHEADER => array(
-                        "serial: $userSerial",
+                        "serial: ".$user->serial,
                         'database: ' . $user->holooDatabaseName,
-                        "Authorization: Bearer $token",
+                        "Authorization: Bearer ".$this->getNewToken(),
+                        'access_token:' . $user->apiKey,
                     ),
                 ));
                 $response = curl_exec($curl);
                 $response = json_decode($response);
                 curl_close($curl);
-                if ($response->success) {
+                if (isset($response->success) and $response->success) {
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish succsessfuly");
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
-                } else {
+                }
+                else {
+                    return $this->sendResponse('test', Response::HTTP_OK,$response);
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish wrong", "error");
                     $this->recordLog("Invoice Registration", $user->siteUrl, $response, "error");
                 }
@@ -1142,11 +1148,13 @@ class HolooController extends Controller
 
     private function getAmount($amount, $currency)
     {
+        //"IRT"
+
         if ($currency == "toman") {
-            return $amount * 10;
+            return (int)$amount * 10;
         }
 
-        return $amount;
+        return (int)$amount;
     }
 
     public function wcSingleProductUpdate(Request $request)
