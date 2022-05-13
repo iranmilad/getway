@@ -892,9 +892,9 @@ class HolooController extends Controller
 
         $data = $productCategory;
         //$data = ['02' => 12];
-        //dd($data);
 
         $categories = $this->getAllCategory();
+        //dd($categories);
 
         $wcHolooExistCode = app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
         $allRespose = [];
@@ -915,7 +915,8 @@ class HolooController extends Controller
                     CURLOPT_HTTPHEADER => array(
                         'serial: ' . $userSerial,
                         'database: ' . $user->holooDatabaseName,
-                        // 'm_groupcode: ' . $category->s_groupcode,
+                        'm_groupcode: ' . $category->m_groupcode,
+                        's_groupcode: ' . $category->s_groupcode,
                         'isArticle: true',
                         'access_token: ' . $userApiKey,
                         'Authorization: Bearer ' . $token,
