@@ -465,7 +465,7 @@ class HolooController extends Controller
         );
         log::info("order: ".json_encode($orderInvoice->request->all()));
         #$orderInvoice->request->add($order);
-   return $this->sendResponse('test', Response::HTTP_OK, $orderInvoice);
+        #return $this->sendResponse('test', Response::HTTP_OK, $orderInvoice);
 
 
         if ($orderInvoice->save_pre_sale_invoice) {
@@ -1067,7 +1067,7 @@ class HolooController extends Controller
             }
 
         }
-
+        return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
     }
 
     private function wcInvoiceBank($orderInvoice, $fee, $custid, $DateString, $kind)
