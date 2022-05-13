@@ -616,34 +616,43 @@ class WCController extends Controller
                     $holooProduct=$this->findProduct($HolooProds,$holooID);
                     if(!$holooProduct) continue;
 
-
-                    if ((!isset($config->insert_product_with_zero_inventory) ) || (isset($config->insert_product_with_zero_inventory) && $config->insert_product_with_zero_inventory == "0")) {
-                        $param = [
-                            "holooCode" => $holooID,
-                            "holooName" => $this->arabicToPersian($holooProduct->a_Name),
-                            'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct),
-                            'price' => $this->get_price_type($config->special_price_field,$holooProduct),
-                            'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct),
-                            'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct),
-                            'stock_quantity' => ($holooProduct->exist>0) ? (int)$holooProduct->exist : 0,
-                        ];
-                    }
-                    elseif (isset($config->insert_product_with_zero_inventory) && $config->insert_product_with_zero_inventory == "1") {
-                        $param = [
-                            "holooCode" => $holooID,
-                            "holooName" => $this->arabicToPersian($holooProduct->a_Name),
-                            'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct),
-                            'price' => $this->get_price_type($config->special_price_field,$holooProduct),
-                            'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct),
-                            'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct),
-                            'stock_quantity' => ($holooProduct->exist>0) ? (int)$holooProduct->exist : 0,
-                        ];
-
-                    }
-                    else{
-                        continue;
-                    }
+                    $param = [
+                        "holooCode" => $holooID,
+                        "holooName" => $this->arabicToPersian($holooProduct->a_Name),
+                        'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct),
+                        'price' => $this->get_price_type($config->special_price_field,$holooProduct),
+                        'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct),
+                        'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct),
+                        'stock_quantity' => ($holooProduct->exist>0) ? (int)$holooProduct->exist : 0,
+                    ];
                     dd($param );
+                    // if ((!isset($config->insert_product_with_zero_inventory) ) || (isset($config->insert_product_with_zero_inventory) && $config->insert_product_with_zero_inventory == "0")) {
+                    //     $param = [
+                    //         "holooCode" => $holooID,
+                    //         "holooName" => $this->arabicToPersian($holooProduct->a_Name),
+                    //         'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct),
+                    //         'price' => $this->get_price_type($config->special_price_field,$holooProduct),
+                    //         'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct),
+                    //         'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct),
+                    //         'stock_quantity' => ($holooProduct->exist>0) ? (int)$holooProduct->exist : 0,
+                    //     ];
+                    // }
+                    // elseif (isset($config->insert_product_with_zero_inventory) && $config->insert_product_with_zero_inventory == "1") {
+                    //     $param = [
+                    //         "holooCode" => $holooID,
+                    //         "holooName" => $this->arabicToPersian($holooProduct->a_Name),
+                    //         'regular_price' => (string)$this->get_price_type($config->sales_price_field,$holooProduct),
+                    //         'price' => $this->get_price_type($config->special_price_field,$holooProduct),
+                    //         'sale_price' => (string)$this->get_price_type($config->special_price_field,$holooProduct),
+                    //         'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct),
+                    //         'stock_quantity' => ($holooProduct->exist>0) ? (int)$holooProduct->exist : 0,
+                    //     ];
+
+                    // }
+                    // else{
+                    //     continue;
+                    // }
+
 
                     if(isset($holooProduct->Poshak)){
                         $response=$this->createSingleProduct($param,null,"variable",$holooProduct->Poshak);
