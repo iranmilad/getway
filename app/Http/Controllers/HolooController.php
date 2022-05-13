@@ -240,19 +240,9 @@ class HolooController extends Controller
             $_data = (object) $orderInvoice->input("date_created");
             $DateString = Carbon::parse($_data->date ?? now(), $_data->timezone);
             $DateString->setTimezone('Asia/Tehran');
-            //return $DateString->format('Y-m-d');
 
-            // if (isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid == "paid") {
-            //     $type = 1;
-            // } else if (isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid == "prePaid") {
-            //     $type = 2;
-            // } else if (isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid == "order") {
-            //     $type = 3;
-            // } else {
-            //     return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
-            // }
             if (!$orderInvoice->save_pre_sale_invoice || $orderInvoice->save_pre_sale_invoice == 0) {
-                return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+                return $this->sendResponse('ثبت پیش فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
             else {
                 $type = $orderInvoice->save_pre_sale_invoice;
@@ -262,7 +252,7 @@ class HolooController extends Controller
 
             if (!$custid) {
                 log::info("کد مشتری یافت نشد");
-                return $this->sendResponse("ثبت فاکتور انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+                return $this->sendResponse("ثبت پیش فاکتور انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
             }
 
             $items = array();
@@ -306,7 +296,7 @@ class HolooController extends Controller
 
                 }
                 elseif($orderInvoice->invoice_items_no_holo_code){
-                    return $this->sendResponse('ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+                    return $this->sendResponse('ثبت پیش فاکتور بدلیل ایتم فاقد کد هلو انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
                 }
 
             }
@@ -597,7 +587,7 @@ class HolooController extends Controller
                 else {
                     //return $this->sendResponse('test', Response::HTTP_OK,$response);
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish wrong", "error");
-                    $this->recordLog("Invoice Registration", $user->siteUrl, $response, "error");
+                    $this->recordLog("Invoice Registration", $user->siteUrl, json_encode($response), "error");
                 }
 
                 return $this->sendResponse($response->message, Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
