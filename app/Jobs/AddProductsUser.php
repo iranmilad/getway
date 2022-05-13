@@ -116,7 +116,7 @@ class AddProductsUser implements ShouldQueue
                     'name' => $this->param["name"],
                     'type' => 'simple',
                     'regular_price' => $this->param["regular_price"],
-                    'stock_quantity' => $this->param["stock_quantity"],
+                    'stock_quantity' => (int)$this->param["stock_quantity"],
                     "manage_stock" => true,
                     'status' => 'draft',
                     'meta_data' => $meta,
