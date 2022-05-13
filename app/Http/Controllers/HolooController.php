@@ -290,7 +290,7 @@ class HolooController extends Controller
                         $scot = $total * 3 / 100;
                     }
                     $items[] = array(
-                        'id' => $HoloID,
+                        'id' => (int)$HoloID,
                         'Productid' => $HoloID,
                         'few' => $item->quantity,
                         'price' => $this->getAmount($item->price, $orderInvoiceFull->currency),
@@ -319,7 +319,7 @@ class HolooController extends Controller
                     if ($total>0){
                         $scot = $this->getAmount($shipping_lines->total_tax, $orderInvoiceFull->currency);
                         $items[] = array(
-                            'id' => $orderInvoice->product_shipping,
+                            'id' => (int)$orderInvoice->product_shipping,
                             'Productid' => $orderInvoice->product_shipping,
                             'few' => 1,
                             'price' => $total-$scot,
@@ -480,7 +480,7 @@ class HolooController extends Controller
                         $scot = $total * 3 / 100;
                     }
                     $items[] = array(
-                        'id' => $HoloID,
+                        'id' => (int)$HoloID,
                         'Productid' => $HoloID,
                         'few' => $item->quantity,
                         'price' => $this->getAmount($item->price, $orderInvoiceFull->currency),
@@ -510,7 +510,7 @@ class HolooController extends Controller
 
                         $scot = $this->getAmount($shipping_lines->total_tax, $orderInvoiceFull->currency);
                         $items[] = array(
-                            'id' => $orderInvoice->product_shipping,
+                            'id' => (int)$orderInvoice->product_shipping,
                             'Productid' => $orderInvoice->product_shipping,
                             'few' => 1,
                             'price' => $total-$scot,
@@ -541,7 +541,7 @@ class HolooController extends Controller
                         'apiname' => 'InvoicePost',
                         'dto' => array(
                             'invoiceinfo' => array(
-                                'id' => $orderInvoice->input("id"), //$oreder->id
+                                'id' => (int)$orderInvoice->input("id"), //$oreder->id
                                 'Type' => 1, //1 faktor frosh 2 pish factor, 3 sefaresh =>$type
                                 'kind' => 4,
                                 'Date' => $DateString->format('Y-m-d'),
@@ -1096,7 +1096,8 @@ class HolooController extends Controller
                 ],
             ],
         ];
-
+        
+        log::info("customer data: ".json_encode($data));
         $token = $this->getNewToken();
 
         curl_setopt_array($curl, array(
