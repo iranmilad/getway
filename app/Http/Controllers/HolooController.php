@@ -950,7 +950,8 @@ class HolooController extends Controller
             $file = "download/" . $filename . ".xls";
             Excel::store($excel, $file, "asset");
             return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
-        } else {
+        }
+        else {
             return $this->sendResponse('محصولی جهت تولید فایل خروجی یافت نشد', Response::HTTP_OK, ["result" => ["url" => "#"]]);
         }
 
