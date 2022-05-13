@@ -433,7 +433,7 @@ class WCController extends Controller
 
 
         $response = json_decode($response);
-
+        $this->recordLog('update single product',$response);
         curl_close($curl);
         return $response;
         //$this->sendResponse('محصول به روز شد', Response::HTTP_OK, ['res' => $response]);
