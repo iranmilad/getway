@@ -587,6 +587,7 @@ class WCController extends Controller
                     else{
                         $wholesale_customer_wholesale_price=0;
                     }
+                    $this->sendResponse('محصول با موفقیت دریافت شدند', Response::HTTP_OK,$WCProd);
                     // //return $holooProduct;
                     // $holooProduct=$this->findProduct($holooProduct,$holooID);
                     if(isset($WCProd->id) and $WCProd->id){
