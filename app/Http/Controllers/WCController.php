@@ -562,6 +562,7 @@ class WCController extends Controller
             ->first();
             auth()->login($user);
             $HolooIDs=explode(",",$request->MsgValue);
+            $HolooIDs=array_reverse($HolooIDs);
             //array_shift($HolooIDs);
 
             $config=json_decode($this->getWcConfig());
