@@ -271,9 +271,14 @@ class HolooController extends Controller
             if(!is_object($orderInvoiceFull)){
                 return $this->sendResponse('ثبت فاکتور بدلیل عدم یافت انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
+
+            $numberOfItem=0;
+
             foreach ($orderInvoiceFull->line_items as $item) {
+                $numberOfItem=+1;
                 if (is_array($item)) {
                     $item = (object) $item;
+
                 }
                 $HoloID=app('App\Http\Controllers\WCController')->get_product_holooCode($fetchAllWCProds,$item->product_id);
 
@@ -321,7 +326,7 @@ class HolooController extends Controller
                         $items[] = array(
                             'id' => (int)$orderInvoice->product_shipping,
                             'Productid' => $orderInvoice->product_shipping,
-                            'few' => 1,
+                            'few' => $numberOfItem,
                             'price' => $total-$scot,
                             'discount' => 0,
                             'levy' => 0,
@@ -367,10 +372,12 @@ class HolooController extends Controller
                 if ($payment_type == "bank") {
                     $data["generalinfo"]["dto"]["invoiceinfo"]["Bank"] = $sum_total;
                     $data["generalinfo"]["dto"]["invoiceinfo"]["BankSarfasl"] = $payment->number;
-                } elseif ($payment_type == "cash") {
+                }
+                elseif ($payment_type == "cash") {
                     $data["generalinfo"]["dto"]["invoiceinfo"]["Cash"] = $sum_total;
-                    $data["generalinfo"]["dto"]["invoiceinfo"]["CashSarfas"] = $payment->number;
-                } else {
+                    $data["generalinfo"]["dto"]["invoiceinfo"]["CashSarfasl"] = $payment->number;
+                }
+                else {
                     $data["generalinfo"]["dto"]["invoiceinfo"]["nesiyeh"] = $sum_total;
                 }
 
@@ -1028,7 +1035,7 @@ class HolooController extends Controller
 
         foreach ($holooCustomers->result as $holloCustomer) {
             if ($holloCustomer->c_Mobile == $customer->phone) {
-                log::info("get customer: ".json_encode($holloCustomer));
+                log::info("finded customer: ".$holloCustomer->c_Code_C);
                 return $holloCustomer->c_Code_C;
             }
         }
@@ -1076,14 +1083,14 @@ class HolooController extends Controller
                 "dto" => [
                     "custinfo" => [
                         [
-                            "code" => $customerId,
-                            "id" => $customerId,
+
+                            "id" => rand(100000, 999999),
                             "bedsarfasl" => $customer_account,
                             "name" => $customer->first_name . ' ' . $customer->last_name,
                             "ispurchaser" => true,
                             "isseller" => false,
                             "custtype" => 0,
-                            "Kind" => 3,
+                            "kind" => 3,
                             "tel" => "",
                             "mobile" => $customer->phone,
                             "city" => $customer->city,
@@ -1096,7 +1103,7 @@ class HolooController extends Controller
                 ],
             ],
         ];
-        
+
         log::info("customer data: ".json_encode($data));
         $token = $this->getNewToken();
 
