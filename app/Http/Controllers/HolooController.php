@@ -463,9 +463,9 @@ class HolooController extends Controller
             "insert_product_with_zero_inventory" => "0",
             "invoice_items_no_holo_code" => "0",
         );
-        //log::info("order: ".json_encode($orderInvoice->request->all()));
+        log::info("order: ".json_encode($orderInvoice->request->all()));
         #$orderInvoice->request->add($order);
-    return $this->sendResponse('test', Response::HTTP_OK, $orderInvoice);
+   return $this->sendResponse('test', Response::HTTP_OK, $orderInvoice);
 
 
         if ($orderInvoice->save_pre_sale_invoice) {
