@@ -675,6 +675,7 @@ class WCController extends Controller
         $response = curl_exec($curl);
         curl_close($curl);
         if ($response) {
+            log::info(json_encode($response));
             $response=json_decode($response)[0];
             return $response;
         }
