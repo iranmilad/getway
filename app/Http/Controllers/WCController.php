@@ -609,6 +609,7 @@ class WCController extends Controller
 
 
                         $response = $this->updateWCSingleProduct($param);
+                        log::info("webhook update product");
                         log::info(json_encode($response));
                     }
                     else{
@@ -666,7 +667,7 @@ class WCController extends Controller
                     else{
                         $response=$this->createSingleProduct($param);
                     }
-
+                    log::info("product insert");
                     log::info(json_encode($response));
 
                 }
