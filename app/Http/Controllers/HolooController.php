@@ -404,7 +404,7 @@ class HolooController extends Controller
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
                 }
                 else {
-                    return $this->sendResponse('test', Response::HTTP_OK,$response);
+                    //return $this->sendResponse('test', Response::HTTP_OK,$response);
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish wrong", "error");
                     $this->recordLog("Invoice Registration", $user->siteUrl, $response, "error");
                 }
@@ -595,7 +595,7 @@ class HolooController extends Controller
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
                 }
                 else {
-                    return $this->sendResponse('test', Response::HTTP_OK,$response);
+                    //return $this->sendResponse('test', Response::HTTP_OK,$response);
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish wrong", "error");
                     $this->recordLog("Invoice Registration", $user->siteUrl, $response, "error");
                 }
