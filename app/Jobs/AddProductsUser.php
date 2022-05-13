@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class AddProductsUser implements ShouldQueue
 {
@@ -144,6 +145,7 @@ class AddProductsUser implements ShouldQueue
 
         $response = curl_exec($curl);
         $decodedResponse = ($response) ?? json_decode($response);
+        log::info($decodedResponse);
         if ($this->type=="variable") {
             $this->AddProductVariation($decodedResponse->id,$this->param,$this->cluster);
         }
