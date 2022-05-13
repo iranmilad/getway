@@ -614,7 +614,8 @@ class WCController extends Controller
                 else if ($request->MsgType==0 && $config->insert_new_product==1) {
 
                     $holooProduct=$this->findProduct($HolooProds,$holooID);
-                    if(!$holooProduct) continue;
+                    //dd($holooProduct);
+                    if($holooProduct) continue;
 
                     $param = [
                         "holooCode" => $holooID,
@@ -625,7 +626,7 @@ class WCController extends Controller
                         'wholesale_customer_wholesale_price' => $this->get_price_type($config->wholesale_price_field,$holooProduct),
                         'stock_quantity' => ($holooProduct->exist>0) ? (int)$holooProduct->exist : 0,
                     ];
-                    dd($param );
+
                     // if ((!isset($config->insert_product_with_zero_inventory) ) || (isset($config->insert_product_with_zero_inventory) && $config->insert_product_with_zero_inventory == "0")) {
                     //     $param = [
                     //         "holooCode" => $holooID,
