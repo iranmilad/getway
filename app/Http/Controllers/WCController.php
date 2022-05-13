@@ -573,7 +573,7 @@ class WCController extends Controller
 
                 $WCProd=$this->getWcProductWithHolooId($holooID);
 
-                if ($WCProd) {    // if ($request->MsgType==1) {
+                if ($request->MsgType==0 && !$WCProd) {    // if ($request->MsgType==1) {
 
 
                     //update product
