@@ -901,7 +901,7 @@ class HolooController extends Controller
         $sheetes = [];
         foreach ($categories->result as $key => $category) {
             if (array_key_exists($category->m_groupcode.'-'.$category->s_groupcode, $data)) {
-                $sheetes[$category->m_groupname] = array();
+                $sheetes[$category->m_groupcode.'-'.$category->s_groupcode] = array();
 
                 curl_setopt_array($curl, array(
                     CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
@@ -935,7 +935,7 @@ class HolooController extends Controller
                             "holooStockQuantity" => (string) $HolooProd->exist ?? 0,
                         ];
 
-                        $sheetes[$category->m_groupname][] = $param;
+                        $sheetes[$category->m_groupcode.'-'.$category->s_groupcode][] = $param;
 
                     }
 
