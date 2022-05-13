@@ -279,6 +279,9 @@ class HolooController extends Controller
 
 
                 if ($HoloID) {
+                    if($item->total==0){
+                        continue;
+                    }
                     $total = $this->getAmount($item->total, $orderInvoiceFull->currency);
                     $lazy = 0;
                     $scot = 0;
@@ -312,20 +315,22 @@ class HolooController extends Controller
                     if (is_array($shipping_lines)) {
                         $shipping_lines = (object) $shipping_lines;
                     }
-
                     $total = $this->getAmount($shipping_lines->total, $orderInvoiceFull->currency);
-                    $scot = $this->getAmount($shipping_lines->total_tax, $orderInvoiceFull->currency);
-                    $items[] = array(
-                        'id' => $orderInvoice->product_shipping,
-                        'Productid' => $orderInvoice->product_shipping,
-                        'few' => 1,
-                        'price' => $total-$scot,
-                        'discount' => 0,
-                        'levy' => 0,
-                        'scot' => $scot,
-                    );
+                    if ($total>0){
+                        $scot = $this->getAmount($shipping_lines->total_tax, $orderInvoiceFull->currency);
+                        $items[] = array(
+                            'id' => $orderInvoice->product_shipping,
+                            'Productid' => $orderInvoice->product_shipping,
+                            'few' => 1,
+                            'price' => $total-$scot,
+                            'discount' => 0,
+                            'levy' => 0,
+                            'scot' => $scot,
+                        );
 
-                    $sum_total += $total;
+                        $sum_total += $total;
+
+                    }
                 }
 
             }
@@ -425,17 +430,7 @@ class HolooController extends Controller
             $_data = (object) $orderInvoice->input("date_created");
             $DateString = Carbon::parse($_data->date ?? now(), $_data->timezone);
             $DateString->setTimezone('Asia/Tehran');
-            //return $DateString->format('Y-m-d');
 
-            // if (isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid == "paid") {
-            //     $type = 1;
-            // } else if (isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid == "prePaid") {
-            //     $type = 2;
-            // } else if (isset($orderInvoice->invoicePaid) && $orderInvoice->invoicePaid == "order") {
-            //     $type = 3;
-            // } else {
-            //     return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
-            // }
             if (!$orderInvoice->save_sale_invoice || $orderInvoice->save_sale_invoice == 0) {
                 return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
@@ -474,6 +469,9 @@ class HolooController extends Controller
 
 
                 if ($HoloID) {
+                    if($item->total==0){
+                        continue;
+                    }
                     $total = $this->getAmount($item->total, $orderInvoiceFull->currency);
                     $lazy = 0;
                     $scot = 0;
@@ -507,20 +505,22 @@ class HolooController extends Controller
                     if (is_array($shipping_lines)) {
                         $shipping_lines = (object) $shipping_lines;
                     }
-
                     $total = $this->getAmount($shipping_lines->total, $orderInvoiceFull->currency);
-                    $scot = $this->getAmount($shipping_lines->total_tax, $orderInvoiceFull->currency);
-                    $items[] = array(
-                        'id' => $orderInvoice->product_shipping,
-                        'Productid' => $orderInvoice->product_shipping,
-                        'few' => 1,
-                        'price' => $total-$scot,
-                        'discount' => 0,
-                        'levy' => 0,
-                        'scot' => $scot,
-                    );
+                    if ($total>0){
 
-                    $sum_total += $total;
+                        $scot = $this->getAmount($shipping_lines->total_tax, $orderInvoiceFull->currency);
+                        $items[] = array(
+                            'id' => $orderInvoice->product_shipping,
+                            'Productid' => $orderInvoice->product_shipping,
+                            'few' => 1,
+                            'price' => $total-$scot,
+                            'discount' => 0,
+                            'levy' => 0,
+                            'scot' => $scot,
+                        );
+
+                        $sum_total += $total;
+                    }
                 }
 
             }
