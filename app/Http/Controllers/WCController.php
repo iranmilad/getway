@@ -610,7 +610,7 @@ class WCController extends Controller
                     if(!$holooProduct) continue;
 
 
-                    if ((!isset($config->insert_product_with_zero_inventory) && $holooProduct->exist > 0) || (isset($config->insert_product_with_zero_inventory) && $config->insert_product_with_zero_inventory == "0" && $holooProduct->exist > 0)) {
+                    if ((!isset($config->insert_product_with_zero_inventory) ) || (isset($config->insert_product_with_zero_inventory) && $config->insert_product_with_zero_inventory == "0")) {
                         $param = [
                             "holooCode" => $holooID,
                             "holooName" => $this->arabicToPersian($holooProduct->a_Name),
