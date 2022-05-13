@@ -569,14 +569,17 @@ class WCController extends Controller
                 $HolooProds  = $this->fetchCategoryHolloProds($config->product_cat);
             }
 
-
             foreach($HolooIDs as $holooID){
 
-                if ($request->MsgType==1) {
+                $WCProd=$this->getWcProductWithHolooId($holooID);
+
+                if ($WCProd) {    // if ($request->MsgType==1) {
+
+
+                    //update product
 
                     $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
                     $holooProduct=json_decode($holooProduct);
-                    //update product
                     $WCProd=$this->getWcProductWithHolooId($holooID);
                     $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
                     // //return $holooProduct;
@@ -604,10 +607,10 @@ class WCController extends Controller
                 }
                 else if ($request->MsgType==0 && $config->insert_new_product==1) {
 
-
                     $holooProduct=$this->findProduct($HolooProds,$holooID);
 
                     if(!$holooProduct) continue;
+
 
 
                     if ((!isset($config->insert_product_with_zero_inventory) ) || (isset($config->insert_product_with_zero_inventory) && $config->insert_product_with_zero_inventory == "0")) {
