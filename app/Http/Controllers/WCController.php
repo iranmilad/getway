@@ -175,6 +175,7 @@ class WCController extends Controller
 
         curl_close($curl);
         $decodedResponse = ($response) ?? json_decode($response);
+
         if ($response && isset($decodedResponse->id)){
 
             if ($type=="variable") {
@@ -552,7 +553,6 @@ class WCController extends Controller
         //   }
         log::info($request);
         log::info("webhook resived");
-        $this->sendResponse('محصول با موفقیت دریافت شدند', Response::HTTP_OK,"ok");
 
         if(isset($request->Table) && strtolower($request->Table)=="article" && ($request->MsgType==1 or $request->MsgType==0)){
             $Dbname=explode("_",$request->Dbname);
@@ -569,7 +569,6 @@ class WCController extends Controller
             if ($request->MsgType==0 && $config->insert_new_product==1) {
                 $HolooProds  = $this->fetchCategoryHolloProds($config->product_cat);
             }
-
             foreach($HolooIDs as $holooID){
 
                 $WCProd=$this->getWcProductWithHolooId($holooID);
@@ -615,9 +614,7 @@ class WCController extends Controller
                 else if ($request->MsgType==0 && $config->insert_new_product==1) {
 
                     $holooProduct=$this->findProduct($HolooProds,$holooID);
-
                     if(!$holooProduct) continue;
-
 
 
                     if ((!isset($config->insert_product_with_zero_inventory) ) || (isset($config->insert_product_with_zero_inventory) && $config->insert_product_with_zero_inventory == "0")) {
@@ -646,7 +643,7 @@ class WCController extends Controller
                     else{
                         continue;
                     }
-
+                    dd($param );
 
                     if(isset($holooProduct->Poshak)){
                         $response=$this->createSingleProduct($param,null,"variable",$holooProduct->Poshak);
