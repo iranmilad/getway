@@ -499,7 +499,7 @@ class WCController extends Controller
                                 ];
                                 log::info("add new update product to queue");
                                 log::info($data);
-                                $this->updateWCSingleProduct($data);
+                                //$this->updateWCSingleProduct($data);
                                 //$data=[(int)$WCProd->sale_price  ,$this->get_price_type($config->special_price_field,$HolooProd),((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)),$config->special_price_field];
                                 //return $this->sendResponse('همه محصولات به روز رسانی شدند.', Response::HTTP_OK, $data);
                                 UpdateProductsUser::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret],$data,$wcHolooCode)->onQueue("high");
