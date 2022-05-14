@@ -4,13 +4,11 @@ namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 
 class UpdateProductsUser implements ShouldQueue
 {
@@ -96,12 +94,8 @@ class UpdateProductsUser implements ShouldQueue
     }
 
 
-    public function boot()
+    public function uniqueVia()
     {
-        Queue::failing(function (JobFailed $event) {
-           log::alert( $event->connectionName);
-           log::alert( $event->job);
-           log::alert( $event->exception);
-        });
+        return Cache::driver('redis');
     }
 }
