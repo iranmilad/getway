@@ -33,7 +33,7 @@ Route::group([
 
     //holoo webhook event
     Route::post('/webhook', [WCController::class, 'holooWebHook']);
-
+    Route::post('/webhook2', [WCController::class, 'holooWebHook1']);
 
     //login and user group
     Route::post('/login', [AuthController::class, 'login']);
