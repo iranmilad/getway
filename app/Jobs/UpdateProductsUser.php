@@ -25,7 +25,7 @@ class UpdateProductsUser implements ShouldQueue
      */
     public function __construct($user,$param,$flag)
     {
-
+        Log::info('queue update product start');
         $this->user=$user;
         $this->param=$param;
         $this->flag=$flag;
