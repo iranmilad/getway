@@ -1049,7 +1049,7 @@ class WCController extends Controller
 
     public function test(){
         $user=auth()->user();
-        $wcHolooCode = $user->id."0101012";
+        $wcHolooCode = "0101012";
 
         $data=array (
             'id' => 6445,
@@ -1060,7 +1060,6 @@ class WCController extends Controller
             'wholesale_customer_wholesale_price' => '',
             'stock_quantity' => 25,
         );
-        Log::info( $user);
         //$s=dispatch((new UpdateProductsUser($user,$data,$wcHolooCode))->onQueue('high')->onConnection('redis'));
         $s=UpdateProductsUser::dispatch($user,$data,$wcHolooCode)->onConnection('redis');
         //$s=$this->queue_update($user,$data,$wcHolooCode);
