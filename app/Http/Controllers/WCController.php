@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\createSingleProduct;
+use App\Jobs\test;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Jobs\UpdateProductsUser;
