@@ -499,7 +499,7 @@ class WCController extends Controller
                                 ];
                                 log::info("add new update product to queue");
                                 log::info($data);
-                                
+
                                 //$data=[(int)$WCProd->sale_price  ,$this->get_price_type($config->special_price_field,$HolooProd),((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)),$config->special_price_field];
                                 //return $this->sendResponse('همه محصولات به روز رسانی شدند.', Response::HTTP_OK, $data);
                                 UpdateProductsUser::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret],$data,$wcHolooCode)->onQueue("high");
@@ -758,7 +758,7 @@ class WCController extends Controller
                         ];
 
 
-                        updateWCSingleProduct::dispatch($user,$param,$holooID)->onQueue("high");
+                        updateWCSingleProduct::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret],$param,$holooID)->onQueue("high");
                         // $response = $this->updateWCSingleProduct($param);
                         // log::info("webhook update product");
                         // log::info(json_encode($response));
@@ -813,11 +813,11 @@ class WCController extends Controller
 
 
                     if(isset($holooProduct->Poshak)){
-                        createSingleProduct::dispatch($user,$param,$holooID,null,"variable",$holooProduct->Poshak)->onQueue("medium");
+                        createSingleProduct::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret],$param,$holooID,null,"variable",$holooProduct->Poshak)->onQueue("medium");
                         // $response=$this->createSingleProduct($param,null,"variable",$holooProduct->Poshak);
                     }
                     else{
-                        createSingleProduct::dispatch($user,$param,$holooID)->onQueue("medium");
+                        createSingleProduct::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret],$param,$holooID)->onQueue("medium");
                         // $response=$this->createSingleProduct($param);
                     }
                     // log::info("product insert");
@@ -1212,7 +1212,7 @@ class WCController extends Controller
             'stock_quantity' => 25,
         );
         //$s=dispatch((new UpdateProductsUser($user,$data,$wcHolooCode))->onQueue('high')->onConnection('redis'));
-        $s=UpdateProductsUser::dispatch($user,$data,$wcHolooCode)->onQueue("high")->onConnection('redis');
+        $s=UpdateProductsUser::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret],$data,$wcHolooCode)->onQueue("high")->onConnection('redis');
         //$s=$this->queue_update($user,$data,$wcHolooCode);
         dd($s);
         return;
