@@ -51,6 +51,8 @@ class HolooController extends Controller
             $response = json_decode($response);
 
             if ($response) {
+                log::info("take new token request and response");
+                log::info($response);
                 User::where(['id' => $user->id])
                 ->update([
                     'cloudTokenExDate' => Carbon::now()->addDay(1),
