@@ -23,12 +23,12 @@ class test implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($user,$param,$flag)
+    public function __construct($user,$param)
     {
-        Log::info(' queue update product start'.$flag);
+        Log::info(' queue update product start');
         $this->user=$user;
         $this->param=$param;
-        $this->flag=$flag;
+        // $this->flag=$flag;
     }
 
     /**
@@ -38,7 +38,7 @@ class test implements ShouldQueue
      */
     public function handle()
     {
-        Log::info(' queue update product start11'.$this->flag);
+        Log::info(' queue update product start11');
     }
 
 }
