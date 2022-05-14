@@ -502,7 +502,7 @@ class WCController extends Controller
                                 //$data=[(int)$WCProd->sale_price  ,$this->get_price_type($config->special_price_field,$HolooProd),((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)),$config->special_price_field];
                                 //return $this->sendResponse('همه محصولات به روز رسانی شدند.', Response::HTTP_OK, $data);
                                 // $s=UpdateProductsUser::dispatch($user,$data,$wcHolooCode)->onQueue("high");
-                                test::dispatch($user,$data)->onQueue("high");
+                                test::dispatch($user)->onQueue("high");
                                 //dispatch((new UpdateProductsUser($user,$data,$WCProd->meta_data[0]->value))->onConnection('queue')->onQueue('high'));
 
                                 array_push($response_product,$wcHolooCode);
