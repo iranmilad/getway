@@ -1062,6 +1062,7 @@ class WCController extends Controller
         );
 
         $s=UpdateProductsUser::dispatch($user,$data,$wcHolooCode)->onConnection('redis');
+        dd($s);
         return null;
     }
 }
