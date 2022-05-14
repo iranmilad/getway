@@ -39,7 +39,6 @@ class updateWCSingleProduct implements ShouldQueue
     public function handle()
     {
         Log::info('update product for flag ' . $this->flag);
-
         $curl = curl_init();
         $meta = array(
             (object)array(
