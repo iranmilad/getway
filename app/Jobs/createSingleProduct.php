@@ -3,33 +3,36 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 
-class AddProductsUser implements ShouldQueue
+class createSingleProduct implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $user;
     protected $param;
-    protected $categories;
-    protected $type;
-    protected $cluster;
     public $flag;
+    public $categories;
+    public $type;
+    public $cluster;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($user,$param,$categories,$flag,$type="simple",$cluster=[])
+    public function __construct($user,$param,$flag,$categories=null,$type="simple",$cluster=[])
     {
+        Log::info(' queue update product start');
         $this->user=$user;
         $this->param=$param;
-        $this->categories=$categories;
         $this->flag=$flag;
+        $this->categories=$categories;
         $this->type=$type;
         $this->cluster=$cluster;
     }
@@ -41,14 +44,12 @@ class AddProductsUser implements ShouldQueue
      */
     public function handle()
     {
+        Log::info('update product for flag ' . $this->flag);
+
         $meta = array(
             (object)array(
                 'key' => '_holo_sku',
                 'value' => $this->param["holooCode"]
-            ),
-            (object)array(
-                'key' => 'wholesale_customer_wholesale_price',
-                'value' => $this->param["wholesale_customer_wholesale_price"]
             )
         );
         if ($this->type=="variable") {
@@ -75,22 +76,24 @@ class AddProductsUser implements ShouldQueue
                     'meta_data' => $meta,
                     'categories' => $category,
                     'attributes' => $attributes,
+                    "manage_stock" => true,
                 );
             }
             else{
                 $data = array(
                     'name' => $this->param["holooName"],
                     'type' => $this->type,
-                    'regular_price' => $this->param["holooRegularPrice"],
-                    'stock_quantity' =>(int) $this->param["holooStockQuantity"],
+                    'regular_price' => $this->param["regular_price"],
+                    'stock_quantity' => $this->param["stock_quantity"],
                     'status' => 'draft',
-                    "manage_stock" => true,
                     'meta_data' => $meta,
                     'attributes' => $attributes,
+                    "manage_stock" => true,
                 );
             }
         }
         else {
+
             if ($this->categories !=null) {
                 $category=array(
                     (object)array(
@@ -99,31 +102,30 @@ class AddProductsUser implements ShouldQueue
                     )
                 );
                 $data = array(
-                    'name' => $this->param["name"],
-                    'type' => 'simple',
+                    'name' => $this->param["holooName"],
+                    'type' => $this->type,
                     'regular_price' => $this->param["regular_price"],
-                    'price' => $this->param["price"],
-                    'sale_price' => ((int)$this->param["sale_price"]==0) ? null:$this->param["sale_price"],
-                    'stock_quantity' =>(int)$this->param["stock_quantity"],
-                    "manage_stock" => true,
+                    'stock_quantity' => $this->param["stock_quantity"],
                     'status' => 'draft',
                     'meta_data' => $meta,
-                    'categories' => $category
+                    'categories' => $category,
+                    "manage_stock" => true,
                 );
             }
             else{
                 $data = array(
-                    'name' => $this->param["name"],
-                    'type' => 'simple',
+                    'name' => $this->param["holooName"],
+                    'type' => $this->type,
                     'regular_price' => $this->param["regular_price"],
-                    'sale_price' => ((int)$this->param["sale_price"]==0) ? null:$this->param["sale_price"],
-                    'stock_quantity' => (int)$this->param["stock_quantity"],
-                    "manage_stock" => true,
+                    'stock_quantity' => $this->param["stock_quantity"],
                     'status' => 'draft',
                     'meta_data' => $meta,
+                    "manage_stock" => true,
                 );
             }
         }
+
+
         $data = json_encode($data);
         //return response($data);
 
@@ -133,23 +135,29 @@ class AddProductsUser implements ShouldQueue
             CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 20,
+            CURLOPT_TIMEOUT => 0,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => $data,
+            CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
             ),
-            CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
         ));
 
         $response = curl_exec($curl);
+
+        curl_close($curl);
         $decodedResponse = ($response) ?? json_decode($response);
-        log::info($decodedResponse);
-        if ($this->type=="variable") {
-            $this->AddProductVariation($decodedResponse->id,$this->param,$this->cluster);
+
+        if ($response && isset($decodedResponse->id)){
+
+            if ($this->type=="variable") {
+               $a= $this->AddProductVariation($decodedResponse->id,$this->param,$this->cluster);
+            }
         }
+
     }
 
     /**
@@ -162,16 +170,14 @@ class AddProductsUser implements ShouldQueue
         return $this->user->id.$this->flag;
     }
 
-
     private function AddProductVariation($id,$product,$clusters){
-
         $curl = curl_init();
 
         // $data = array(
         //     'name' => $product["holooName"],
         //     'type' => $type,
-        //     'regular_price' => $product["holooRegularPrice"],
-        //     'stock_quantity' => $product["holooStockQuantity"],
+        //     'regular_price' => $product["regular_price"],
+        //     'stock_quantity' => $product["stock_quantity"],
         //     'status' => 'draft',
         //     'meta_data' => $meta,
         //     'attributes' => $attributes,
@@ -186,11 +192,10 @@ class AddProductsUser implements ShouldQueue
         foreach($clusters as $cluster){
 
             $data=array(
-                'description' => $cluster->Name,
-                'regular_price' => $product["holooRegularPrice"],
-                'sale_price' => $product["holooRegularPrice"],
+                'description' => $this->arabicToPersian($cluster->Name),
+                'regular_price' => $product["regular_price"],
+                'sale_price' => $product["regular_price"],
                 'stock_quantity' => $cluster->Few,
-                "manage_stock" => true,
                 //'status' => 'draft',
                 'meta_data' => $meta,
 
@@ -211,7 +216,7 @@ class AddProductsUser implements ShouldQueue
               CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
               CURLOPT_CUSTOMREQUEST => 'POST',
               CURLOPT_POSTFIELDS => $data,
-              CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
+              CURLOPT_USERPWD =>  $this->user->consumerKey. ":" .  $this->user->consumerSecret,
               CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
               ),
@@ -227,7 +232,6 @@ class AddProductsUser implements ShouldQueue
 
     }
 
-
     private function variableOptions($clusters){
         $options=[];
 
@@ -239,4 +243,30 @@ class AddProductsUser implements ShouldQueue
 
     }
 
+    public static function arabicToPersian($string)
+    {
+
+        $characters = [
+            'ك' => 'ک',
+            'دِ' => 'د',
+            'بِ' => 'ب',
+            'زِ' => 'ز',
+            'ذِ' => 'ذ',
+            'شِ' => 'ش',
+            'سِ' => 'س',
+            'ى' => 'ی',
+            'ي' => 'ی',
+            '١' => '۱',
+            '٢' => '۲',
+            '٣' => '۳',
+            '٤' => '۴',
+            '٥' => '۵',
+            '٦' => '۶',
+            '٧' => '۷',
+            '٨' => '۸',
+            '٩' => '۹',
+            '٠' => '۰',
+        ];
+        return str_replace(array_keys($characters), array_values($characters), $string);
+    }
 }

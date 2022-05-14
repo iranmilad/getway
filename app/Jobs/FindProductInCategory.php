@@ -84,20 +84,20 @@ class FindProductInCategory implements ShouldQueue
                 if ((!isset($this->request["insert_product_with_zero_inventory"]) && $HolooProd->exist > 0) || (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "0" && $HolooProd->exist > 0)) {
 
                     if (isset($HolooProd->Poshak)) {
-                        AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
+                        AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak)->onQueue("low");
                     }
                     else{
                         //Log::info(['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""]);
-                        AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""], $HolooProd->a_Code);
+                        AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""], $HolooProd->a_Code)->onQueue("low");
                     }
                 }
                 elseif (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "1") {
 
                     if (isset($HolooProd->Poshak)) {
-                        AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
+                        AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak)->onQueue("low");
                     }
                     else{
-                        AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""], $HolooProd->a_Code);
+                        AddProductsUser::dispatch($this->user, $param, ['id' => $this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode], "name" => ""], $HolooProd->a_Code)->onQueue("low");
                     }
 
                 }
@@ -149,7 +149,7 @@ class FindProductInCategory implements ShouldQueue
      */
     public function uniqueId()
     {
-        return $this->user->id.'_'.$this->flag;
+        return $this->user->id.$this->flag;
     }
 
 }

@@ -800,7 +800,7 @@ class HolooController extends Controller
 
         foreach ($categories->result as $key => $category) {
             if (array_key_exists($category->m_groupcode.'-'.$category->s_groupcode, $data) && $data[$category->m_groupcode.'-'.$category->s_groupcode]!="") {
-                FindProductInCategory::dispatch($user,$category,$token,$wcHolooExistCode,$param,$category->m_groupcode.'-'.$category->s_groupcode);
+                FindProductInCategory::dispatch($user,$category,$token,$wcHolooExistCode,$param,$category->m_groupcode.'-'.$category->s_groupcode)->onQueue("low");
 
                 // curl_setopt_array($curl, array(
                 //     CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
