@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
+use PHPUnit\Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -94,8 +94,8 @@ class UpdateProductsUser implements ShouldQueue
     }
 
 
-    public function uniqueVia()
+    public function failed(Exception $exception)
     {
-        return Cache::driver('redis');
+       Log::alert( 'UpdateProductsUser job failed for user ' . $this->user->id . ' with exception ' . $exception->getMessage());
     }
 }
