@@ -46,7 +46,7 @@ Route::group([
 
     Route::post('/updateUser', [AuthController::class, 'updateWordpressSettings']);
 
-    Route::get('/test', [WCController::class, 'testProductVar']);
+   // Route::get('/test', [WCController::class, 'testProductVar']);
 
 
 });
