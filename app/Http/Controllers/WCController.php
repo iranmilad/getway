@@ -1049,7 +1049,7 @@ class WCController extends Controller
 
     public function test(){
         $user=auth()->user();
-        $wcHolooCode = "0101012";
+        $wcHolooCode = $user->id."0101012";
 
         $data=array (
             'id' => 6445,

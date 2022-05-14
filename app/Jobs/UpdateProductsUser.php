@@ -87,8 +87,8 @@ class UpdateProductsUser implements ShouldQueue
      *
      * @return string
      */
-    public function uniqueId()
-    {
-        return $this->user->id.'_'.$this->flag;
-    }
+    // public function uniqueId()
+    // {
+    //     return $this->user->id.'_'.$this->flag;
+    // }
 }
