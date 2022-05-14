@@ -1068,29 +1068,29 @@ class WCController extends Controller
     }
 
     public function queue_update($user,$param,$flag){
-        Log::info('update product for flag ' . $this->flag);
+        Log::info('update product for flag ' . $flag);
 
         $curl = curl_init();
         $meta = array(
             (object)array(
                 'key' => 'wholesale_customer_wholesale_price',
-                'value' => $this->param["wholesale_customer_wholesale_price"]
+                'value' => $param["wholesale_customer_wholesale_price"]
             )
         );
         $data=[
-            "regular_price"=>(string)$this->param['regular_price'],     //problem on update all need to convert to string
-            "sale_price"=>((int)$this->param["sale_price"]==0) ? null:(string)$this->param['sale_price'],           //problem on update all need to convert to string
-            "price" =>$this->param['price'],
-            "stock_quantity"=>(int)$this->param['stock_quantity'],
-            //'wholesale_customer_wholesale_price' => $this->param['wholesale_customer_wholesale_price'],
-            "name"=>$this->param['name'],
+            "regular_price"=>(string)$param['regular_price'],     //problem on update all need to convert to string
+            "sale_price"=>((int)$param["sale_price"]==0) ? null:(string)$param['sale_price'],           //problem on update all need to convert to string
+            "price" =>$param['price'],
+            "stock_quantity"=>(int)$param['stock_quantity'],
+            //'wholesale_customer_wholesale_price' => $param['wholesale_customer_wholesale_price'],
+            "name"=>$param['name'],
             "meta_data"=>$meta,
         ];
         log::info($data);
         $data = json_encode($data);
         //$data = json_encode($data);
         curl_setopt_array($curl, array(
-            CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products/'. $this->param['id'],
+            CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products/'. $param['id'],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -1099,7 +1099,7 @@ class WCController extends Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => $data,
-            CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
+            CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
             CURLOPT_HTTPHEADER => array(
               //'Content-Type: multipart/form-data',
               'Content-Type: application/json',
