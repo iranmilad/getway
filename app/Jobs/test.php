@@ -15,14 +15,20 @@ class test implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
 
+    protected $user;
+    protected $param;
+    public $flag;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($user,$param,$flag)
     {
-     
+        Log::info(' queue update product start'.$flag);
+        $this->user=$user;
+        $this->param=$param;
+        $this->flag=$flag;
     }
 
     /**
