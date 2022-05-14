@@ -1061,7 +1061,7 @@ class WCController extends Controller
             'stock_quantity' => 25,
         );
         //$s=dispatch((new UpdateProductsUser($user,$data,$wcHolooCode))->onQueue('high')->onConnection('redis'));
-        $s=UpdateProductsUser::dispatch($user,$data,$wcHolooCode)->onConnection('mysql');
+        $s=UpdateProductsUser::dispatch($user,$data,$wcHolooCode)->onConnection('redis');
         //$s=$this->queue_update($user,$data,$wcHolooCode);
         dd($s);
         return;
