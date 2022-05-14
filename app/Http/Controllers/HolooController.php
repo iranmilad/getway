@@ -566,7 +566,7 @@ class HolooController extends Controller
                     $data["generalinfo"]["dto"]["invoiceinfo"]["BankSarfasl"] = $payment->number;
                 } elseif ($payment_type == "cash") {
                     $data["generalinfo"]["dto"]["invoiceinfo"]["Cash"] = $sum_total;
-                    $data["generalinfo"]["dto"]["invoiceinfo"]["CashSarfas"] = $payment->number;
+                    $data["generalinfo"]["dto"]["invoiceinfo"]["CashSarfasl"] = $payment->number;
                 } else {
                     $data["generalinfo"]["dto"]["invoiceinfo"]["nesiyeh"] = $sum_total;
                 }
