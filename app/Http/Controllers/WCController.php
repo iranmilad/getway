@@ -1057,7 +1057,7 @@ class WCController extends Controller
             'regular_price' => 250000,
             'price' => 0,
             'sale_price' => 0,
-            'wholesale_customer_wholesale_price' => NULL,
+            'wholesale_customer_wholesale_price' => '',
             'stock_quantity' => 25,
         );
 
