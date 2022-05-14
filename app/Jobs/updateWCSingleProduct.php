@@ -94,6 +94,6 @@ class updateWCSingleProduct implements ShouldQueue
      */
     public function uniqueId()
     {
-        return $this->user->id.$this->flag;
+        // return $this->user->id.$this->flag;
     }
 }
