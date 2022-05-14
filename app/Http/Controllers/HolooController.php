@@ -208,7 +208,7 @@ class HolooController extends Controller
                 $response = curl_exec($curl);
 
                 if($response){
-                    $totalProduct=array_merge(json_decode($response, true),$totalProduct);
+                    $totalProduct=array_merge(json_decode($response, true)??[],$totalProduct??[]);
                 }
 
             }
