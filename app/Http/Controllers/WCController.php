@@ -494,7 +494,7 @@ class WCController extends Controller
                                     'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($wholesale_customer_wholesale_price) && (int)$wholesale_customer_wholesale_price != $this->get_price_type($config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($config->wholesale_price_field,$HolooProd)  : ((isset($wholesale_customer_wholesale_price)) ? (int)$wholesale_customer_wholesale_price : null),
                                     'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1" && (int) $HolooProd->exist>0 and isset($WCProd->stock_quantity)) ? (int) $HolooProd->exist : 0,
                                 ];
-                                log::info("add new product to queue");
+                                log::info("add new update product to queue");
                                 log::info($data);
                                 //$data=[(int)$WCProd->sale_price  ,$this->get_price_type($config->special_price_field,$HolooProd),((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)),$config->special_price_field];
                                 //return $this->sendResponse('همه محصولات به روز رسانی شدند.', Response::HTTP_OK, $data);
@@ -1044,6 +1044,24 @@ class WCController extends Controller
             }
         }
 
+        return null;
+    }
+
+    public function test(){
+        $user=auth()->user();
+        $wcHolooCode = "0101012";
+
+        $data=array (
+            'id' => 6445,
+            'name' => 'استیج 25.5 بدون پایه',
+            'regular_price' => 250000,
+            'price' => 0,
+            'sale_price' => 0,
+            'wholesale_customer_wholesale_price' => NULL,
+            'stock_quantity' => 25,
+        );
+
+        $s=UpdateProductsUser::dispatch($user,$data,$wcHolooCode)->onConnection('redis');
         return null;
     }
 }

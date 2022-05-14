@@ -60,6 +60,9 @@ Route::group([
     Route::post('/wcadd', [WCController::class, 'createSingleProduct']);
     Route::post('/getProductConflict', [WCController::class, 'compareProductsFromWoocommerceToHoloo']);
 
+    Route::get('/test', [WCController::class, 'test']);
+
+
     Route::post('/updateWCSingleProduct', [WCController::class, 'updateWCSingleProduct']);
     Route::post('/updateAllProductFromHolooToWC', [WCController::class, 'updateAllProductFromHolooToWC']);
     Route::post('/wcSingleProductUpdate', [HolooController::class, 'wcSingleProductUpdate']);
