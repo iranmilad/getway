@@ -26,9 +26,9 @@ class UpdateProductsUser implements ShouldQueue
     public function __construct($user,$param,$flag)
     {
         Log::info(' queue update product start');
-        // $this->user=$user;
-        // $this->param=$param;
-        // $this->flag=$flag;
+        $this->user=$user;
+        $this->param=$param;
+        $this->flag=$flag;
     }
 
     /**
@@ -40,47 +40,47 @@ class UpdateProductsUser implements ShouldQueue
     {
         Log::info('update product for flag ' . $this->flag);
 
-        // $curl = curl_init();
-        // $meta = array(
-        //     (object)array(
-        //         'key' => 'wholesale_customer_wholesale_price',
-        //         'value' => $this->param["wholesale_customer_wholesale_price"]
-        //     )
-        // );
-        // $data=[
-        //     "regular_price"=>(string)$this->param['regular_price'],     //problem on update all need to convert to string
-        //     "sale_price"=>((int)$this->param["sale_price"]==0) ? null:(string)$this->param['sale_price'],           //problem on update all need to convert to string
-        //     "price" =>$this->param['price'],
-        //     "stock_quantity"=>(int)$this->param['stock_quantity'],
-        //     //'wholesale_customer_wholesale_price' => $this->param['wholesale_customer_wholesale_price'],
-        //     "name"=>$this->param['name'],
-        //     "meta_data"=>$meta,
-        // ];
-        // log::info($data);
-        // $data = json_encode($data);
-        // //$data = json_encode($data);
-        // curl_setopt_array($curl, array(
-        //     CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products/'. $this->param['id'],
-        //     CURLOPT_RETURNTRANSFER => true,
-        //     CURLOPT_ENCODING => '',
-        //     CURLOPT_MAXREDIRS => 10,
-        //     CURLOPT_TIMEOUT => 0,
-        //     CURLOPT_FOLLOWLOCATION => true,
-        //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        //     CURLOPT_CUSTOMREQUEST => 'POST',
-        //     CURLOPT_POSTFIELDS => $data,
-        //     CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
-        //     CURLOPT_HTTPHEADER => array(
-        //       //'Content-Type: multipart/form-data',
-        //       'Content-Type: application/json',
-        //     ),
-        // ));
+        $curl = curl_init();
+        $meta = array(
+            (object)array(
+                'key' => 'wholesale_customer_wholesale_price',
+                'value' => $this->param["wholesale_customer_wholesale_price"]
+            )
+        );
+        $data=[
+            "regular_price"=>(string)$this->param['regular_price'],     //problem on update all need to convert to string
+            "sale_price"=>((int)$this->param["sale_price"]==0) ? null:(string)$this->param['sale_price'],           //problem on update all need to convert to string
+            "price" =>$this->param['price'],
+            "stock_quantity"=>(int)$this->param['stock_quantity'],
+            //'wholesale_customer_wholesale_price' => $this->param['wholesale_customer_wholesale_price'],
+            "name"=>$this->param['name'],
+            "meta_data"=>$meta,
+        ];
+        log::info($data);
+        $data = json_encode($data);
+        //$data = json_encode($data);
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products/'. $this->param['id'],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
+            CURLOPT_HTTPHEADER => array(
+              //'Content-Type: multipart/form-data',
+              'Content-Type: application/json',
+            ),
+        ));
 
-        // $response = curl_exec($curl);
+        $response = curl_exec($curl);
 
-        // log::info(json_encode($response));
+        log::info(json_encode($response));
 
-        // curl_close($curl);
+        curl_close($curl);
     }
 
     /**
