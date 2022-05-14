@@ -17,7 +17,7 @@ class UpdateProductsUser implements ShouldQueue
     protected $user;
     protected $param;
     public $flag;
-
+    public $uniqueFor = 3600;
     /**
      * Create a new job instance.
      *
