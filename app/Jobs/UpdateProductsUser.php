@@ -2,13 +2,13 @@
 
 namespace App\Jobs;
 
-use PHPUnit\Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 
 class UpdateProductsUser implements ShouldQueue
 {
@@ -17,7 +17,7 @@ class UpdateProductsUser implements ShouldQueue
     protected $user;
     protected $param;
     public $flag;
-    public $uniqueFor = 3600;
+
     /**
      * Create a new job instance.
      *
@@ -25,7 +25,7 @@ class UpdateProductsUser implements ShouldQueue
      */
     public function __construct($user,$param,$flag)
     {
-        Log::info('queue update product start');
+        Log::info(' queue update product start');
         $this->user=$user;
         $this->param=$param;
         $this->flag=$flag;
@@ -91,11 +91,5 @@ class UpdateProductsUser implements ShouldQueue
     public function uniqueId()
     {
         return $this->user->id.'_'.$this->flag;
-    }
-
-
-    public function failed(Exception $exception)
-    {
-       Log::alert( 'UpdateProductsUser job failed for user ' . $this->user->id . ' with exception ' . $exception->getMessage());
     }
 }
