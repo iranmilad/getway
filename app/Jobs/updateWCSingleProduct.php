@@ -87,13 +87,13 @@ class updateWCSingleProduct implements ShouldQueue
         curl_close($curl);
     }
 
-    /**
-     * The unique ID of the job.
-     *
-     * @return string
-     */
-    public function uniqueId()
-    {
-        // return $this->user->id.$this->flag;
-    }
+    // /**
+    //  * The unique ID of the job.
+    //  *
+    //  * @return string
+    //  */
+    // public function uniqueId()
+    // {
+    //     // return $this->user->id.$this->flag;
+    // }
 }
