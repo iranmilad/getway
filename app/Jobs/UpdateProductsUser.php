@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -91,5 +93,15 @@ class UpdateProductsUser implements ShouldQueue
     public function uniqueId()
     {
         return $this->user->id.'_'.$this->flag;
+    }
+
+
+    public function boot()
+    {
+        Queue::failing(function (JobFailed $event) {
+           log::alert( $event->connectionName);
+           log::alert( $event->job);
+           log::alert( $event->exception);
+        });
     }
 }
