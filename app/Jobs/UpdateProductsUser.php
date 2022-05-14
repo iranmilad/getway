@@ -25,6 +25,7 @@ class UpdateProductsUser implements ShouldQueue
      */
     public function __construct($user,$param,$flag)
     {
+        Log::info('update product start');
         $this->user=$user;
         $this->param=$param;
         $this->flag=$flag;
@@ -87,8 +88,8 @@ class UpdateProductsUser implements ShouldQueue
      *
      * @return string
      */
-    // public function uniqueId()
-    // {
-    //     return $this->user->id.'_'.$this->flag;
-    // }
+    public function uniqueId()
+    {
+        return $this->user->id.'_'.$this->flag;
+    }
 }
