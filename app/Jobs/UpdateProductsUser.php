@@ -56,7 +56,6 @@ class UpdateProductsUser implements ShouldQueue
             "name"=>$this->param['name'],
             "meta_data"=>$meta,
         ];
-        log::info($data);
         $data = json_encode($data);
         //$data = json_encode($data);
         curl_setopt_array($curl, array(
@@ -83,13 +82,13 @@ class UpdateProductsUser implements ShouldQueue
         curl_close($curl);
     }
 
-    // /**
-    //  * The unique ID of the job.
-    //  *
-    //  * @return string
-    //  */
-    // public function uniqueId()
-    // {
-    //     return $this->user->id.'_'.$this->flag;
-    // }
+    /**
+     * The unique ID of the job.
+     *
+     * @return string
+     */
+    public function uniqueId()
+    {
+        return $this->flag;
+    }
 }
