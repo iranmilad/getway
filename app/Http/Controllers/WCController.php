@@ -508,6 +508,7 @@ class WCController extends Controller
                                 //     'stock_quantity' =>(isset($config->update_product_stock) && $config->update_product_stock=="1") && (isset($WCProd->stock_quantity) and $WCProd->stock_quantity != $HolooProd->exist) ? (int)$HolooProd->exist ?? 0 : null,
                                 // ];
 
+
                                 $data = [
                                     'id' => $WCProd->id,
                                     'name' =>(isset($config->update_product_name) && $config->update_product_name=="1") && ($WCProd->name != $this->arabicToPersian($HolooProd->a_Name)) ? $this->arabicToPersian($HolooProd->a_Name) :$WCProd->name,
