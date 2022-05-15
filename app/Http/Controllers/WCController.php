@@ -451,14 +451,14 @@ class WCController extends Controller
         //return $config->special_price_field;
         $user=auth()->user();
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
-        $callApi = $this->fetchAllHolloProds();
-        //$callApi = $this->fetchCategoryHolloProds($config->product_cat);
+        //$callApi = $this->fetchAllHolloProds();
+        $callApi = $this->fetchCategoryHolloProds($config->product_cat);
         $holooProducts = $callApi;
 
         $callApi = $this->fetchAllWCProds();
         $wcProducts = $callApi;
         $response_product=[];
-        return $this->sendResponse('داده در سمت سرور موجود نیست', Response::HTTP_OK,$wcProducts);
+        //return $this->sendResponse('داده در سمت سرور موجود نیست', Response::HTTP_OK,$wcProducts);
         if (count($wcProducts)==0 or count($holooProducts)==0) {
             return $this->sendResponse('داده در سمت سرور موجود نیست', Response::HTTP_OK,null);
         }
