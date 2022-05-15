@@ -743,7 +743,12 @@ class WCController extends Controller
             $HolooDb=$Dbname[1];
             $user = User::where(['holooDatabaseName'=>$HolooDb,'holooCustomerID'=>$HolooUser,])
             ->first();
+            if (!$user) {
+                $this->sendResponse('کاربر مورد نظر یافت نشد', Response::HTTP_NOT_FOUND,[]);
+            }
+
             auth()->login($user);
+
             $HolooIDs=explode(",",$request->MsgValue);
             $HolooIDs=array_reverse($HolooIDs);
             //array_shift($HolooIDs);
