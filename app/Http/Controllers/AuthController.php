@@ -110,6 +110,7 @@ class AuthController extends Controller
                 'password' => bcrypt($activeLicense),
                 'holooDatabaseName' => $request->input('holooDatabaseName'),
                 'holooCustomerID' => $request->input('holooCustomerID'),
+                'serial' => $request->input('serial'),
                 'activeLicense' => $activeLicense,
                 'expireActiveLicense' => Carbon::now()->addYears(1),
             ]);
