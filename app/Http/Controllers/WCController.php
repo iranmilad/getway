@@ -252,7 +252,7 @@ class WCController extends Controller
                                 array_push($messages_code, 1);
 
                             }
-                            if ((isset($config->update_product_stock) && $config->update_product_stock=="1") && isset($WCProd->stock_quantity) and $WCProd->stock_quantity != (int)$HolooProd->exist) {
+                            if ((isset($config->update_product_stock) && $config->update_product_stock=="1") &&  isset($WCProd->stock_quantity) and (int)$HolooProd->exist>0 and $WCProd->stock_quantity != (int)$HolooProd->exist) {
                                 array_push($messages, 'مقدار موجودی محصول با هلو منطبق نیست.');
                                 array_push($messages_code, 2);
 
@@ -462,15 +462,21 @@ class WCController extends Controller
         if (count($wcProducts)==0 or count($holooProducts)==0) {
             return $this->sendResponse('داده در سمت سرور موجود نیست', Response::HTTP_OK,null);
         }
+        $wcholooCounter=0;
+        $holooFinded=0;
+        $conflite=0;
+        $wcCount=0;
         foreach ($wcProducts as $WCProd) {
             if (count($WCProd->meta_data)>0) {
+
                 $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
                 if ($wcHolooCode) {
-
+                    $wcholooCounter=$wcholooCounter+1;
                     $productFind = false;
                     foreach ($holooProducts as $key=>$HolooProd) {
                         $HolooProd=(object) $HolooProd;
                         if ($wcHolooCode == $HolooProd->a_Code) {
+                            $holooFinded=$holooFinded+1;
                             $productFind = true;
                             $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
                             if (
@@ -480,7 +486,7 @@ class WCController extends Controller
                                 ((isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ) or
                                 ((isset($config->update_product_price) && $config->update_product_price=="1") && isset($wholesale_customer_wholesale_price) && ((int)$wholesale_customer_wholesale_price != $this->get_price_type($config->wholesale_price_field,$HolooProd)) )
                             ) {
-
+                                $conflite=$conflite+1;
                                 # if product holoo was not same with product hoocomrece
                                 // $data = [
                                 //     'id' => $WCProd->id,
@@ -522,7 +528,7 @@ class WCController extends Controller
             }
         }
         if (count($response_product)>0) {
-            return $this->sendResponse('همه محصولات به روز رسانی شدند.', Response::HTTP_OK, ["result"=>["msg_code"=>1,"count"=>count($response_product),"products_cods"=>$response_product]]);
+            return $this->sendResponse('همه محصولات به روز رسانی شدند.', Response::HTTP_OK, ["result"=>["msg_code"=>1,"count"=>count($response_product),"products_cods"=>$response_product,"wcholoo"=>$wcholooCounter,"holooFinded"=>$holooFinded,'conflite'=>$conflite]]);
         }
         else{
             return $this->sendResponse('تمامی محصولات به روز هستند.', Response::HTTP_OK, ["result"=>["msg_code"=>0]]);
