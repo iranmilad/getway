@@ -458,7 +458,8 @@ class WCController extends Controller
         $callApi = $this->fetchAllWCProds();
         $wcProducts = $callApi;
         $response_product=[];
-        if (!isset($holooProducts) or !isset($wcProducts) or count($wcProducts)==0 or count($holooProducts)==0) {
+        return $this->sendResponse('داده در سمت سرور موجود نیست', Response::HTTP_OK,$wcProducts);
+        if (count($wcProducts)==0 or count($holooProducts)==0) {
             return $this->sendResponse('داده در سمت سرور موجود نیست', Response::HTTP_OK,null);
         }
         foreach ($wcProducts as $WCProd) {
