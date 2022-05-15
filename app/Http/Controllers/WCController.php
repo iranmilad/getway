@@ -510,6 +510,9 @@ class WCController extends Controller
                                 array_push($response_product,$wcHolooCode);
 
                             }
+                            else{
+                                unset($holooProducts[$key]);
+                            }
                         }
 
                     }
