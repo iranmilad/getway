@@ -87,6 +87,7 @@ class AuthController extends Controller
             'siteUrl' => 'required|unique:users',
             'holooDatabaseName' => 'required',
             'holooCustomerID' => 'required|unique:users',
+            'serial' => 'required|unique:users',
             'email'  => 'required|unique:users',
         ], [
             'siteUrl.required' => 'آدرس سایت الزامی می باشد.',
@@ -95,6 +96,8 @@ class AuthController extends Controller
             'holooDatabaseName.unique' => 'نام پایگاه داده هلو تکراری می باشد.',
             'holooCustomerID.required' => 'شناسه یکتای هلو مشتری الزامی می باشد.',
             'holooCustomerID.unique' => 'شناسه یکتای هلو مشتری تکراری می باشد',
+            'serial.required' => 'شناسه یکتای هلو مشتری الزامی می باشد.',
+            'serial.unique' => 'شناسه یکتای هلو مشتری تکراری می باشد',
             'email.required' => 'ادرس ایمیل اجباری می باشد',
             'email.unique' => 'ادرس ایمیل تکراری می باشد',
         ]);
