@@ -48,7 +48,6 @@ class updateWCSingleProduct implements ShouldQueue
         );
         $data=[
             "regular_price"=>(string)$this->params['regular_price'],
-            "price"=>$this->params['price'],
             "sale_price"=>((int)$this->params['sale_price']==0) ? null : (string) $this->params['sale_price'] ,
             //"wholesale_customer_wholesale_price"=>$this->params['wholesale_customer_wholesale_price'],
             "stock_quantity"=>(int)$this->params['stock_quantity'],

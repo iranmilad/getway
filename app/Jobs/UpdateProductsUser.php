@@ -50,7 +50,7 @@ class UpdateProductsUser implements ShouldQueue
         $data=[
             "regular_price"=>(string)$this->param['regular_price'],     //problem on update all need to convert to string
             "sale_price"=>((int)$this->param["sale_price"]==0) ? null:(string)$this->param['sale_price'],           //problem on update all need to convert to string
-            "price" =>$this->param['price'],
+
             "stock_quantity"=>(int)$this->param['stock_quantity'],
             //'wholesale_customer_wholesale_price' => $this->param['wholesale_customer_wholesale_price'],
             "name"=>$this->param['name'],
