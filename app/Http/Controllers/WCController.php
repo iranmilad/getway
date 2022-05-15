@@ -468,7 +468,7 @@ class WCController extends Controller
                 if ($wcHolooCode) {
 
                     $productFind = false;
-                    foreach ($holooProducts as $HolooProd) {
+                    foreach ($holooProducts as $key=>$HolooProd) {
                         $HolooProd=(object) $HolooProd;
                         if ($wcHolooCode == $HolooProd->a_Code) {
                             $productFind = true;
@@ -506,7 +506,7 @@ class WCController extends Controller
                                 UpdateProductsUser::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret],$data,$wcHolooCode)->onQueue("high");
                                 // test::dispatch($user->siteUrl,$user->consumerKey,$user->consumerSecret)->onQueue("high");
                                 //dispatch((new UpdateProductsUser($user,$data,$WCProd->meta_data[0]->value))->onConnection('queue')->onQueue('high'));
-
+                                unset($holooProducts[$key]);
                                 array_push($response_product,$wcHolooCode);
 
                             }
