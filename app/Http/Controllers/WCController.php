@@ -451,6 +451,7 @@ class WCController extends Controller
         //return $config->special_price_field;
         $user=auth()->user();
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
+        set_time_limit(0);
         //$callApi = $this->fetchAllHolloProds();
         $callApi = $this->fetchCategoryHolloProds($config->product_cat);
         $holooProducts = $callApi;
