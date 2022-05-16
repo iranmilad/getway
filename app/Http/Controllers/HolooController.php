@@ -906,7 +906,7 @@ class HolooController extends Controller
         $userApiKey = $user->apiKey;
         ini_set('max_execution_time', 0);
         set_time_limit(0);
-        
+
         log::info('request resive download file for user: ' . $user->id);
         if (File::exists(public_path("download/$user_id.xls"))) {
             $filename = $user_id;
@@ -1238,11 +1238,12 @@ class HolooController extends Controller
         // "sel_Price9": 0,
         // "sel_Price10": 0,
 
+
         if((int)$price_field==1){
-            return (int)(float) $HolooProd->sel_Price;
+            return (int)(float) $HolooProd->sel_Price*$this->get_tabdel_vahed();
         }
         else{
-            return (int)(float) $HolooProd->{"sel_Price".$price_field};
+            return (int)(float) $HolooProd->{"sel_Price".$price_field}*$this->get_tabdel_vahed();
         }
     }
 
@@ -1414,4 +1415,20 @@ class HolooController extends Controller
         }
         return null;
     }
+
+    public function get_tabdel_vahed(){
+        $user=auth()->user();
+        // log::alert($user->holo_unit);
+        if ($user->holo_unit=="rial" and $user->plugin_unit=="toman"){
+            return 0.1;
+        }
+        elseif ($user->holo_unit=="toman" and $user->plugin_unit=="rial"){
+            return 10;
+        }
+        else{
+            return 1;
+        }
+
+    }
+
 }

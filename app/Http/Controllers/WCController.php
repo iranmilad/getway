@@ -479,7 +479,11 @@ class WCController extends Controller
                             $holooFinded=$holooFinded+1;
                             $productFind = true;
                             $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
-
+                            // Log::info((int)$WCProd->regular_price);
+                            // log::info($this->get_price_type($config->sales_price_field,$HolooProd));
+                            // log::info((int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd));
+                            // log::info(isset($config->sales_price_field));
+                            // log::info(isset($config->update_product_price) && $config->update_product_price=="1");
                             if (
                             isset($config->update_product_price) && $config->update_product_price=="1" &&
                             (
@@ -1163,11 +1167,12 @@ class WCController extends Controller
         // "sel_Price9": 0,
         // "sel_Price10": 0,
 
+
         if((int)$price_field==1){
-            return (int)(float) $HolooProd->sel_Price;
+            return (int)(float) $HolooProd->sel_Price*$this->get_tabdel_vahed();
         }
         else{
-            return (int)(float) $HolooProd->{"sel_Price".$price_field};
+            return (int)(float) $HolooProd->{"sel_Price".$price_field}*$this->get_tabdel_vahed();
         }
     }
 
@@ -1303,12 +1308,13 @@ class WCController extends Controller
         curl_close($curl);
     }
 
-    public function get_tabdel_vahed($user){
-
-        if ($user->holo_unit=="rial" and $user->plugin_unit="toman"){
+    public function get_tabdel_vahed(){
+        $user=auth()->user();
+        // log::alert($user->holo_unit);
+        if ($user->holo_unit=="rial" and $user->plugin_unit=="toman"){
             return 0.1;
         }
-        elseif ($user->holo_unit=="toman" and $user->plugin_unit="rial"){
+        elseif ($user->holo_unit=="toman" and $user->plugin_unit=="rial"){
             return 10;
         }
         else{
