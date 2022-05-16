@@ -910,7 +910,7 @@ class HolooController extends Controller
             $file = "download/" . $filename . ".xls";
             return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
         }
-
+        log::info('products file not found try for make new for user: ' . $user->id);
         ini_set('max_execution_time', 10*60); // 120 (seconds) = 2 Minutes
         $token = $this->getNewToken();
         $curl = curl_init();
