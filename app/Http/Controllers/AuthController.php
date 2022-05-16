@@ -89,6 +89,8 @@ class AuthController extends Controller
             'holooCustomerID' => 'required|unique:users',
             'serial' => 'required|unique:users',
             'email'  => 'required|unique:users',
+            'holo_unit' => 'required|in:rial,toman',
+            'plugin_unit' => 'required|in:rial,toman',
         ], [
             'siteUrl.required' => 'آدرس سایت الزامی می باشد.',
             'siteUrl.unique' => 'آدرس سایت مورد نظر تکراری می باشد.',
@@ -100,6 +102,11 @@ class AuthController extends Controller
             'serial.unique' => 'شناسه یکتای هلو مشتری تکراری می باشد',
             'email.required' => 'ادرس ایمیل اجباری می باشد',
             'email.unique' => 'ادرس ایمیل تکراری می باشد',
+            'holo_unit.required' => 'واحد هلو الزامی می باشد',
+            'plugin_unit.required' => 'واحد پلاگین الزامی می باشد',
+            'holo_unit.in' => 'واحد هلو باید به صورت rial یا toman باشد',
+            'plugin_unit.in' => 'واحد پلاگین باید به صورت rial یا toman باشد',
+
         ]);
 
         if ($validator->fails()) {
@@ -116,6 +123,8 @@ class AuthController extends Controller
                 'serial' => $request->input('serial'),
                 'activeLicense' => $activeLicense,
                 'expireActiveLicense' => Carbon::now()->addYears(1),
+                'holo_unit' => $request->input('holo_unit'),
+                'plugin_unit' => $request->input('plugin_unit'),
             ]);
 
             return $this->sendResponse('کاربر مورد نظر با موفقیت ثبت شد', Response::HTTP_CREATED, ['user' => $user]);
