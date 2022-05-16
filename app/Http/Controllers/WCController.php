@@ -1302,4 +1302,19 @@ class WCController extends Controller
 
         curl_close($curl);
     }
+
+    public function get_tabdel_vahed($user){
+
+        if ($user->holo_unit=="rial" and $user->plugin_unit="toman"){
+            return 0.1;
+        }
+        elseif ($user->holo_unit=="toman" and $user->plugin_unit="rial"){
+            return 10;
+        }
+        else{
+            return 1;
+        }
+
+    }
+
 }

@@ -903,7 +903,7 @@ class HolooController extends Controller
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
 
-        ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
+        ini_set('max_execution_time', 10*60); // 120 (seconds) = 2 Minutes
         $token = $this->getNewToken();
         $curl = curl_init();
 

@@ -22,6 +22,8 @@ class CreateUsersTable extends Migration
             $table->string('activeLicense', 12)->nullable();
             $table->date('expireActiveLicense')->nullable();
 
+            $table->enum('holo_unit', ['rial', 'toman'])->default('rial');
+            $table->enum('plugin_unit', ['rial', 'toman'])->default('toman');
 
             $table->string('serial')->default('10304923');
             $table->string('holooDatabaseName')->default('Holoo1');
