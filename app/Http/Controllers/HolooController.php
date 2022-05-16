@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use stdClass;
+use Carbon\Carbon;
+use App\Models\User;
+use Illuminate\Http\Request;
 use App\Exports\ReportExport;
 use App\Jobs\AddProductsUser;
-use App\Jobs\FindProductInCategory;
 use App\Models\ProductRequest;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
+use App\Jobs\FindProductInCategory;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
-use stdClass;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarDumper\Cloner\Data;
+use Symfony\Component\HttpFoundation\Response;
+
 
 class HolooController extends Controller
 {
@@ -902,6 +904,12 @@ class HolooController extends Controller
         $user_id = $user->id;
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
+
+        if (File::exists(public_path("download/$user_id.xls"))) {
+            $filename = $user_id;
+            $file = "download/" . $filename . ".xls";
+            return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
+        }
 
         ini_set('max_execution_time', 10*60); // 120 (seconds) = 2 Minutes
         $token = $this->getNewToken();
