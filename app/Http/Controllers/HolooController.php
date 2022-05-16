@@ -904,7 +904,7 @@ class HolooController extends Controller
         $user_id = $user->id;
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
-
+        log::info('request resive download file for user: ' . $user->id);
         if (File::exists(public_path("download/$user_id.xls"))) {
             $filename = $user_id;
             $file = "download/" . $filename . ".xls";
