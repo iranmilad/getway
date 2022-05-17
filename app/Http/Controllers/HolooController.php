@@ -1114,7 +1114,7 @@ class HolooController extends Controller
 
                             "id" => rand(100000, 999999),
                             "bedsarfasl" => $customer_account,
-                            "name" => $customer->first_name . ' ' . $customer->last_name,
+                            "name" => $customer->first_name . ' ' . $customer->last_name.' - '.rand(100000, 999999),
                             "ispurchaser" => true,
                             "isseller" => false,
                             "custtype" => 0,

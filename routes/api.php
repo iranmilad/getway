@@ -59,6 +59,7 @@ Route::group([
     Route::get('/wc/{id}', [WCController::class, 'fetchSingleProduct']);
     Route::post('/wcadd', [WCController::class, 'createSingleProduct']);
     Route::post('/getProductConflict', [WCController::class, 'compareProductsFromWoocommerceToHoloo']);
+    Route::post('/getProductConflict2', [WCController::class, 'compareProductsFromWoocommerceToHoloo2']);
 
     Route::get('/test', [WCController::class, 'test']);
 
