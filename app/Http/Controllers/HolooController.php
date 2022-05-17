@@ -914,7 +914,7 @@ class HolooController extends Controller
             return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
         }
         log::info('products file not found try for make new for user: ' . $user->id);
-        ini_set('max_execution_time', 10*60); // 120 (seconds) = 2 Minutes
+        ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         $token = $this->getNewToken();
         $curl = curl_init();
 
@@ -957,7 +957,7 @@ class HolooController extends Controller
 
                 foreach ($HolooProds as $HolooProd) {
 
-                    if (!in_array($HolooProd->a_Code, $wcHolooExistCode)) {
+                   // if (!in_array($HolooProd->a_Code, $wcHolooExistCode)) {
 
                         $param = [
                             "holooCode" => $HolooProd->a_Code,
@@ -968,7 +968,7 @@ class HolooController extends Controller
 
                         $sheetes[$category->m_groupcode.'-'.$category->s_groupcode][] = $param;
 
-                    }
+                   //}
 
                 }
             }
