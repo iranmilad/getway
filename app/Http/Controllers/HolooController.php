@@ -926,7 +926,7 @@ class HolooController extends Controller
         $categories = $this->getAllCategory();
         //dd($categories);
 
-        $wcHolooExistCode = app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
+        //$wcHolooExistCode = app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
         $allRespose = [];
         $sheetes = [];
         foreach ($categories->result as $key => $category) {
