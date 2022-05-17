@@ -333,7 +333,7 @@ class WCController extends Controller
         do{
           try {
             curl_setopt_array($curl, array(
-                CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products?'.$status.$category.'page='.$page.'&per_page=100',
+                CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products?meta=_holo_sku&'.$status.$category.'page='.$page.'&per_page=10000',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 0,
