@@ -311,7 +311,7 @@ class WCController extends Controller
         return $response;
     }
 
-    public function fetchAllWCProds($published=false)
+    public function fetchAllWCProds($published=false,$category=null)
     {
         $user=auth()->user();
         if($published){
@@ -320,6 +320,12 @@ class WCController extends Controller
         else{
             $status= "";
         }
+        if($category){
+            $category= "category=$category&";
+        }
+        else{
+            $category= "";
+        }
         $curl = curl_init();
         $page = 1;
         $products = [];
@@ -327,7 +333,7 @@ class WCController extends Controller
         do{
           try {
             curl_setopt_array($curl, array(
-                CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products?'.$status.'page='.$page.'&per_page=100',
+                CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products?'.$status.$category.'page='.$page.'&per_page=100',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 0,
@@ -523,7 +529,10 @@ class WCController extends Controller
                                     'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($wholesale_customer_wholesale_price) && (int)$wholesale_customer_wholesale_price != $this->get_price_type($config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($config->wholesale_price_field,$HolooProd)  : ((isset($wholesale_customer_wholesale_price)) ? (int)$wholesale_customer_wholesale_price : null),
                                     'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1" && (int) $HolooProd->exist>0 and isset($WCProd->stock_quantity)) ? (int) $HolooProd->exist : 0,
                                 ];
-                                log::info("add new update product to queue for product ".$WCProd->id,$user->siteUrl);
+                                log::info("add new update product to queue for product ");
+                                log::info("for website id : ".$user->siteUrl);
+
+
                                 // log::info($data);
                                 //$this->updateWCSingleProduct($data);
                                 //$data=[(int)$WCProd->sale_price  ,$this->get_price_type($config->special_price_field,$HolooProd),((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)),$config->special_price_field];
@@ -564,6 +573,178 @@ class WCController extends Controller
         }
     }
 
+    public function updateAllProductFromHolooToWC2(Request $config)
+    {
+        //return $config->special_price_field;
+        $user=auth()->user();
+        ini_set('max_execution_time',0); // 120 (seconds) = 2 Minutes
+        set_time_limit(0);
+        //$callApi = $this->fetchAllHolloProds();
+        if(!isset($config->param)){
+
+            if (($key = array_search("", $config->product_cat)) !== false) {
+                unset($config->product_cat[$key]);
+            }
+            // $count=count($config->product_cat);
+            // if ($count>0) {
+            //     return $this->sendResponse('هیچ گروه محصولی جهت به روز رسانی یافت نشد', Response::HTTP_OK, ["result"=>["msg_code"=>0]]);
+            // }
+            $param=[
+                "categorys"=>$config->product_cat,
+                "count"=>0,
+            ];
+            $response=[
+                "param" => $param,
+                "url" =>route('updateAllProductFromHolooToWC2'),
+                "message"=>"در حال دریافت اطلاعات در سرورهای هلو لطفا منتظر بمانید"
+            ];
+            $body=$config->all();
+            $body=array_merge($body,$response);
+
+            return $this->sendResponse('اغاز عملیات به روز رسانی لطفا منتظر بمانید', Response::HTTP_OK,$body);
+        }
+
+
+        foreach ($config->param->categorys->product_cat as $holoo_cat=>$wc_cat){
+
+            if ($wc_cat=="") continue;
+            $callApi = $this->fetchAllWCProds(true,$wc_cat);
+            $wcProducts = $callApi;
+            if (count($wcProducts)==0) continue;
+
+            $callApi = $this->fetchCategoryHolloProds([$holoo_cat=>$wc_cat]);
+            $holooProducts = $callApi;
+
+            $config->param->categorys->product_cat = array_shift($config->param->categorys->product_cat);
+            $config->param->count++;
+
+            if (count($config->param->categorys->product_cat)==0){
+                return $this->sendResponse('همه محصولات به روز رسانی شدند.', Response::HTTP_OK, ["result"=>["msg_code"=>1,"count"=>$config->param->count]]);
+            }
+            else{
+                if (($key = array_search("", $config->product_cat)) !== false) {
+                    unset($config->product_cat[$key]);
+                }
+
+                $param=[
+                    "config"=>$config,
+                    "categorys"=>$config->product_cat,
+                    "count"=> $config->param->count,
+                ];
+                $response=[
+                    "param" => $param,
+                    "url" =>route('updateAllProductFromHolooToWC2'),
+                    "message"=>$config->param->count." تا محصول تاکنون به روز شدند لطفا منتظر بمانید"
+                ];
+
+                return $this->sendResponse('عملیات به روز رسانی لطفا منتظر بمانید', Response::HTTP_OK,$response);
+            }
+        }
+
+        $response_product=[];
+        if (count($wcProducts)==0 or count($holooProducts)==0) {
+            return $this->sendResponse('داده در سمت سرور موجود نیست', Response::HTTP_OK,null);
+        }
+        $wcholooCounter=0;
+        $holooFinded=0;
+        $conflite=0;
+        $wcCount=0;
+        foreach ($wcProducts as $WCProd) {
+            if (count($WCProd->meta_data)>0) {
+
+                $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
+                if ($wcHolooCode) {
+                    $wcholooCounter=$wcholooCounter+1;
+                    $productFind = false;
+                    foreach ($holooProducts as $key=>$HolooProd) {
+                        $HolooProd=(object) $HolooProd;
+                        if ($wcHolooCode == $HolooProd->a_Code) {
+                            $holooFinded=$holooFinded+1;
+                            $productFind = true;
+                            $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
+                            // Log::info((int)$WCProd->regular_price);
+                            // log::info($this->get_price_type($config->sales_price_field,$HolooProd));
+                            // log::info((int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd));
+                            // log::info(isset($config->sales_price_field));
+                            // log::info(isset($config->update_product_price) && $config->update_product_price=="1");
+                            if (
+                            isset($config->update_product_price) && $config->update_product_price=="1" &&
+                            (
+                            (isset($config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd)) or
+                            (isset($config->special_price_field) && (int)$WCProd->sale_price  != $this->get_price_type($config->special_price_field,$HolooProd)) or
+                            (isset($config->wholesale_price_field) && $wholesale_customer_wholesale_price && (int)$wholesale_customer_wholesale_price  != $this->get_price_type($config->wholesale_price_field,$HolooProd))
+                            ) or
+                            ((isset($config->update_product_stock) && $config->update_product_stock=="1") &&  isset($WCProd->stock_quantity)  and $WCProd->stock_quantity != (int)$HolooProd->exist) or
+                            ((isset($config->update_product_name) && $config->update_product_name=="1") && $WCProd->name != trim($this->arabicToPersian($HolooProd->a_Name)))
+
+                            ){
+
+                            // if (
+                            //     ((isset($config->update_product_stock) && $config->update_product_stock=="1") && (int) $HolooProd->exist>0 and isset($WCProd->stock_quantity) and  $WCProd->stock_quantity !=(int) $HolooProd->exist) or
+                            //     ((isset($config->update_product_name) && $config->update_product_name=="1") && $WCProd->name != trim($this->arabicToPersian($HolooProd->a_Name))) or
+                            //     ((isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd))) or
+                            //     ((isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ) or
+                            //     ((isset($config->update_product_price) && $config->update_product_price=="1") && isset($wholesale_customer_wholesale_price) && ((int)$wholesale_customer_wholesale_price != $this->get_price_type($config->wholesale_price_field,$HolooProd)) )
+                            // ) {
+                                $conflite=$conflite+1;
+                                # if product holoo was not same with product hoocomrece
+                                // $data = [
+                                //     'id' => $WCProd->id,
+                                //     'name' => (isset($config->update_product_name) && $config->update_product_name=="1") && ($WCProd->name != $this->arabicToPersian($HolooProd->a_Name)) ? urlencode($this->arabicToPersian($HolooProd->a_Name)) :null,
+                                //     'regular_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ($WCProd->regular_price != $HolooProd->sel_Price) ? $HolooProd->sel_Price ?? 0 : null,
+                                //     'stock_quantity' =>(isset($config->update_product_stock) && $config->update_product_stock=="1") && (isset($WCProd->stock_quantity) and $WCProd->stock_quantity != $HolooProd->exist) ? (int)$HolooProd->exist ?? 0 : null,
+                                // ];
+
+
+                                $data = [
+                                    'id' => $WCProd->id,
+                                    'name' =>(isset($config->update_product_name) && $config->update_product_name=="1") && ($WCProd->name != $this->arabicToPersian($HolooProd->a_Name)) ? $this->arabicToPersian($HolooProd->a_Name) :$WCProd->name,
+                                    'regular_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd)) ? $this->get_price_type($config->sales_price_field,$HolooProd) : (int)$WCProd->regular_price,
+                                    'price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
+                                    'sale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
+                                    'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($wholesale_customer_wholesale_price) && (int)$wholesale_customer_wholesale_price != $this->get_price_type($config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($config->wholesale_price_field,$HolooProd)  : ((isset($wholesale_customer_wholesale_price)) ? (int)$wholesale_customer_wholesale_price : null),
+                                    'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1" && (int) $HolooProd->exist>0 and isset($WCProd->stock_quantity)) ? (int) $HolooProd->exist : 0,
+                                ];
+                                log::info("add new update product to queue for product ".$WCProd->id,$user->siteUrl);
+                                // log::info($data);
+                                //$this->updateWCSingleProduct($data);
+                                //$data=[(int)$WCProd->sale_price  ,$this->get_price_type($config->special_price_field,$HolooProd),((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)),$config->special_price_field];
+                                //return $this->sendResponse('همه محصولات به روز رسانی شدند.', Response::HTTP_OK, $data);
+                                UpdateProductsUser::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret],$data,$wcHolooCode)->onQueue("high");
+                                // test::dispatch($user->siteUrl,$user->consumerKey,$user->consumerSecret)->onQueue("high");
+                                //dispatch((new UpdateProductsUser($user,$data,$WCProd->meta_data[0]->value))->onConnection('queue')->onQueue('high'));
+
+                            // if (
+                            //     ((isset($config->update_product_stock) && $config->update_product_stock=="1") && (int) $HolooProd->exist>0 and isset($WCProd->stock_quantity) and  $WCProd->stock_quantity !=(int) $HolooProd->exist) or
+                            //     ((isset($config->update_product_name) && $config->update_product_name=="1") && $WCProd->name != trim($this->arabicToPersian($HolooProd->a_Name))) or
+                            //     ((isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd))) or
+                            //     ((isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ) or
+                            //     ((isset($config->update_product_price) && $config->update_product_price=="1") && isset($wholesale_customer_wholesale_price) && ((int)$wholesale_customer_wholesale_price != $this->get_price_type($config->wholesale_price_field,$HolooProd)) )
+                            // ) {
+
+
+                                unset($holooProducts[$key]);
+                                array_push($response_product,$wcHolooCode);
+
+                            }
+                            else{
+                                unset($holooProducts[$key]);
+                            }
+                        }
+
+                    }
+
+
+                }
+            }
+        }
+        if (count($response_product)>0) {
+            return $this->sendResponse('همه محصولات به روز رسانی شدند.', Response::HTTP_OK, ["result"=>["msg_code"=>1,"count"=>count($response_product),"products_cods"=>$response_product,"wcholoo"=>$wcholooCounter,"holooFinded"=>$holooFinded,'conflite'=>$conflite]]);
+        }
+        else{
+            return $this->sendResponse('تمامی محصولات به روز هستند.', Response::HTTP_OK, ["result"=>["msg_code"=>0]]);
+        }
+    }
     public function get_all_holoo_code_exist(){
         $wcProducts=$this->fetchAllWCProds();
         $response_products=[];

@@ -65,6 +65,8 @@ Route::group([
 
     Route::post('/updateWCSingleProduct', [WCController::class, 'updateWCSingleProduct']);
     Route::post('/updateAllProductFromHolooToWC', [WCController::class, 'updateAllProductFromHolooToWC']);
+    Route::post('/updateAllProductFromHolooToWC2', [WCController::class, 'updateAllProductFromHolooToWC2'])->name("updateAllProductFromHolooToWC2");   //test
+
     Route::post('/wcSingleProductUpdate', [HolooController::class, 'wcSingleProductUpdate']);
     Route::post('/wcAddAllHolooProductsCategory', [HolooController::class, 'wcAddAllHolooProductsCategory']);
 
