@@ -60,6 +60,7 @@ Route::group([
     Route::post('/wcadd', [WCController::class, 'createSingleProduct']);
     Route::post('/getProductConflict', [WCController::class, 'compareProductsFromWoocommerceToHoloo']);
     Route::post('/getProductConflict2', [WCController::class, 'compareProductsFromWoocommerceToHoloo2']);
+    Route::post('/getProductConflict3', [WCController::class, 'compareProductsFromWoocommerceToHoloo3']);
 
     Route::get('/test', [WCController::class, 'test']);
 
@@ -76,6 +77,7 @@ Route::group([
     Route::post('/GetAllAccount', [HolooController::class, 'get_all_accounts']);
     //Route::post('/GetShippingAccount', [HolooController::class, 'get_shipping_accounts']);
     Route::post('/GetShippingAccount', [HolooController::class, 'get_shipping_accounts_by_product']);
+    Route::post('/GetAllCustomerAccount', [HolooController::class, 'GetAllCustomerAccount']);
 
 
     Route::post('/getProductCategory', [HolooController::class, 'getProductCategory']);

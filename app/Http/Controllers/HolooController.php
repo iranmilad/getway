@@ -931,7 +931,7 @@ class HolooController extends Controller
         $sheetes = [];
         foreach ($categories->result as $key => $category) {
 
-            if (array_key_exists($category->m_groupcode.'-'.$category->s_groupcode, $data)) {
+            //if (array_key_exists($category->m_groupcode.'-'.$category->s_groupcode, $data)) {
                 if ($data[$category->m_groupcode.'-'.$category->s_groupcode]=="")
                 {
                     continue;
@@ -976,7 +976,7 @@ class HolooController extends Controller
                    //}
 
                 }
-            }
+            //}
         }
 
         curl_close($curl);
@@ -1436,4 +1436,31 @@ class HolooController extends Controller
 
     }
 
+
+    public function GetAllCustomerAccount(){
+        $user=auth()->user();
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://myholoo.ir/api/Customer/GetCustomerGroup',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'serial: ' . $user->serial,
+                'database: ' . $user->holooDatabaseName,
+                'Authorization: Bearer ' . $this->getNewToken(),
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $response = json_decode($response);
+        $response = $response->data->bedGroup;
+        curl_close($curl);
+        return $this->sendResponse('لیست حسابهای', Response::HTTP_OK,  $response);
+    }
 }
