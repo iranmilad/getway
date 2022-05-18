@@ -10,6 +10,7 @@ use App\Exports\ReportExport;
 use App\Jobs\AddProductsUser;
 use App\Models\ProductRequest;
 use App\Jobs\FindProductInCategory;
+use App\Models\Invoice;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
@@ -234,10 +235,13 @@ class HolooController extends Controller
         $user = auth()->user();
         $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration receive");
 
-        log::info("order: ".json_encode($orderInvoice->request->all()));
-        #$orderInvoice->request->add($order);
-        #return $this->sendResponse('test', Response::HTTP_OK, $orderInvoice);
-
+        //log::info("order: ".json_encode($orderInvoice->request->all()));
+        //$orderInvoice->request->add($order);
+        //return $this->sendResponse('test', Response::HTTP_OK, $orderInvoice);
+        $invoice = new Invoice();
+        $invoice->longText = json_encode($orderInvoice->request->all());
+        $invoice->bigInteger = $user->id;
+        $invoice->save();
 
         if ($orderInvoice->save_pre_sale_invoice) {
 
@@ -433,8 +437,11 @@ class HolooController extends Controller
         $this->recordLog("Invoice Payed", $user->siteUrl, "Invoice Payed receive");
 
         // return response()->json($this->genericFee("#102564#25000%3", 25000));
-        log::info("order: ".json_encode($orderInvoice->request->all()));
-
+        //log::info("order: ".json_encode($orderInvoice->request->all()));
+        $invoice = new Invoice();
+        $invoice->longText = json_encode($orderInvoice->request->all());
+        $invoice->bigInteger = $user->id;
+        $invoice->save();
 
         if ($orderInvoice->save_sale_invoice) {
 
