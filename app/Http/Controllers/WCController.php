@@ -168,6 +168,7 @@ class WCController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_USERAGENT => 'Holoo',
             CURLOPT_POSTFIELDS => $data,
             CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
             CURLOPT_HTTPHEADER => array(
@@ -675,6 +676,7 @@ class WCController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_USERAGENT => 'Holoo',
             CURLOPT_POSTFIELDS => $data,
             CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
             CURLOPT_HTTPHEADER => array(
@@ -1355,11 +1357,14 @@ class WCController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_USERAGENT => 'Holoo',
             CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
         ));
 
         $response = curl_exec($curl);
         curl_close($curl);
+
+
         return $response;
 
 
@@ -1384,7 +1389,7 @@ class WCController extends Controller
     }
 
     public function get_wc_category(){
-        log::info($this->getWcConfig());
+
         return json_decode($this->getWcConfig(),true)["product_cat"];
     }
 
@@ -1445,6 +1450,7 @@ class WCController extends Controller
               CURLOPT_FOLLOWLOCATION => true,
               CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
               CURLOPT_CUSTOMREQUEST => 'POST',
+              CURLOPT_USERAGENT => 'Holoo',
               CURLOPT_POSTFIELDS => $data,
               CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
               CURLOPT_HTTPHEADER => array(
@@ -1474,6 +1480,7 @@ class WCController extends Controller
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 1000,
             CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_USERAGENT => 'Holoo',
             CURLOPT_POSTFIELDS => array('Serial' => '10304923','RefreshToken' => 'false','DeleteService' => 'false','MakeService' => 'true','RefreshKey' => 'false'),
             CURLOPT_HTTPHEADER => array(
                 'apikey: E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70'
@@ -1734,6 +1741,7 @@ class WCController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_USERAGENT => 'Holoo',
             CURLOPT_POSTFIELDS => $data,
             CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
             CURLOPT_HTTPHEADER => array(
@@ -1763,5 +1771,7 @@ class WCController extends Controller
         }
 
     }
+
+
 
 }
