@@ -1384,6 +1384,7 @@ class WCController extends Controller
     }
 
     public function get_wc_category(){
+        log::info($this->getWcConfig());
         return json_decode($this->getWcConfig(),true)["product_cat"];
     }
 

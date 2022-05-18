@@ -91,7 +91,7 @@ class AuthController extends Controller
             'email'  => 'required|unique:users',
             'holo_unit' => 'required|in:rial,toman',
             'plugin_unit' => 'required|in:rial,toman',
-            'years' => 'required|integer|min:1|max:12',
+            'days' => 'required|integer|min:1|max:500',
         ], [
             'siteUrl.required' => 'آدرس سایت الزامی می باشد.',
             'siteUrl.unique' => 'آدرس سایت مورد نظر تکراری می باشد.',
@@ -107,7 +107,7 @@ class AuthController extends Controller
             'plugin_unit.required' => 'واحد پلاگین الزامی می باشد',
             'holo_unit.in' => 'واحد هلو باید به صورت rial یا toman باشد',
             'plugin_unit.in' => 'واحد پلاگین باید به صورت rial یا toman باشد',
-            'years.required' => 'مدت اشتراک به روز اجباری می باشد ',
+            'days.required' => 'مدت اشتراک به روز اجباری می باشد ',
 
         ]);
 
