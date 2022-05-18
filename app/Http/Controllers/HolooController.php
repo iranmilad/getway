@@ -687,12 +687,13 @@ class HolooController extends Controller
     private function getAmount($amount, $currency)
     {
         //"IRT"
+        $zarib=$this->get_tabdel_vahed();
+        $zarib=1/$zarib;
+        // if ($currency == "toman") {
+        //     return (int)$amount * 10;
+        // }
 
-        if ($currency == "toman") {
-            return (int)$amount * 10;
-        }
-
-        return (int)$amount;
+        return (int)$amount*$zarib;
     }
 
     public function wcSingleProductUpdate(Request $request)
