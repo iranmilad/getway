@@ -91,6 +91,7 @@ class AuthController extends Controller
             'email'  => 'required|unique:users',
             'holo_unit' => 'required|in:rial,toman',
             'plugin_unit' => 'required|in:rial,toman',
+            'month' => 'required|integer|min:1|max:12',
         ], [
             'siteUrl.required' => 'آدرس سایت الزامی می باشد.',
             'siteUrl.unique' => 'آدرس سایت مورد نظر تکراری می باشد.',
@@ -106,6 +107,7 @@ class AuthController extends Controller
             'plugin_unit.required' => 'واحد پلاگین الزامی می باشد',
             'holo_unit.in' => 'واحد هلو باید به صورت rial یا toman باشد',
             'plugin_unit.in' => 'واحد پلاگین باید به صورت rial یا toman باشد',
+            'month.required' => 'مدت اشتراک به ماه اجباری می باشد ',
 
         ]);
 
@@ -122,7 +124,7 @@ class AuthController extends Controller
                 'holooCustomerID' => $request->input('holooCustomerID'),
                 'serial' => $request->input('serial'),
                 'activeLicense' => $activeLicense,
-                'expireActiveLicense' => Carbon::now()->addYears(1),
+                'expireActiveLicense' => Carbon::now()->addMonth($request->input('month')),
                 'holo_unit' => $request->input('holo_unit'),
                 'plugin_unit' => $request->input('plugin_unit'),
             ]);
