@@ -904,11 +904,14 @@ class HolooController extends Controller
         return $this->sendResponse(" درخواست ثبت محصولات جدید با موفقیت ثبت گردید. ", Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
     }
 
-    public function wcGetExcelProducts2()
+    public function wcGetExcelProducts()
     {
-
         $counter = 0;
         $user = auth()->user();
+        if($user->user_traffic!="light"){
+          $this->wcGetExcelProducts2();
+        }
+
         $user_id = $user->id;
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
@@ -1003,7 +1006,7 @@ class HolooController extends Controller
 
     }
 
-    public function wcGetExcelProducts()
+    public function wcGetExcelProducts2()
     {
 
         $counter = 0;

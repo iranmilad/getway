@@ -214,6 +214,7 @@ class WCController extends Controller
         #return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  isset($config->wholesale_price_field));
         $counter_confid=0;
         $products = [];
+        $notneedtoProsse=[];
         foreach ($WCProds as $WCProd) {
             //array_push($products,$WCProd->id);
             if ($counter_confid==30) {
@@ -231,6 +232,7 @@ class WCController extends Controller
 
                     $productFind = false;
                     foreach ($HolooProds as $key=>$HolooProd) {
+                        if( array_search($key, $notneedtoProsse)) continue;
                         $HolooProd=(object) $HolooProd;
                         //0 "قیمت محصول با هلو منطبق نیست"
                         //1 "نام محصول با هلو منطبق نیست"
@@ -268,7 +270,7 @@ class WCController extends Controller
 
                             }
 
-                            unset($HolooProds[$key]);
+                            $notneedtoProsse[]=$key;
                             $productFind = true;
                             break;
                         }
@@ -718,6 +720,7 @@ class WCController extends Controller
         $holooFinded=0;
         $conflite=0;
         $wcCount=0;
+        $notneedtoProsse=[];
         foreach ($wcProducts as $WCProd) {
             if (count($WCProd->meta_data)>0) {
 
@@ -726,6 +729,8 @@ class WCController extends Controller
                     $wcholooCounter=$wcholooCounter+1;
                     $productFind = false;
                     foreach ($holooProducts as $key=>$HolooProd) {
+                        if( array_search($key, $notneedtoProsse)) continue;
+
                         $HolooProd=(object) $HolooProd;
                         if ($wcHolooCode == $HolooProd->a_Code) {
                             $holooFinded=$holooFinded+1;
@@ -794,13 +799,14 @@ class WCController extends Controller
                             //     ((isset($config->update_product_price) && $config->update_product_price=="1") && isset($wholesale_customer_wholesale_price) && ((int)$wholesale_customer_wholesale_price != $this->get_price_type($config->wholesale_price_field,$HolooProd)) )
                             // ) {
 
-
-                                unset($holooProducts[$key]);
+                                $notneedtoProsse[]=$key;
+                                //unset($holooProducts[$key]);
                                 array_push($response_product,$wcHolooCode);
 
                             }
                             else{
-                                unset($holooProducts[$key]);
+                                $notneedtoProsse[]=$key;
+                                //unset($holooProducts[$key]);
                             }
                         }
 
