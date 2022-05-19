@@ -904,7 +904,7 @@ class HolooController extends Controller
         return $this->sendResponse(" درخواست ثبت محصولات جدید با موفقیت ثبت گردید. ", Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
     }
 
-    public function wcGetExcelProducts()
+    public function wcGetExcelProducts2()
     {
 
         $counter = 0;
@@ -928,9 +928,9 @@ class HolooController extends Controller
         $token = $this->getNewToken();
         $curl = curl_init();
 
-        $productCategory = app('App\Http\Controllers\WCController')->get_wc_category();
+        // $productCategory = app('App\Http\Controllers\WCController')->get_wc_category();
 
-        $data = $productCategory;
+        // $data = $productCategory;
         //$data = ['02' => 12];
 
         $categories = $this->getAllCategory();
@@ -941,7 +941,7 @@ class HolooController extends Controller
         $sheetes = [];
         foreach ($categories->result as $key => $category) {
 
-            if (array_key_exists($category->m_groupcode.'-'.$category->s_groupcode, $data)) {
+            //if (array_key_exists($category->m_groupcode.'-'.$category->s_groupcode, $data)) {
                 // if ($data[$category->m_groupcode.'-'.$category->s_groupcode]==""){
                 //     continue;
                 // }
@@ -986,7 +986,7 @@ class HolooController extends Controller
                    //}
 
                 }
-            }
+            //}
         }
 
         curl_close($curl);
@@ -1002,6 +1002,102 @@ class HolooController extends Controller
         }
 
     }
+
+    public function wcGetExcelProducts()
+    {
+
+        $counter = 0;
+        $user = auth()->user();
+        $user_id = $user->id;
+        $userSerial = $user->serial;
+        $userApiKey = $user->apiKey;
+        ini_set('max_execution_time', 0);
+        set_time_limit(0);
+
+        log::info('request resive download file for user: ' . $user->id);
+        $file=public_path("download/$user_id.xls");
+        $yesdate = strtotime("-1 days");
+        if (File::exists($file) and filemtime($file) < $yesdate ) {
+            $filename = $user_id;
+            $file = "download/" . $filename . ".xls";
+            return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
+        }
+        log::info('products file not found try for make new for user: ' . $user->id);
+        ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
+        $token = $this->getNewToken();
+        $curl = curl_init();
+
+        // $productCategory = app('App\Http\Controllers\WCController')->get_wc_category();
+
+        // $data = $productCategory;
+        //$data = ['02' => 12];
+
+        //$categories = $this->getAllCategory();
+        //dd($categories);
+
+        //$wcHolooExistCode = app('App\Http\Controllers\WCController')->get_all_holoo_code_exist();
+        $allRespose = [];
+        $sheetes = [];
+        // foreach ($categories->result as $key => $category) {
+
+            //if (array_key_exists($category->m_groupcode.'-'.$category->s_groupcode, $data)) {
+                // if ($data[$category->m_groupcode.'-'.$category->s_groupcode]==""){
+                //     continue;
+                // }
+                $sheetes["kala"] = array();
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://myholoo.ir/api/Service/article/'.$user->holooDatabaseName,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                    CURLOPT_HTTPHEADER => array(
+                        'serial: ' . $userSerial,
+                        'database: ' . $user->holooDatabaseName,
+                        'Authorization: Bearer ' . $token,
+                    ),
+                ));
+                $response = curl_exec($curl);
+                $HolooProds = json_decode($response);
+
+                foreach ($HolooProds->result as $HolooProd) {
+
+                   // if (!in_array($HolooProd->a_Code, $wcHolooExistCode)) {
+
+                        $param = [
+                            "holooCode" => $HolooProd->a_Code,
+                            "holooName" => $this->arabicToPersian($HolooProd->a_Name),
+                            "holooRegularPrice" => (string) $HolooProd->sel_Price ?? 0,
+                            "holooStockQuantity" => (string) $HolooProd->exist ?? 0,
+                            "holooCustomerCode" => ($HolooProd->a_Code_C) ?? "",
+                        ];
+
+                        $sheetes["kala"][] = $param;
+
+                   //}
+
+                }
+            //}
+        //}
+
+        curl_close($curl);
+        if (count($sheetes) != 0) {
+            $excel = new ReportExport($sheetes);
+            $filename = $user_id;
+            $file = "download/" . $filename . ".xls";
+            Excel::store($excel, $file, "asset");
+            return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
+        }
+        else {
+            return $this->sendResponse('محصولی جهت تولید فایل خروجی یافت نشد', Response::HTTP_OK, ["result" => ["url" => "#"]]);
+        }
+
+    }
+
 
     public function addToCart(Request $orderInvoice)
     {
