@@ -482,6 +482,8 @@ class HolooController extends Controller
             $payment = (object) $payment->payment_methos;
             $orderInvoiceFull=app('App\Http\Controllers\WCController')->get_invoice($orderInvoice->id);
             $fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
+
+
             if(!is_object($orderInvoiceFull)){
                 return $this->sendResponse('ثبت فاکتور بدلیل عدم یافت انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }

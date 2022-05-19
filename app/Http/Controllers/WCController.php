@@ -1045,6 +1045,7 @@ class WCController extends Controller
         //   }
         log::info($request);
         log::info("webhook resived");
+        $hook = new Webhook();
 
         if(isset($request->Table) && strtolower($request->Table)=="article" && ($request->MsgType==1 or $request->MsgType==0)){
             $Dbname=explode("_",$request->Dbname);
@@ -1052,6 +1053,9 @@ class WCController extends Controller
             $HolooDb=$Dbname[1];
             $user = User::where(['holooDatabaseName'=>$HolooDb,'holooCustomerID'=>$HolooUser,])
             ->first();
+            $hook->invoices = json_encode($request);
+            $hook->user_id = ($user->id) ?? null;
+            $hook->save();
             auth()->login($user);
             $HolooIDs=explode(",",$request->MsgValue);
             $HolooIDs=array_reverse($HolooIDs);
