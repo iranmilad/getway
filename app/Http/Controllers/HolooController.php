@@ -978,6 +978,7 @@ class HolooController extends Controller
                             "holooName" => $this->arabicToPersian($HolooProd->a_Name),
                             "holooRegularPrice" => (string) $HolooProd->sel_Price ?? 0,
                             "holooStockQuantity" => (string) $HolooProd->exist ?? 0,
+                            "holooCustomerCode" => $HolooProd->a_Code_C,
                         ];
 
                         $sheetes[$category->m_groupcode.'-'.$category->s_groupcode][] = $param;

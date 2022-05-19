@@ -26,7 +26,8 @@ class ReportGeneralExport implements FromArray, WithHeadings, WithTitle, ShouldA
             $row['holooCode'],
             $row['holooName'],
             $row['holooRegularPrice'],
-            $row['holooStockQuantity']
+            $row['holooStockQuantity'],
+            $row['holooCustomerCode']
         ];
     }
 
@@ -36,7 +37,8 @@ class ReportGeneralExport implements FromArray, WithHeadings, WithTitle, ShouldA
             'holooCode',
             'holooName',
             'holooRegularPrice',
-            'holooStockQuantity'
+            'holooStockQuantity',
+            'holooCustomerCode'
         ];
     }
 
@@ -53,7 +55,7 @@ class ReportGeneralExport implements FromArray, WithHeadings, WithTitle, ShouldA
     public function columnFormats(): array
     {
         return [
-           
+
         ];
     }
 }
