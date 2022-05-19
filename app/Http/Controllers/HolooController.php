@@ -473,7 +473,7 @@ class HolooController extends Controller
                 $payment = (object) $orderInvoice->payment;
             }
 
-            $payment = (object) $payment->$payment_methos;
+            $payment = (object) $payment->payment_methos;
             $orderInvoiceFull=app('App\Http\Controllers\WCController')->get_invoice($orderInvoice->id);
             $fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
             if(!is_object($orderInvoiceFull)){
