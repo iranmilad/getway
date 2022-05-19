@@ -709,7 +709,7 @@ class WCController extends Controller
         $callApi = $this->fetchCategoryHolloProds($config->product_cat);
         $holooProducts = $callApi;
 
-        $callApi = $this->fetchAllWCProds();
+        $callApi = $this->fetchAllWCProds(true);
         $wcProducts = $callApi;
         $response_product=[];
         //return $this->sendResponse('داده در سمت سرور موجود نیست', Response::HTTP_OK,$wcProducts);
