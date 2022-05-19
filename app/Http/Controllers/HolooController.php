@@ -272,7 +272,10 @@ class HolooController extends Controller
             elseif (is_array($orderInvoice->payment)) {
                 $payment = (object) $orderInvoice->payment;
             }
-
+            log::info("payment: ".json_encode($payment));
+            if (!$payment) {
+                return $this->sendResponse('ثبت فاکتور انجام نشد.روش پرداخت نامعتبر', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+            }
             $payment = (object) $payment->$payment_methos;
             $orderInvoiceFull=app('App\Http\Controllers\WCController')->get_invoice($orderInvoice->id);
             $fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
@@ -473,6 +476,9 @@ class HolooController extends Controller
                 $payment = (object) $orderInvoice->payment;
             }
             log::info("payment: ".json_encode($payment));
+            if (!$payment) {
+                return $this->sendResponse('ثبت فاکتور انجام نشد.روش پرداخت نامعتبر', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+            }
             $payment = (object) $payment->payment_methos;
             $orderInvoiceFull=app('App\Http\Controllers\WCController')->get_invoice($orderInvoice->id);
             $fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
