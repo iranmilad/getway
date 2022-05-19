@@ -1015,13 +1015,13 @@ class HolooController extends Controller
         set_time_limit(0);
 
         log::info('request resive download file for user: ' . $user->id);
-        $file=public_path("download/$user_id.xls");
-        $yesdate = strtotime("-1 days");
-        if (File::exists($file) and filemtime($file) < $yesdate ) {
-            $filename = $user_id;
-            $file = "download/" . $filename . ".xls";
-            return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
-        }
+        // $file=public_path("download/$user_id.xls");
+        // $yesdate = strtotime("-1 days");
+        // if (File::exists($file) and filemtime($file) < $yesdate ) {
+        //     $filename = $user_id;
+        //     $file = "download/" . $filename . ".xls";
+        //     return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
+        // }
         log::info('products file not found try for make new for user: ' . $user->id);
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         $token = $this->getNewToken();
