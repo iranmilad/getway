@@ -273,7 +273,7 @@ class HolooController extends Controller
                 $payment = (object) $orderInvoice->payment;
             }
             log::info("payment: ".json_encode($payment));
-            if (!$payment) {
+            if (count($payment)==0) {
                 return $this->sendResponse('ثبت فاکتور انجام نشد.روش پرداخت نامعتبر', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
             $payment = (object) $payment->$payment_methos;
@@ -476,7 +476,7 @@ class HolooController extends Controller
                 $payment = (object) $orderInvoice->payment;
             }
             log::info("payment: ".json_encode($payment));
-            if (!$payment) {
+            if (count($payment)==0) {
                 return $this->sendResponse('ثبت فاکتور انجام نشد.روش پرداخت نامعتبر', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
             $payment = (object) $payment->payment_methos;
