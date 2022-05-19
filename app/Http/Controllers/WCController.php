@@ -1056,6 +1056,9 @@ class WCController extends Controller
             $hook->invoices = json_encode($request);
             $hook->user_id = ($user->id) ?? null;
             $hook->save();
+            if($user==null){
+                $this->sendResponse('کاربر مورد نظر یافت نشد', Response::HTTP_OK,[]);
+            }
             auth()->login($user);
             $HolooIDs=explode(",",$request->MsgValue);
             $HolooIDs=array_reverse($HolooIDs);
