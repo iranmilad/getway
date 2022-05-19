@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Artisan;
 use phpDocumentor\Reflection\Types\This;
+use Codexshaper\WooCommerce\Models\Webhook;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Client\HttpClientException;
 
