@@ -239,7 +239,7 @@ class HolooController extends Controller
         //$orderInvoice->request->add($order);
         //return $this->sendResponse('test', Response::HTTP_OK, $orderInvoice);
         $invoice = new Invoice();
-        $invoice->invoices = json_encode($orderInvoice->request->all());
+        $invoice->invoice = json_encode($orderInvoice->request->all());
         $invoice->user_id = $user->id;
         $invoice->save();
 
@@ -265,7 +265,6 @@ class HolooController extends Controller
 
             $items = array();
             $sum_total = 0;
-            $payment_methos = $orderInvoice->payment_method;
             if (is_string($orderInvoice->payment)) {
                 $payment = json_decode($orderInvoice->payment);
             }
@@ -276,7 +275,7 @@ class HolooController extends Controller
             if (!(array)$payment) {
                 return $this->sendResponse('ثبت فاکتور انجام نشد.روش پرداخت نامعتبر', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
-            $payment = (object) $payment->$payment_methos;
+            $payment =(object) $payment->{$orderInvoice->payment_method};
             $orderInvoiceFull=app('App\Http\Controllers\WCController')->get_invoice($orderInvoice->id);
             $fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
             if(!is_object($orderInvoiceFull)){
@@ -415,6 +414,7 @@ class HolooController extends Controller
                 $response = curl_exec($curl);
                 $response = json_decode($response);
                 curl_close($curl);
+                log::info(json_encode($response));
                 if (isset($response->success) and $response->success) {
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish succsessfuly");
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
@@ -442,7 +442,7 @@ class HolooController extends Controller
         // return response()->json($this->genericFee("#102564#25000%3", 25000));
         //log::info("order: ".json_encode($orderInvoice->request->all()));
         $invoice = new Invoice();
-        $invoice->invoices = json_encode($orderInvoice->request->all());
+        $invoice->invoice = json_encode($orderInvoice->request->all());
         $invoice->user_id = $user->id;
         $invoice->save();
 
@@ -468,18 +468,20 @@ class HolooController extends Controller
 
             $items = array();
             $sum_total = 0;
-            $payment_methos = $orderInvoice->payment_method;
+
             if (is_string($orderInvoice->payment)) {
                 $payment = json_decode($orderInvoice->payment);
             }
             elseif (is_array($orderInvoice->payment)) {
                 $payment = (object) $orderInvoice->payment;
             }
-            log::info("payment: ".json_encode($payment));
+            // log::info("payment: ".json_encode($payment));
+            // log::info("payment: ".json_encode($orderInvoice->payment_method));
             if (!(array)$payment) {
                 return $this->sendResponse('ثبت فاکتور انجام نشد.روش پرداخت نامعتبر', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
-            $payment = (object) $payment->payment_methos;
+            $payment =(object) $payment->{$orderInvoice->payment_method};
+            //log::info("payment: ".json_encode($payment));
             $orderInvoiceFull=app('App\Http\Controllers\WCController')->get_invoice($orderInvoice->id);
             $fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
 
@@ -610,8 +612,10 @@ class HolooController extends Controller
                         'access_token:' . $user->apiKey,
                     ),
                 ));
+
                 $response = curl_exec($curl);
                 $response = json_decode($response);
+                log::info(json_encode($response));
                 curl_close($curl);
                 if (isset($response->success) and $response->success) {
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish succsessfuly");
