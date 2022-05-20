@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\test;
 use App\Models\User;
+use App\Models\Webhook;
 use Illuminate\Http\Request;
 use App\Jobs\UpdateProductFind;
 use App\Jobs\UpdateProductsUser;
@@ -13,8 +14,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Artisan;
+
 use phpDocumentor\Reflection\Types\This;
-use Codexshaper\WooCommerce\Models\Webhook;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Client\HttpClientException;
 
