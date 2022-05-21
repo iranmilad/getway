@@ -1591,6 +1591,6 @@ class HolooController extends Controller
 
     public function changeProduct(Request $config){
 
-        return $this->sendResponse("محصول با موفقیت به روز شد.", Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+        return $this->sendResponse("ویرایش محصول دریافت شد.", Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
     }
 }

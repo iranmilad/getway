@@ -198,7 +198,7 @@ class WCController extends Controller
 
     public function compareProductsFromWoocommerceToHoloo(Request $config){
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
-        //Log::error(json_encode($config));
+        Log::info(json_encode($config->all()));
         // $size = count(array_filter($config->product_cat, ""));
         // $size_cat = count($config->product_cat);
 
@@ -1120,8 +1120,8 @@ class WCController extends Controller
                     }
 
                 }
-                else if ($request->MsgType==0 && $config->insert_new_product==1) {
-
+                else if ($request->MsgType==0 && property_exists($config, insert_new_product) && $config->insert_new_product==1) {
+                    
                     $holooProduct=$this->findProduct($HolooProds,$holooID);
                     //dd($holooProduct);
                     if(!$holooProduct) continue;
