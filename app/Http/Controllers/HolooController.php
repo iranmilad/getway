@@ -1588,4 +1588,9 @@ class HolooController extends Controller
         curl_close($curl);
         return $this->sendResponse('لیست حسابهای', Response::HTTP_OK,  $response);
     }
+
+    public function changeProduct(Request $config){
+
+        return $this->sendResponse("محصول با موفقیت به روز شد.", Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+    }
 }

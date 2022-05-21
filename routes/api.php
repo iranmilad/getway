@@ -89,6 +89,8 @@ Route::group([
     Route::post('/wcInvoiceRegistration', [HolooController::class, 'wcInvoiceRegistration']);
     Route::post('/wcInvoicePayed', [HolooController::class, 'wcInvoicePayed']);
     Route::post('/addToCart', [HolooController::class, 'addToCart']);
+    Route::post('/changeProduct', [HolooController::class, 'changeProduct']);
+
 
 });
 
