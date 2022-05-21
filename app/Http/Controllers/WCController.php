@@ -1055,7 +1055,7 @@ class WCController extends Controller
             $HolooDb=$Dbname[1];
             $user = User::where(['holooDatabaseName'=>$HolooDb,'holooCustomerID'=>$HolooUser,])
             ->first();
-            $hook->content = json_encode($request);
+            $hook->content = json_encode($request->all());
             $hook->user_id = ($user->id) ?? null;
             $hook->save();
             if($user==null){
