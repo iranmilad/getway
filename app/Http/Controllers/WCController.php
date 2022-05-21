@@ -205,8 +205,12 @@ class WCController extends Controller
         // if ($size>$size_cat){
         //     $this->compareProductsFromWoocommerceToHoloo2($config);
         // }
-
-        $callApi = $this->fetchAllWCProds(true);
+        if($config->search_category!=""){
+            $callApi = $this->fetchAllWCProds(true,$config->search_category);
+        }
+        else{
+            $callApi = $this->fetchAllWCProds(true);
+        }
         $WCProds = $callApi;
 
 
@@ -219,7 +223,7 @@ class WCController extends Controller
         $notneedtoProsse=[];
         foreach ($WCProds as $WCProd) {
             //array_push($products,$WCProd->id);
-            if ($counter_confid==30) {
+            if ($counter_confid==$config->per_page) {
                 break;
             }
             if (count($WCProd->meta_data)>0) {
@@ -1121,7 +1125,7 @@ class WCController extends Controller
 
                 }
                 else if ($request->MsgType==0 && property_exists($config, insert_new_product) && $config->insert_new_product==1) {
-                    
+
                     $holooProduct=$this->findProduct($HolooProds,$holooID);
                     //dd($holooProduct);
                     if(!$holooProduct) continue;
