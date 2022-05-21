@@ -1349,7 +1349,7 @@ class WCController extends Controller
         $response = curl_exec($curl);
         $response=json_decode($response);
         curl_close($curl);
-        if (isset($response) && count($response)>0) {
+        if (isset($response)) {
             log::info(json_encode($response));
             return $response;
         }
