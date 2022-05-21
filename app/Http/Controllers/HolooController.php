@@ -616,6 +616,7 @@ class HolooController extends Controller
 
                 $response = curl_exec($curl);
                 $response = json_decode($response);
+                log::info("invoice Package");
                 log::info(json_encode($data));
                 log::info(json_encode($response));
                 curl_close($curl);
@@ -1187,6 +1188,7 @@ class HolooController extends Controller
         foreach ($holooCustomers->result as $holloCustomer) {
             if ($holloCustomer->c_Mobile == $customer->phone) {
                 log::info("finded customer: ".$holloCustomer->c_Code_C);
+
                 return $holloCustomer->c_Code_C;
             }
         }
