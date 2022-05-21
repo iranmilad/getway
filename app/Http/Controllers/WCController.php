@@ -206,7 +206,9 @@ class WCController extends Controller
         //     $this->compareProductsFromWoocommerceToHoloo2($config);
         // }
         if($config->search_category!=""){
-            $callApi = $this->fetchAllWCProds(true,$config->search_category);
+           // $callApi = $this->fetchAllWCProds(true,$config->search_category);
+            $callApi = $this->fetchAllWCProds(true);
+
         }
         else{
             $callApi = $this->fetchAllWCProds(true);
