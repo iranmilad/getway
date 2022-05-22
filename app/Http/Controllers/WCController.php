@@ -617,7 +617,7 @@ class WCController extends Controller
         $notneedtoProsse=[];
         foreach ($WCProds as $WCProd) {
             //array_push($products,$WCProd->id);
-            if ($counter_confid==$config->per_page) {
+            if ($counter_confid>$config->per_page) {
                 break;
             }
             if (count($WCProd->meta_data)>0) {
