@@ -259,7 +259,7 @@ class WCController extends Controller
             $counter_wc++;
             //array_push($products,$WCProd->id);
             if ($counter_confid==$config->per_page) {
-                break;
+                //break;
             }
             if (count($WCProd->meta_data)>0) {
                 //dd($WCProd->meta_data);
