@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
 use App\Jobs\UpdateProductsUser;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -18,6 +20,7 @@ class UpdateProductFind implements ShouldQueue
 
     protected $user;
     protected $param;
+    protected $category;
     public $flag;
 
     /**
@@ -116,6 +119,8 @@ class UpdateProductFind implements ShouldQueue
             }
         }
 
+        Log::info( $wcholooCounter ." product(s) update");
+
 
     }
 
@@ -129,11 +134,56 @@ class UpdateProductFind implements ShouldQueue
         return $this->user->id.$this->flag;
     }
 
+    private function getNewToken(): string
+    {
+        $userSerial = $this->user->serial;
+        $userApiKey = $this->user->apiKey;
+        if ($this->user->cloudTokenExDate > Carbon::now()) {
+
+            return $this->user->cloudToken;
+        }
+        else {
+
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://myholoo.ir/api/Ticket/RegisterForPartner',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => array('Serial' => $userSerial, 'RefreshToken' => 'false', 'DeleteService' => 'false', 'MakeService' => 'true', 'RefreshKey' => 'false'),
+                CURLOPT_HTTPHEADER => array(
+                    'apikey:' . $userApiKey,
+                ),
+            ));
+
+            $response = curl_exec($curl);
+            curl_close($curl);
+            $response = json_decode($response);
+
+            if ($response) {
+                log::info("take new token request and response");
+                log::info(json_encode($response));
+                User::where(['id' => $this->user->id])
+                ->update([
+                    'cloudTokenExDate' => Carbon::now()->addDay(1),
+                    'cloudToken' => $response->result->apikey,
+                ]);
+
+                return $response->result->apikey;
+            }
+        }
+    }
+
+
     public function fetchCategoryHolloProds($categorys)
     {
         $totalProduct=[];
 
-        $this->user = auth()->user();
         $curl = curl_init();
         foreach ($categorys as $category_key=>$category_value) {
             if ($category_value != "") {
@@ -152,9 +202,9 @@ class UpdateProductFind implements ShouldQueue
                     CURLOPT_HTTPHEADER => array(
                         'serial: ' . $this->user->serial,
                         'database: ' . $this->user->holooDatabaseName,
-                        'Authorization: Bearer ' .$this->token,
-                        'm_groupcode: ' . $this->category->m_groupcode,
-                        's_groupcode: ' . $this->category->s_groupcode,
+                        'Authorization: Bearer ' .$this->getNewToken(),
+                        'm_groupcode: ' . $m_groupcode,
+                        's_groupcode: ' . $s_groupcode,
                         'isArticle: true',
                         'access_token: ' .$this->user->apiKey
                     ),
