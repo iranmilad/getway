@@ -1072,13 +1072,11 @@ class WCController extends Controller
         $user=auth()->user();
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         set_time_limit(0);
-        UpdateProductFind::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"serial"=>$user->serial,"apiKey"=>$user->apiKey,"holooDatabaseName"=>$user->holooDatabaseName,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret,"cloudTokenExDate"=>$user->cloudTokenExDate,"cloudToken"=>$user->cloudToken],$config->product_cat,$config,1)->onQueue("high");
+        UpdateProductFind::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret],$config->product_cat,$config)->onQueue("high");
 
         return $this->sendResponse('درخواست به روزرسانی محصولات با موفقیت دریافت شد ', Response::HTTP_OK, ["result"=>["msg_code"=>0]]);
 
     }
-
-
 
     public function updateAllProductFromHolooToWC2(Request $config)
     {
@@ -1252,6 +1250,8 @@ class WCController extends Controller
             return $this->sendResponse('تمامی محصولات به روز هستند.', Response::HTTP_OK, ["result"=>["msg_code"=>0]]);
         }
     }
+
+
     public function get_all_holoo_code_exist(){
         $wcProducts=$this->fetchAllWCProds();
         $response_products=[];
@@ -2027,6 +2027,30 @@ class WCController extends Controller
 
     }
 
+    public function get_variation_product(){
+        $user=auth()->user();
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products?per_page=100',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+        if ($response) {
+            $decodedResponse = json_decode($response);
+            return $decodedResponse;
+        }
+        return null;
+    }
 
 
 }
