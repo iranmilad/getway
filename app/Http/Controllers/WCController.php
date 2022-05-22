@@ -228,7 +228,7 @@ class WCController extends Controller
 
     public function compareProductsFromWoocommerceToHoloo(Request $config){
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
-        Log::info(json_encode($config->all()));
+        //Log::info(json_encode($config->all()));
         // $size = count(array_filter($config->product_cat, ""));
         // $size_cat = count($config->product_cat);
 
@@ -791,6 +791,7 @@ class WCController extends Controller
         $response=app('App\Http\Controllers\HolooController')->fetchAllHolloProds();
         return json_decode($response);
     }
+
     private function fetchCategoryHolloProds($cat){
 
         $response=app('App\Http\Controllers\HolooController')->fetchCategoryHolloProds($cat);

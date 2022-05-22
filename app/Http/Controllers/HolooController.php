@@ -26,6 +26,7 @@ class HolooController extends Controller
 
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
+
         if ($user->cloudTokenExDate > Carbon::now()) {
 
             return $user->cloudToken;
@@ -98,7 +99,7 @@ class HolooController extends Controller
 
     public function getProductCategory()
     {
-
+        return $this->sendResponse('مشکل در دریافت گروه بندی محصولات', Response::HTTP_NOT_ACCEPTABLE, null);
         $response = $this->getAllCategory();
         if ($response) {
             $category = [];
@@ -156,7 +157,7 @@ class HolooController extends Controller
     {
         $user = auth()->user();
         $curl = curl_init();
-
+        log::info("yes");
         curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://myholoo.ir/api/Service/article/' . $user->holooDatabaseName,
             CURLOPT_RETURNTRANSFER => true,
