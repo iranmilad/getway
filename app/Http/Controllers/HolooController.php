@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Exports\ReportExport;
 use App\Jobs\AddProductsUser;
+use App\Jobs\CreateProductFind;
 use App\Models\ProductRequest;
 use App\Jobs\FindProductInCategory;
 use App\Models\Invoice;
@@ -916,6 +917,28 @@ class HolooController extends Controller
         $productRequest->user_id = $user_id;
         $productRequest->request_time = Carbon::now();
         $productRequest->save();
+
+        return $this->sendResponse(" درخواست ثبت محصولات جدید با موفقیت ثبت گردید. ", Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
+    }
+
+    public function wcAddAllHolooProductsCategory2(Request $request)
+    {
+        $user = auth()->user();
+        $user_id = $user->id;
+        $counter = 0;
+        if (ProductRequest::where(['user_id' => $user_id])->exists()) {
+            //return $this->sendResponse('شما یک درخواست ثبت محصول در ۲۴ ساعت گذشته ارسال کرده اید لطفا منتظر بمانید تا عملیات قبلی شما تکمیل گردد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+        }
+
+
+        ini_set('max_execution_time', 300); // 120 (seconds) = 2 Minutes
+        $token = $this->getNewToken();
+        $curl = curl_init();
+
+        $data = $request->product_cat;
+        //dd($data);
+
+       CreateProductFind::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"serial"=>$user->serial,"apiKey"=>$user->apiKey,"holooDatabaseName"=>$user->holooDatabaseName,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret,"cloudTokenExDate"=>$user->cloudTokenExDate,"cloudToken"=>$user->cloudToken],$data,(object)$request->all(),$token,1)->onQueue("low");
 
         return $this->sendResponse(" درخواست ثبت محصولات جدید با موفقیت ثبت گردید. ", Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
     }

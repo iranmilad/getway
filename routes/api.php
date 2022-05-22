@@ -72,6 +72,7 @@ Route::group([
 
     Route::post('/wcSingleProductUpdate', [HolooController::class, 'wcSingleProductUpdate']);
     Route::post('/wcAddAllHolooProductsCategory', [HolooController::class, 'wcAddAllHolooProductsCategory']);
+    Route::post('/wcAddAllHolooProductsCategory2', [HolooController::class, 'wcAddAllHolooProductsCategory2']);
 
     Route::post('/GetBankAccount', [HolooController::class, 'getAccountBank']);
     Route::post('/GetCashAccount', [HolooController::class, 'getAccountCash']);
