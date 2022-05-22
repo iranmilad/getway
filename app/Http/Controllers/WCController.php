@@ -228,7 +228,7 @@ class WCController extends Controller
 
     public function compareProductsFromWoocommerceToHoloo(Request $config){
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
-        //Log::info(json_encode($config->all()));
+        Log::info(json_encode($config->all()));
         // $size = count(array_filter($config->product_cat, ""));
         // $size_cat = count($config->product_cat);
 
@@ -987,7 +987,7 @@ class WCController extends Controller
                             isset($config->update_product_price) && $config->update_product_price=="1" &&
                             (
                             (isset($config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd)) or
-                            (isset($config->special_price_field) &(object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"serial"=>$user->serial,"apiKey"=>$user->apiKey,"holooDatabaseName"=>$user->holooDatabaseName,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret,"cloudTokenExDate"=>$user->cloudTokenExDate,"cloudToken"=>$user->cloudToken],$config->product_cat,$config,1& (int)$WCProd->sale_price  != $this->get_price_type($config->special_price_field,$HolooProd)) or
+                            (isset($config->special_price_field) && (int)$WCProd->sale_price  != $this->get_price_type($config->special_price_field,$HolooProd)) or
                             (isset($config->wholesale_price_field) && $wholesale_customer_wholesale_price && (int)$wholesale_customer_wholesale_price  != $this->get_price_type($config->wholesale_price_field,$HolooProd))
                             ) or
                             ((isset($config->update_product_stock) && $config->update_product_stock=="1") &&  isset($WCProd->stock_quantity)  and $WCProd->stock_quantity != (int)$HolooProd->exist) or
