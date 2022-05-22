@@ -251,9 +251,12 @@ class WCController extends Controller
         $HolooProds = $callApi->result;
         //return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  $callApi);
         $counter_confid=0;
+        $counter_wc=0;
         $products = [];
         $notneedtoProsse=[];
+
         foreach ($WCProds as $WCProd) {
+            $counter_wc++;
             //array_push($products,$WCProd->id);
             if ($counter_confid==$config->per_page) {
                 break;
@@ -342,7 +345,7 @@ class WCController extends Controller
         }
 
         if($counter_confid==0){
-            return $this->sendResponse('عدم انطباقی در محصولات یافت نشد', Response::HTTP_OK, ['result' => []]);
+            return $this->sendResponse('عدم انطباقی در محصولات یافت نشد', Response::HTTP_OK, ['result' => [$counter_wc]]);
         }
         else{
             return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK, ['result' => $products]);
