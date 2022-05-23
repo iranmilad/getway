@@ -258,7 +258,7 @@ class UpdateProductFind implements ShouldQueue
             ));
 
             $response = curl_exec($curl);
-            //log::info($response);
+            log::info($response);
             $products = json_decode($response);
             $all_products = array_merge($all_products,$products);
           }
