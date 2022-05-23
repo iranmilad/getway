@@ -1272,6 +1272,8 @@ class WCController extends Controller
     }
 
     public function holooWebHook(Request $request){
+        ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
+        set_time_limit(0);
         // {
         //     "Dbname": "S11216632_holoo1",
         //     "Table": "Article",
