@@ -1609,6 +1609,13 @@ class HolooController extends Controller
         $response = curl_exec($curl);
         $response = json_decode($response);
         $response = $response->data->bedGroup;
+        if(count($response)==0){
+            $response =[
+                "sarfasl_Code"=> "1030001",
+                "sarfasl_Name"=> "پیشفرض"
+            ];
+        }
+
         curl_close($curl);
         return $this->sendResponse('لیست حسابهای', Response::HTTP_OK,  $response);
     }
