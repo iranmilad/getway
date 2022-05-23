@@ -1624,4 +1624,6 @@ class HolooController extends Controller
 
         return $this->sendResponse("ویرایش محصول دریافت شد.", Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
     }
+
+
 }

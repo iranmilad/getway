@@ -57,6 +57,7 @@ class WCController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_USERAGENT => 'Holoo',
             CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
         ));
 
@@ -86,6 +87,7 @@ class WCController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_USERAGENT => 'Holoo',
             CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
         ));
 
@@ -830,6 +832,7 @@ class WCController extends Controller
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_USERAGENT => 'Holoo',
                 CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
             ));
 
