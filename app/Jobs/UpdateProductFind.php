@@ -46,7 +46,7 @@ class UpdateProductFind implements ShouldQueue
     {
         $callApi = $this->fetchCategoryHolloProds($this->category);
         $holooProducts = $callApi;
-        log::info($holooProducts);
+
         $callApi = $this->fetchAllWCProds();
         $wcProducts = $callApi;
 
@@ -228,7 +228,7 @@ class UpdateProductFind implements ShouldQueue
 
     public function fetchAllWCProds($published=false,$category=null)
     {
-        $this->user=auth()->user();
+
         if($published){
             $status= "status=publish&" ;
         }
