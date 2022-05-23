@@ -1330,7 +1330,7 @@ class WCController extends Controller
                     $holooProduct=json_decode($holooProduct);
                     if (!isset($holooProduct->result->sel_Price)){
                         Log::alert("holo code not found for holoo id".$holooID);
-                        Log::alert($holooProduct);
+                        Log::alert(json_encode($holooProduct));
                         continue;
                     }
 
