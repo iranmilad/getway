@@ -1610,7 +1610,7 @@ class HolooController extends Controller
         $response = json_decode($response);
         $response = $response->data->bedGroup;
         if(count($response)==0){
-            $response =[
+            $response[] =(object)[
                 "sarfasl_Code"=> "1030001",
                 "sarfasl_Name"=> "پیشفرض"
             ];
