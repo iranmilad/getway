@@ -1328,6 +1328,11 @@ class WCController extends Controller
 
                     $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
                     $holooProduct=json_decode($holooProduct);
+                    if (!isset($holooProduct->result->sel_Price)){
+                        Log::alert("holo code not found for holoo id".$holooID);
+                        Log::alert($holooProduct);
+                    }
+                    
                     $WCProd=$this->getWcProductWithHolooId($holooID);
                     $WCProd=$WCProd[0];
 
