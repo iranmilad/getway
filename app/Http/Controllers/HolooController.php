@@ -1612,7 +1612,7 @@ class HolooController extends Controller
         if(count($response)==0){
             $response[] =(object)[
                 "sarfasl_Code"=> "1030001",
-                "sarfasl_Name"=> "پیشفرض"
+                "sarfasl_Name"=> "پیش فرض"
             ];
         }
 
