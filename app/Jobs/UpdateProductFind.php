@@ -49,6 +49,7 @@ class UpdateProductFind implements ShouldQueue
 
         $callApi = $this->fetchAllWCProds();
         $wcProducts = $callApi;
+        log::info($wcProducts);
         $response_product=[];
 
         $wcholooCounter=0;
@@ -260,7 +261,7 @@ class UpdateProductFind implements ShouldQueue
             $response = curl_exec($curl);
 
             $products = json_decode($response);
-            log::info($products);
+
             $all_products = array_merge($all_products,$products);
           }
           catch(\Throwable $th){
