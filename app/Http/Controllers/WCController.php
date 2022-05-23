@@ -1331,8 +1331,9 @@ class WCController extends Controller
                     if (!isset($holooProduct->result->sel_Price)){
                         Log::alert("holo code not found for holoo id".$holooID);
                         Log::alert($holooProduct);
+                        continue;
                     }
-                    
+
                     $WCProd=$this->getWcProductWithHolooId($holooID);
                     $WCProd=$WCProd[0];
 
