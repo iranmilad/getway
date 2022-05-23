@@ -100,7 +100,7 @@ class HolooController extends Controller
 
     public function getProductCategory()
     {
-        return $this->sendResponse('مشکل در دریافت گروه بندی محصولات', Response::HTTP_NOT_ACCEPTABLE, null);
+        //return $this->sendResponse('مشکل در دریافت گروه بندی محصولات', Response::HTTP_NOT_ACCEPTABLE, null);
         $response = $this->getAllCategory();
         if ($response) {
             $category = [];
