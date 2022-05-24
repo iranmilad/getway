@@ -2131,13 +2131,13 @@ class WCController extends Controller
 
 
                                     $notneedtoProsse[]=$key;
-                                    //unset($holooProducts[$key]);
-                                    array_push($response_product,$wcHolooCode);
+
+
 
                                 }
                                 else{
                                     $notneedtoProsse[]=$key;
-                                    //unset($holooProducts[$key]);
+
                                 }
                             }
 
