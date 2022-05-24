@@ -53,7 +53,7 @@ class UpdateProductsVariationUser implements ShouldQueue
 
             "stock_quantity"=>(int)$this->param['stock_quantity'],
             //'wholesale_customer_wholesale_price' => $this->param['wholesale_customer_wholesale_price'],
-            "name"=>$this->param['name'],
+
             "meta_data"=>$meta,
         ];
         Log::info('param sended ');
