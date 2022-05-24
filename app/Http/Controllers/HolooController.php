@@ -241,12 +241,13 @@ class HolooController extends Controller
         //log::info("order: ".json_encode($orderInvoice->request->all()));
         //$orderInvoice->request->add($order);
         //return $this->sendResponse('test', Response::HTTP_OK, $orderInvoice);
-        $invoice = new Invoice();
-        $invoice->invoice = json_encode($orderInvoice->request->all());
-        $invoice->user_id = $user->id;
-        $invoice->save();
+
 
         if ($orderInvoice->save_pre_sale_invoice) {
+            $invoice = new Invoice();
+            $invoice->invoice = json_encode($orderInvoice->request->all());
+            $invoice->user_id = $user->id;
+            $invoice->save();
 
             $_data = (object) $orderInvoice->input("date_created");
             $DateString = Carbon::parse($_data->date ?? now(), $_data->timezone);
@@ -445,12 +446,13 @@ class HolooController extends Controller
 
         // return response()->json($this->genericFee("#102564#25000%3", 25000));
         //log::info("order: ".json_encode($orderInvoice->request->all()));
-        $invoice = new Invoice();
-        $invoice->invoice = json_encode($orderInvoice->request->all());
-        $invoice->user_id = $user->id;
-        $invoice->save();
+
 
         if ($orderInvoice->save_sale_invoice) {
+            $invoice = new Invoice();
+            $invoice->invoice = json_encode($orderInvoice->request->all());
+            $invoice->user_id = $user->id;
+            $invoice->save();
 
             $_data = (object) $orderInvoice->input("date_created");
             $DateString = Carbon::parse($_data->date ?? now(), $_data->timezone);
