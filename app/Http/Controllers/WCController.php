@@ -1327,7 +1327,7 @@ class WCController extends Controller
 
             $config=json_decode($this->getWcConfig());
 
-
+            if(!$config) return;
 
             if ($request->MsgType==0 && isset($config->insert_new_product) && $config->insert_new_product==1) {
                 $HolooProds  = $this->fetchCategoryHolloProds($config->product_cat);
