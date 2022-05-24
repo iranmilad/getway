@@ -2078,7 +2078,7 @@ class WCController extends Controller
     }
 
     public function updateWCVariation($variations,$holooProducts,$config){
-        return;
+        //return;
         $user=auth()->user();
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         set_time_limit(0);
