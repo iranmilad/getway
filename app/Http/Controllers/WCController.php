@@ -2150,7 +2150,7 @@ class WCController extends Controller
             }
         }
 
-        return $this->sendResponse('همه محصولات به روز رسانی شدند.', Response::HTTP_OK, ["result"=>[$a]]);
+
     }
 
 }
