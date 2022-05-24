@@ -54,6 +54,8 @@ Route::group([
 
 Route::group([
     'middleware' => 'auth:api',
+   // 'middleware' => 'api',
+
 ], function ($router) {
     Route::get('/wcall', [WCController::class, 'fetchAllWCProducts']);
     Route::get('/wc/{id}', [WCController::class, 'fetchSingleProduct']);
@@ -69,6 +71,7 @@ Route::group([
     Route::post('/updateAllProductFromHolooToWC', [WCController::class, 'updateAllProductFromHolooToWC']);
     Route::post('/updateAllProductFromHolooToWC2', [WCController::class, 'updateAllProductFromHolooToWC2'])->name("updateAllProductFromHolooToWC2");   //test
     Route::post('/updateAllProductFromHolooToWC3', [WCController::class, 'updateAllProductFromHolooToWC3'])->name("updateAllProductFromHolooToWC3");   //test
+    Route::post('/updateAllProductVariationFromHolooToWC', [WCController::class, 'updateAllProductVariationFromHolooToWC'])->name("updateAllProductVariationFromHolooToWC");   //test
 
     Route::post('/wcSingleProductUpdate', [HolooController::class, 'wcSingleProductUpdate']);
     Route::post('/wcAddAllHolooProductsCategory', [HolooController::class, 'wcAddAllHolooProductsCategory']);

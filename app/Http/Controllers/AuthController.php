@@ -65,7 +65,9 @@ class AuthController extends Controller
                 }
 
             }
+
             $response=$this->createNewToken($token);
+            //auth()->login($User);
             return $this->sendResponse("ورود با موفقیت انجام شد", Response::HTTP_OK, $response);
 
         }

@@ -23,6 +23,7 @@ class HolooController extends Controller
 {
     private function getNewToken(): string
     {
+
         $user = auth()->user();
 
         $userSerial = $user->serial;
