@@ -346,6 +346,7 @@ class WCController extends Controller
                 }
             }
             else{
+                continue;
                 $WCProdsVariation=$this->get_variation_product($WCProd->id);
                 foreach ($WCProdsVariation as $WCProdVariation) {
                     if (count($WCProdVariation->meta_data)>0) {
