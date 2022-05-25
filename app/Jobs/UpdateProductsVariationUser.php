@@ -25,7 +25,7 @@ class UpdateProductsVariationUser implements ShouldQueue
      */
     public function __construct($user,$param,$flag)
     {
-        Log::info(' queue update product start');
+        Log::info(' queue update product variation start');
         $this->user=$user;
         $this->param=$param;
         $this->flag=$flag;
@@ -44,7 +44,7 @@ class UpdateProductsVariationUser implements ShouldQueue
         $meta = array(
             (object)array(
                 'key' => 'wholesale_customer_wholesale_price',
-                'value' => $this->param["wholesale_customer_wholesale_price"]
+                'value' => ($this->param["wholesale_customer_wholesale_price"]!=0 ) ? $this->param["wholesale_customer_wholesale_price"] : null,
             )
         );
         $data=[

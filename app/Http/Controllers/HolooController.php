@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Component\HttpFoundation\Response;
+use App\Jobs\UpdateProductsVariationUser;
 
 
 class HolooController extends Controller
@@ -728,6 +729,12 @@ class HolooController extends Controller
         ini_set('max_execution_time', 120); // 120 (seconds) = 2 Minutes
         $holoo_product_id = $request->holoo_id;
         $wp_product_id = $request->product_id;
+        if(count( explode(":", $wp_product_id))>1){
+            $wp_product_id=explode(":", $wp_product_id);
+            //product is variant
+            $this->wcSingleVariantProductUpdate($wp_product_id,$holoo_product_id,$request);
+            return $this->sendResponse("محصول با موفقیت به روز شد.", Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+        }
         $user = auth()->user();
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
@@ -768,7 +775,54 @@ class HolooController extends Controller
         return $this->sendResponse("محصول با موفقیت به روز شد.", Response::HTTP_OK, ["result" => ["msg_code" => $response]]);
         return $response;
     }
+    public function wcSingleVariantProductUpdate(array $wp_product_variant_id,$holoo_product_id,$request)
+    {
+        ini_set('max_execution_time', 120); // 120 (seconds) = 2 Minutes
 
+        $wp_product_id = $wp_product_variant_id[0];
+        $wp_variant_id = $wp_product_variant_id[1];
+
+        $user = auth()->user();
+        $userSerial = $user->serial;
+        $userApiKey = $user->apiKey;
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://myholoo.ir/api/Service/article/' . $user->holooDatabaseName . '/' . $holoo_product_id,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'serial: ' . $userSerial,
+                'access_token: ' . $userApiKey,
+                'Authorization: Bearer ' . $this->getNewToken(),
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $HolooProd = json_decode($response)->result;
+
+
+        $data = [
+            'id' => $wp_product_id,
+            'variation_id' => $wp_variant_id,
+            'name' => $this->arabicToPersian($HolooProd->a_Name),
+            'regular_price' => $this->get_price_type($request->sales_price_field,$HolooProd),
+            'price' => $this->get_price_type($request->special_price_field,$HolooProd),
+            'sale_price' => $this->get_price_type($request->special_price_field,$HolooProd),
+            'wholesale_customer_wholesale_price' => $this->get_price_type($request->wholesale_price_field,$HolooProd),
+            'stock_quantity' => (int) $HolooProd->exist ?? 0,
+        ];
+        $wcHolooCode=$HolooProd->a_Code;
+        UpdateProductsVariationUser::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret],$data,$wcHolooCode)->onQueue("high");
+        return $this->sendResponse("محصول با موفقیت به روز شد.", Response::HTTP_OK, ["result" => ["msg_code" => $response]]);
+        return $response;
+    }
     public function GetSingleProductHoloo($holoo_id)
     {
         $user = auth()->user();

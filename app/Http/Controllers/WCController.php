@@ -345,6 +345,89 @@ class WCController extends Controller
                     }
                 }
             }
+            else{
+                $WCProdsVariation=$this->get_variation_product($WCProd->id);
+                foreach ($WCProdsVariation as $WCProdVariation) {
+                    if (count($WCProdVariation->meta_data)>0) {
+                        //dd($WCProdVariation->meta_data);
+
+                        $wcHolooCode = $this->findKey($WCProdVariation->meta_data, '_holo_sku');
+
+
+                        if ($wcHolooCode!=null) {
+                            $messages = [];
+                            $messages_code = [];
+
+                            $productFind = false;
+                            foreach ($HolooProds as $key=>$HolooProd) {
+                                //if( array_search($key, $notneedtoProsse)) continue;
+                                $HolooProd=(object) $HolooProd;
+                                //0 "قیمت محصول با هلو منطبق نیست"
+                                //1 "نام محصول با هلو منطبق نیست"
+                                //2 "مقدار موجودی محصول با هلو منطبق نیست"
+                                //3 "کد هلو ثبت شده برای این محصول در نرم افزار هلو یافت نشد"
+                                $wholesale_customer_wholesale_price= $this->findKey($WCProdVariation->meta_data, 'wholesale_customer_wholesale_price');
+
+                                //return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  $wholesale_customer_wholesale_price);
+                                if ($wcHolooCode == $HolooProd->a_Code) {
+                                    if (
+                                    isset($config->update_product_price) && $config->update_product_price=="1" &&
+                                    (
+                                    (isset($config->sales_price_field) && (int)$WCProdVariation->regular_price != $this->get_price_type($config->sales_price_field, $HolooProd)) or
+                                    (isset($config->special_price_field) && (int)$WCProdVariation->sale_price!=0 && (int)$WCProdVariation->sale_price<(int)$WCProdVariation->regular_price && (int)$WCProdVariation->sale_price  != $this->get_price_type($config->special_price_field, $HolooProd)) or
+                                    (isset($config->wholesale_price_field) && $wholesale_customer_wholesale_price && (int)$wholesale_customer_wholesale_price  != $this->get_price_type($config->wholesale_price_field, $HolooProd))
+                                    )
+
+                                    ) {
+                                        log::info($wholesale_customer_wholesale_price);
+                                        log::info($this->get_price_type($config->wholesale_price_field, $HolooProd));
+                                        array_push($messages, 'قیمت محصول با هلو منطبق نیست.');
+                                        array_push($messages_code, 0);
+                                    }
+
+
+
+                                    if ((isset($config->update_product_name) && $config->update_product_name=="1") && $WCProdVariation->name != trim($this->arabicToPersian($HolooProd->a_Name))) {
+                                        //dd($WCProdVariation->name.'-'.trim($this->arabicToPersian($HolooProd->a_Name)));
+                                        array_push($messages, 'نام محصول با هلو منطبق نیست.');
+                                        array_push($messages_code, 1);
+                                    }
+                                    if ((isset($config->update_product_stock) && $config->update_product_stock=="1") &&  isset($WCProdVariation->stock_quantity)  and $WCProdVariation->stock_quantity != (int)$HolooProd->exist) {
+                                        array_push($messages, 'مقدار موجودی محصول با هلو منطبق نیست.');
+                                        array_push($messages_code, 2);
+                                    }
+
+                                    $notneedtoProsse[]=$key;
+                                    $productFind = true;
+                                    break;
+                                }
+                            }
+                            if ($productFind == false) {
+                                # if product dont find
+                                array_push($messages, 'کد هلو ثبت شده برای این محصول در نرم افزار هلو یافت نشد.');
+                                array_push($messages_code, 3);
+                            }
+
+                            if (count($messages_code)>0) {
+                                array_push(
+                                    $products,
+                                    [
+                                        'msg' => $messages,
+                                        'product_name' =>"متغییر ". $WCProd->name,
+                                        'price' => $WCProdVariation->regular_price,
+                                        'amount' => (isset($WCProdVariation->stock_quantity)) ? $WCProdVariation->stock_quantity : 0,
+                                        'holo_code' => $wcHolooCode ,
+                                        'woocommerce_product_id' => $WCProd->id.':'.$WCProdVariation->id,
+                                        'msg_code' => $messages_code,
+
+                                    ]
+                                );
+                                $counter_confid=$counter_confid+1;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         if($counter_confid==0){
@@ -1349,8 +1432,13 @@ class WCController extends Controller
                         continue;
                     }
 
-                    $WCProd=$this->getWcProductWithHolooId($holooID);
+                    //$WCProd=$this->getWcProductWithHolooId($holooID);
                     $WCProd=$WCProd[0];
+                    if($WCProd->type=="variable"){
+                        $WCProd=$this->getVariationProductWithHoloo($holooID,$WCProd,$holooProduct,$config);
+                        Log::info("holo code found variation product ".$holooID);
+                        continue;
+                    }
 
                     if(isset($WCProd->meta_data) and count($WCProd->meta_data)>0){
                         $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
@@ -1629,6 +1717,7 @@ class WCController extends Controller
         $user=auth()->user();
         $curl = curl_init();
 
+        $header=array('consumer_secret: '. $user->consumerSecret,'consumer_key: '. $user->consumerKey);
         curl_setopt_array($curl, array(
             CURLOPT_URL => $user->siteUrl.'/wp-json/wooholo/v1/data',
             CURLOPT_RETURNTRANSFER => true,
@@ -1638,7 +1727,7 @@ class WCController extends Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_USERAGENT => 'Holoo',
-            CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
+            CURLOPT_HTTPHEADER => $header,
         ));
 
         $response = curl_exec($curl);
@@ -1971,7 +2060,13 @@ class WCController extends Controller
     }
 
     public function test(){
-        $user=auth()->user();
+        $user = User::where(['id'=>13])->first();
+
+        auth()->login($user);
+        //return $user;
+        //$user=auth()->user();
+        return $this->getWcConfig();
+
         $wcHolooCode = "0101012";
 
         $data=array (
@@ -2153,4 +2248,70 @@ class WCController extends Controller
 
     }
 
+    public function getVariationProductWithHoloo($holooCode,$WCProd,$holooProducts,$config){
+        $user=auth()->user();
+        ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
+        set_time_limit(0);
+        $wcId=$WCProd->id;
+        //foreach ($variations as $wcId){
+
+            $wcProducts=$this->get_variation_product($wcId);
+
+            //$wcProducts=$wcProducts[0];
+
+            foreach ($wcProducts as $WCProd) {
+
+                if (count($WCProd->meta_data)>0) {
+
+                    $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
+                    if ($wcHolooCode) {
+
+                        $productFind = false;
+                        $HolooProd=$holooProducts->result;
+                        $holooCode=$HolooProd->a_Code;
+                        if ($wcHolooCode == $holooCode) {
+
+                            // log::info("holo ".json_encode($HolooProd));
+                            // log::info("wp ".json_encode($WCProd));
+                            $productFind = true;
+                            $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
+
+                            if (
+                            isset($config->update_product_price) && $config->update_product_price=="1" &&
+                            (
+                            (isset($config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd)) or
+                            (isset($config->special_price_field) && (int)$WCProd->sale_price  != $this->get_price_type($config->special_price_field,$HolooProd)) or
+                            (isset($config->wholesale_price_field) && $wholesale_customer_wholesale_price && (int)$wholesale_customer_wholesale_price  != $this->get_price_type($config->wholesale_price_field,$HolooProd))
+                            ) or
+                            ((isset($config->update_product_stock) && $config->update_product_stock=="1") &&  isset($WCProd->stock_quantity)  and $WCProd->stock_quantity != (int)$HolooProd->exist) or
+                            ((isset($config->update_product_name) && $config->update_product_name=="1") && $WCProd->name != trim($this->arabicToPersian($HolooProd->a_Name)))
+
+                            ){
+
+
+                                $data = [
+                                    'id' => $wcId ,
+                                    'variation_id' => $WCProd->id,
+                                    'regular_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field,$HolooProd)) ? $this->get_price_type($config->sales_price_field,$HolooProd) : (int)$WCProd->regular_price,
+                                    'price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
+                                    'sale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
+                                    'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($wholesale_customer_wholesale_price) && (int)$wholesale_customer_wholesale_price != $this->get_price_type($config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($config->wholesale_price_field,$HolooProd)  : ((isset($wholesale_customer_wholesale_price)) ? (int)$wholesale_customer_wholesale_price : null),
+                                    'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1" and isset($WCProd->stock_quantity)) ? (int) $HolooProd->exist : 0,
+                                ];
+                                log::info("add new update product to queue for product variation");
+                                log::info("for website id : ".$user->siteUrl);
+
+                                UpdateProductsVariationUser::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret],$data,$wcHolooCode)->onQueue("high");
+
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            }
+        //}
+    }
 }

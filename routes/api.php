@@ -47,6 +47,7 @@ Route::group([
     Route::post('/updateUser', [AuthController::class, 'updateWordpressSettings']);
 
    // Route::get('/test', [WCController::class, 'testProductVar']);
+    Route::get('/test', [WCController::class, 'test']);
 
 
 });
@@ -64,7 +65,6 @@ Route::group([
     Route::post('/getProductConflict2', [WCController::class, 'compareProductsFromWoocommerceToHoloo2']);
     Route::post('/getProductConflict3', [WCController::class, 'compareProductsFromWoocommerceToHoloo3']);
 
-    Route::get('/test', [WCController::class, 'test']);
 
 
     Route::post('/updateWCSingleProduct', [WCController::class, 'updateWCSingleProduct']);
