@@ -248,7 +248,7 @@ class WCController extends Controller
         }
         $WCProds = $callApi;
 
-
+        Log::info("fetch holo and wp complete");
         //$callApi = $this->fetchCategoryHolloProds($config->product_cat);
         $callApi = $this->fetchAllHolloProds();
         if (!isset($WCProds) or !isset($callApi)) {

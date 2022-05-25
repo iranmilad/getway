@@ -160,7 +160,7 @@ class HolooController extends Controller
     {
         $user = auth()->user();
         $curl = curl_init();
-        log::info("yes");
+        // log::info("yes");
         curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://myholoo.ir/api/Service/article/' . $user->holooDatabaseName,
             CURLOPT_RETURNTRANSFER => true,
