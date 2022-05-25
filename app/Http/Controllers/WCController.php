@@ -232,6 +232,7 @@ class WCController extends Controller
     public function compareProductsFromWoocommerceToHoloo(Request $config){
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         Log::info(json_encode($config->all()));
+        $user=auth()->user();
         // $size = count(array_filter($config->product_cat, ""));
         // $size_cat = count($config->product_cat);
 
@@ -346,7 +347,7 @@ class WCController extends Controller
                 }
             }
             else{
-                continue;
+                if($user->user_traffic=='heavy') continue;
                 $WCProdsVariation=$this->get_variation_product($WCProd->id);
                 foreach ($WCProdsVariation as $WCProdVariation) {
                     if (count($WCProdVariation->meta_data)>0) {
@@ -428,6 +429,7 @@ class WCController extends Controller
                         }
                     }
                 }
+                $counter_confid=$counter_confid+1;
             }
         }
 
