@@ -379,8 +379,8 @@ class WCController extends Controller
                                     )
 
                                     ) {
-                                        log::info($wholesale_customer_wholesale_price);
-                                        log::info($this->get_price_type($config->wholesale_price_field, $HolooProd));
+                                        // log::info($wholesale_customer_wholesale_price);
+                                        // log::info($this->get_price_type($config->wholesale_price_field, $HolooProd));
                                         array_push($messages, 'قیمت محصول با هلو منطبق نیست.');
                                         array_push($messages_code, 0);
                                     }
