@@ -36,7 +36,7 @@ class UpdateProductFind implements ShouldQueue
         $this->config=$config;
         $this->category=$category;
         $this->flag=$flag;
-        log::info($config);
+
     }
 
     /**
@@ -70,9 +70,10 @@ class UpdateProductFind implements ShouldQueue
                     foreach ($holooProducts as $key=>$HolooProd) {
                         $HolooProd=(object) $HolooProd;
                         if ($wcHolooCode == $HolooProd->a_Code) {
-                            log::info($this->config->sales_price_field);
-                            log::info((int)$WCProd->regular_price);
-                            log::info($this->get_price_type($this->config->sales_price_field,$HolooProd));
+                            log::info($this->config);
+                            // log::info($this->config->sales_price_field);
+                            // log::info((int)$WCProd->regular_price);
+                            // log::info($this->get_price_type($this->config->sales_price_field,$HolooProd));
 
                             log::info((isset($this->config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($this->config->sales_price_field,$HolooProd)));
                             $holooFinded=$holooFinded+1;
