@@ -69,7 +69,7 @@ class UpdateProductFind implements ShouldQueue
                     foreach ($holooProducts as $key=>$HolooProd) {
                         $HolooProd=(object) $HolooProd;
                         if ($wcHolooCode == $HolooProd->a_Code) {
-                            log::info($this->config);
+                            //log::info($this->config);
                             $holooFinded=$holooFinded+1;
                             $productFind = true;
                             $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
