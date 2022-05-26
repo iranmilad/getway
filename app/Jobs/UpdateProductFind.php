@@ -36,6 +36,7 @@ class UpdateProductFind implements ShouldQueue
         $this->config=$config;
         $this->category=$category;
         $this->flag=$flag;
+        log::info($config);
     }
 
     /**
