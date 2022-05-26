@@ -21,6 +21,7 @@ class UpdateProductFind implements ShouldQueue
     protected $user;
     protected $param;
     protected $category;
+    protected $config;
     public $flag;
 
     /**
