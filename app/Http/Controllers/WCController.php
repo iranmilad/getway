@@ -1038,6 +1038,7 @@ class WCController extends Controller
     {
         //return $config->special_price_field;
         $user=auth()->user();
+
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         set_time_limit(0);
         //$callApi = $this->fetchAllHolloProds();
@@ -1173,6 +1174,7 @@ class WCController extends Controller
     {
         //return $config->special_price_field;
         $user=auth()->user();
+        $this->updateConfig($config);
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         set_time_limit(0);
         $cf=(object)$config->all();
@@ -1737,8 +1739,12 @@ class WCController extends Controller
         $response = curl_exec($curl);
         curl_close($curl);
 
-
-        return $response;
+        if($response){
+            return $response;
+        }
+        else{
+            return $user->config;
+        }
 
 
     }
@@ -2317,5 +2323,13 @@ class WCController extends Controller
                 }
             }
         //}
+    }
+
+    public function updateConfig(Request $request){
+        $user=auth()->user();
+        User::where(['id'=>$user->id,])
+        ->update([
+            'config' => $request->all(),
+        ]);
     }
 }
