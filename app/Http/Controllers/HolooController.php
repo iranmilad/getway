@@ -1023,6 +1023,8 @@ class HolooController extends Controller
             return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
         }
         log::info('products file not found try for make new for user: ' . $user->id);
+        return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => route("liveWcGetExcelProducts", ["user_id" => $user->id])]]);
+
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         $token = $this->getNewToken();
         $curl = curl_init();

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WCController;
+use App\Http\Controllers\DownloadController;
 use Symfony\Component\HttpFoundation\Response;
 
 /*
@@ -34,3 +35,4 @@ Route::get('cashClear', [WCController::class, 'clearCache']);
 
 
 
+Route::get('/liveWcGetExcelProducts/{user_id}', [DownloadController::class, 'index'])->name("liveWcGetExcelProducts");
