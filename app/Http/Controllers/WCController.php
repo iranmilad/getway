@@ -2332,8 +2332,8 @@ class WCController extends Controller
     }
 
     public function updateConfig(Request $request){
-        log::info("new config for user id resived",$user->id);
         $user=auth()->user();
+        log::info("new config for user id resived",$user->id);
         User::where(['id'=>$user->id,])
         ->update([
             'config' => $request->all(),
