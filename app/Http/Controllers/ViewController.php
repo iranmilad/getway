@@ -7,10 +7,8 @@ use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class ViewController extends Controller{
-    public function index(){
-
-
-        return view('find');
+    public function index($user_id,$token){
+        return view('find',compact($user_id,$token));
     }
 
     public function compareProductsFromWoocommerceToHoloo(Request $config){

@@ -3,22 +3,22 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
- window.$ = window.jQuery = require('jquery'); // <-- main, not 'slim'
+ //window.$ = window.jQuery = require('jquery'); // <-- main, not 'slim'
 
- require('bootstrap');
-
-
+ //require('bootstrap');
 
 
- window.Vue = require("vue").default;
-
- window.axios = require('axios');
 
 
- window.axios.defaults.baseURL = document.head.querySelector('meta[name="api-base-url"]').content;
+ //window.Vue = require("vue").default;
+
+ //window.axios = require('axios');
 
 
- Vue.component('signal-table-vue', require('./components/TableComponent.vue').default);
+ //window.axios.defaults.baseURL = document.head.querySelector('meta[name="api-base-url"]').content;
+
+
+ //Vue.component('signal-table-vue', require('./components/TableComponent.vue').default);
  //Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
  /**
@@ -27,8 +27,8 @@
   * or customize the JavaScript scaffolding to fit your unique needs.
   */
 
- const app = new Vue({
-     el: '#app',
+//  const app = new Vue({
+//      el: '#app',
 
- });
+//  });
 
