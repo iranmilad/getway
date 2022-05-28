@@ -361,6 +361,7 @@ class WCController extends Controller
                             $messages_code = [];
 
                             $productFind = false;
+
                             foreach ($HolooProds as $key=>$HolooProd) {
                                 //if( array_search($key, $notneedtoProsse)) continue;
                                 $HolooProd=(object) $HolooProd;
@@ -369,9 +370,14 @@ class WCController extends Controller
                                 //2 "مقدار موجودی محصول با هلو منطبق نیست"
                                 //3 "کد هلو ثبت شده برای این محصول در نرم افزار هلو یافت نشد"
                                 $wholesale_customer_wholesale_price= $this->findKey($WCProdVariation->meta_data, 'wholesale_customer_wholesale_price');
-
                                 //return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  $wholesale_customer_wholesale_price);
                                 if ($wcHolooCode == $HolooProd->a_Code) {
+                                    // if($wcHolooCode=='0302102'){
+                                    //     Log::info($wcHolooCode);
+                                    //     log::info($HolooProd->a_Code);
+                                    //     Log::info((int)$WCProdVariation->regular_price);
+                                    //     log::info($this->get_price_type($config->sales_price_field, $HolooProd));
+                                    // }
                                     if (
                                     isset($config->update_product_price) && $config->update_product_price=="1" &&
                                     (
@@ -394,7 +400,7 @@ class WCController extends Controller
                                         array_push($messages, 'نام محصول با هلو منطبق نیست.');
                                         array_push($messages_code, 1);
                                     }
-                                    if ((isset($config->update_product_stock) && $config->update_product_stock=="1") &&  isset($WCProdVariation->stock_quantity)  and $WCProdVariation->stock_quantity != (int)$HolooProd->exist) {
+                                    if ((isset($config->update_product_stock) && $config->update_product_stock=="1")  and (int)$WCProdVariation->stock_quantity != (int)$HolooProd->exist) {
                                         array_push($messages, 'مقدار موجودی محصول با هلو منطبق نیست.');
                                         array_push($messages_code, 2);
                                     }
@@ -628,7 +634,7 @@ class WCController extends Controller
                                 array_push($messages_code, 1);
 
                             }
-                            if ((isset($config->update_product_stock) && $config->update_product_stock=="1") &&  isset($WCProd->stock_quantity)  and $WCProd->stock_quantity != (int)$HolooProd->exist) {
+                            if ((isset($config->update_product_stock) && $config->update_product_stock=="1") and (int)$WCProd->stock_quantity != (int)$HolooProd->exist) {
                                 array_push($messages, 'مقدار موجودی محصول با هلو منطبق نیست.');
                                 array_push($messages_code, 2);
 
