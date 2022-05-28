@@ -440,7 +440,7 @@ class WCController extends Controller
         }
 
         if($counter_confid==0){
-            return $this->sendResponse('عدم انطباقی در محصولات یافت نشد', Response::HTTP_OK, ['result' => [$counter_wc]]);
+            return $this->sendResponse('عدم انطباقی در محصولات یافت نشد', Response::HTTP_OK, ['result' => []]);
         }
         else{
             return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK, ['result' => $products]);
