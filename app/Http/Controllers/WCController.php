@@ -435,7 +435,7 @@ class WCController extends Controller
                         }
                     }
                 }
-                $counter_confid=$counter_confid+1;
+                //$counter_confid=$counter_confid+1;
             }
         }
 
