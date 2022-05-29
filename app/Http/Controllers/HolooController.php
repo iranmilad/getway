@@ -278,13 +278,13 @@ class HolooController extends Controller
             }
             log::info("payment: ".json_encode($payment));
             if (!(array)$payment) {
-                return $this->sendResponse('ثبت فاکتور انجام نشد.روش پرداخت نامعتبر', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+                return $this->sendResponse('ثبت پیش فاکتور انجام نشد.روش پرداخت نامعتبر', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
             $payment =(object) $payment->{$orderInvoice->payment_method};
             $orderInvoiceFull=app('App\Http\Controllers\WCController')->get_invoice($orderInvoice->id);
-            $fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
+            //$fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
             if(!is_object($orderInvoiceFull)){
-                return $this->sendResponse('ثبت فاکتور بدلیل عدم یافت انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+                return $this->sendResponse('ثبت پیش فاکتور بدلیل عدم یافت انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
 
             $numberOfItem=0;
@@ -295,13 +295,14 @@ class HolooController extends Controller
                     $item = (object) $item;
 
                 }
-                $HoloID=app('App\Http\Controllers\WCController')->get_product_holooCode($fetchAllWCProds,$item->product_id);
+                //$HoloID=app('App\Http\Controllers\WCController')->get_product_holooCode($fetchAllWCProds,$item->product_id);
 
 
-                if ($HoloID) {
-                    if($item->total==0){
-                        continue;
-                    }
+                if (isset($item->meta_data)) {
+                    $HoloID=$this->findKey($item->meta_data,'_holo_sku');
+                    // if($item->total==0){
+                    //     continue;
+                    // }
                     $total = $this->getAmount($item->total, $orderInvoiceFull->currency);
                     $lazy = 0;
                     $scot = 0;
@@ -434,10 +435,10 @@ class HolooController extends Controller
 
                 return $this->sendResponse($response->message, Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
-
+            return $this->sendResponse('اقلام سفارش یافت نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0,"item"=>$orderInvoiceFull]]);
         }
 
-        return $this->sendResponse('ثبت پیش فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+        return $this->sendResponse('ثبت پیش فاکتور خاموش است', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
     }
 
     public function wcInvoicePayed(Request $orderInvoice)
@@ -490,7 +491,7 @@ class HolooController extends Controller
             $payment =(object) $payment->{$orderInvoice->payment_method};
             //log::info("payment: ".json_encode($payment));
             $orderInvoiceFull=app('App\Http\Controllers\WCController')->get_invoice($orderInvoice->id);
-            $fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
+            //$fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
 
 
             if(!is_object($orderInvoiceFull)){
