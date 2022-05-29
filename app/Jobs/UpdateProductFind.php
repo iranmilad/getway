@@ -47,6 +47,8 @@ class UpdateProductFind implements ShouldQueue
      */
     public function handle()
     {
+        $user_id=$this->user->id;
+        Log::info("update for user id $user_id");
         $callApi = $this->fetchCategoryHolloProds($this->category);
         $holooProducts = $callApi;
 
