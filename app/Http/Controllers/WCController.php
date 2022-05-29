@@ -349,7 +349,7 @@ class WCController extends Controller
             else{
                 //if($user->user_traffic=='heavy') continue;
                 $WCProdsVariation=$this->get_variation_product($WCProd->id);
-                if (count($WCProdsVariation)==0){
+                if ($WCProdsVariation==null){
                     continue;
                 }
                 foreach ($WCProdsVariation as $WCProdVariation) {
