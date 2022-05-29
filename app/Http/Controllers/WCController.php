@@ -1470,7 +1470,7 @@ class WCController extends Controller
                             'price' => (isset($config->update_product_price) && $config->update_product_price=="1") ? $this->get_price_type($config->special_price_field,$holooProduct->result) :(int)$WCProd->sale_price ,
                             'sale_price' =>(isset($config->update_product_price) && $config->update_product_price=="1") ? (string) $this->get_price_type($config->special_price_field,$holooProduct->result):(int)$WCProd->sale_price,
                             'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($wholesale_customer_wholesale_price)) ? $this->get_price_type($config->wholesale_price_field,$holooProduct->result): ((isset($wholesale_customer_wholesale_price)) ? (int)$wholesale_customer_wholesale_price : null),
-                            'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1" && (int) $holooProduct->result->exist>0 and isset($WCProd->stock_quantity)) ? (int) $holooProduct->result->exist : 0
+                            'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1") ? (int) $holooProduct->result->exist : 0
                         ];
 
 
