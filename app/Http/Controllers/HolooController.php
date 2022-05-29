@@ -427,6 +427,10 @@ class HolooController extends Controller
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
                 }
                 else {
+                    $invoice = new Invoice();
+                    $invoice->invoice = json_encode(['data' => $data]);
+                    $invoice->user_id = $user->id;
+                    $invoice->save();
                     //return $this->sendResponse('test', Response::HTTP_OK,$response);
                     $this->recordLog("Invoice Registration", $user->siteUrl, json_encode(['data' => $data]), "error");
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish wrong", "error");
