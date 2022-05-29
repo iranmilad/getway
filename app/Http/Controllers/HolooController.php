@@ -500,10 +500,11 @@ class HolooController extends Controller
                 if (is_array($item)) {
                     $item = (object) $item;
                 }
-                $HoloID=app('App\Http\Controllers\WCController')->get_product_holooCode($fetchAllWCProds,$item->product_id);
 
 
-                if ($HoloID) {
+
+                if (isset($item->meta_data)) {
+                    $HoloID=$this->findKey($item->meta_data,'_holo_sku');;
                     if($item->total==0){
                         continue;
                     }
