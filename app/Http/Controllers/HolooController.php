@@ -645,7 +645,7 @@ class HolooController extends Controller
             }
 
         }
-        return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+        return $this->sendResponse('ثبت فاکتور خاموش است', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
     }
 
     private function wcInvoiceBank($orderInvoice, $fee, $custid, $DateString, $kind)
