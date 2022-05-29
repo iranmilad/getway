@@ -460,7 +460,7 @@ class HolooController extends Controller
             $DateString->setTimezone('Asia/Tehran');
 
             if (!$orderInvoice->save_sale_invoice || $orderInvoice->save_sale_invoice == 0) {
-                return $this->sendResponse('ثبت فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+                return $this->sendResponse('ثبت فاکتور غیرفعال است', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
             else {
                 $type = $orderInvoice->save_sale_invoice;
@@ -470,7 +470,7 @@ class HolooController extends Controller
 
             if (!$custid) {
                 log::info("کد مشتری یافت نشد");
-                return $this->sendResponse("ثبت فاکتور انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+                return $this->sendResponse(" ثبت فاکتور انجام نشد کد مشتری یافت نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
             }
 
             $items = array();
