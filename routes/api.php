@@ -65,7 +65,7 @@ Route::group([
     Route::post('/getProductConflict2', [WCController::class, 'compareProductsFromWoocommerceToHoloo2']);
     Route::post('/getProductConflict3', [WCController::class, 'compareProductsFromWoocommerceToHoloo3']);
 
-    Route::post('/selfConfig', [WCController::class, ' self_config']);
+    Route::get('/selfConfig', [WCController::class, ' self_config']);
     Route::post('/updateConfig', [WCController::class, 'updateConfig']);
 
     Route::post('/updateWCSingleProduct', [WCController::class, 'updateWCSingleProduct']);
