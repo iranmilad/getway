@@ -496,6 +496,7 @@ class HolooController extends Controller
             if(!is_object($orderInvoiceFull)){
                 return $this->sendResponse('ثبت فاکتور بدلیل عدم یافت انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
+            $cate=[];
             foreach ($orderInvoiceFull->line_items as $item) {
                 if (is_array($item)) {
                     $item = (object) $item;
@@ -504,10 +505,12 @@ class HolooController extends Controller
 
 
                 if (isset($item->meta_data)) {
-                    $HoloID=$this->findKey($item->meta_data,'_holo_sku');;
+                    $HoloID=$this->findKey($item->meta_data,'_holo_sku');
+
                     if($item->total==0){
                         continue;
                     }
+                    //$totalfactor=$item->total ?? $item->subtotal;
                     $total = $this->getAmount($item->total, $orderInvoiceFull->currency);
                     $lazy = 0;
                     $scot = 0;
