@@ -347,7 +347,7 @@ class WCController extends Controller
                 }
             }
             else{
-                if($user->user_traffic=='heavy') continue;
+                //if($user->user_traffic=='heavy') continue;
                 $WCProdsVariation=$this->get_variation_product($WCProd->id);
                 foreach ($WCProdsVariation as $WCProdVariation) {
                     if (count($WCProdVariation->meta_data)>0) {
