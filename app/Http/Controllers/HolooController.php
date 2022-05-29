@@ -449,7 +449,7 @@ class HolooController extends Controller
         //log::info("order: ".json_encode($orderInvoice->request->all()));
 
 
-        if (isset($orderInvoice->save_sale_invoice) and $orderInvoice->save_sale_invoice == 0) {
+        if (isset($orderInvoice->save_sale_invoice) and $orderInvoice->save_sale_invoice != 0) {
             $invoice = new Invoice();
             $invoice->invoice = json_encode($orderInvoice->request->all());
             $invoice->user_id = $user->id;
