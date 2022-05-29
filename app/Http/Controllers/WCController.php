@@ -1398,7 +1398,7 @@ class WCController extends Controller
         //     "MsgError": "",
         //     "Message": "ویرایش"
         //   }
-        log::info($request);
+        log::info($request->all());
         log::info("webhook resived");
         $hook = new Webhook();
 
