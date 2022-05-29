@@ -507,9 +507,9 @@ class HolooController extends Controller
                 if (isset($item->meta_data)) {
                     $HoloID=$this->findKey($item->meta_data,'_holo_sku');
 
-                    if($item->total==0){
-                        continue;
-                    }
+                    // if($item->total==0){
+                    //     continue;
+                    // }
                     //$totalfactor=$item->total ?? $item->subtotal;
                     $total = $this->getAmount($item->total, $orderInvoiceFull->currency);
                     $lazy = 0;
