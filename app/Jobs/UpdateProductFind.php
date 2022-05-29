@@ -195,7 +195,7 @@ class UpdateProductFind implements ShouldQueue
                     'cloudTokenExDate' => Carbon::now()->addDay(1),
                     'cloudToken' => $response->result->apikey,
                 ]);
-
+                $this->user->cloudTokenExDate = Carbon::now()->addDay(1);
                 return $response->result->apikey;
             }
         }
