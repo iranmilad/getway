@@ -2340,4 +2340,10 @@ class WCController extends Controller
             'config' => $request->all(),
         ]);
     }
+
+
+    public function self_config(){
+        $user=auth()->user();
+        return $this->getWcConfig();
+    }
 }
