@@ -644,7 +644,7 @@ class HolooController extends Controller
 
                 return $this->sendResponse($response->message, Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
-            return $this->sendResponse('اقلام سفارش یافت نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+            return $this->sendResponse('اقلام سفارش یافت نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0,"item"=>$orderInvoiceFull]]);
         }
         return $this->sendResponse('ثبت فاکتور خاموش است', Response::HTTP_OK, ["result" => ["msg_code" => 0,"param"=>$orderInvoice->save_sale_invoice]]);
     }
