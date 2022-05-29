@@ -1744,12 +1744,12 @@ class WCController extends Controller
 
         $response = curl_exec($curl);
         curl_close($curl);
-
-        if($response){
-            return $response;
+        $return_json=json_decode($response);
+        if(isset($return_json->data->status) && $return_json->data->status==401){
+            return $user->config;
         }
         else{
-            return $user->config;
+            return $response;
         }
 
 
