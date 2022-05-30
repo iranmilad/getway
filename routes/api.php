@@ -104,3 +104,6 @@ Route::middleware(['auth:api','cors'])->group(function () {
     Route::post('/wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
     Route::get('/wcGetExcelProducts', [HolooController::class, 'wcGetExcelProducts']);
 });
+
+
+// php artisan queue:work --queue=high,medium,low,default
