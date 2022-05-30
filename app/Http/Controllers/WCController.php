@@ -301,7 +301,7 @@ class WCController extends Controller
                                 if (
                                 isset($config->update_product_price) && $config->update_product_price=="1" &&
                                 (
-                                    (isset($config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field, $HolooProd)) or
+                                (isset($config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($config->sales_price_field, $HolooProd)) or
                                 (isset($config->special_price_field) && (int)$WCProd->sale_price!=0 && (int)$WCProd->sale_price<(int)$WCProd->regular_price && (int)$WCProd->sale_price  != $this->get_price_type($config->special_price_field, $HolooProd)) or
                                 (isset($config->wholesale_price_field) && $wholesale_customer_wholesale_price && (int)$wholesale_customer_wholesale_price  != $this->get_price_type($config->wholesale_price_field, $HolooProd))
                                 )
@@ -318,7 +318,7 @@ class WCController extends Controller
                                     array_push($messages, 'نام محصول با هلو منطبق نیست.');
                                     array_push($messages_code, 1);
                                 }
-                                if ((isset($config->update_product_stock) && $config->update_product_stock=="1") &&  isset($WCProd->stock_quantity)  and $WCProd->stock_quantity != (int)$HolooProd->exist) {
+                                if ((isset($config->update_product_stock) && $config->update_product_stock=="1") and $WCProd->stock_quantity != (int)$HolooProd->exist) {
                                     array_push($messages, 'مقدار موجودی محصول با هلو منطبق نیست.');
                                     array_push($messages_code, 2);
                                 }
