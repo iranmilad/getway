@@ -54,7 +54,7 @@ class UpdateProductFind implements ShouldQueue
 
         $callApi = $this->fetchAllWCProds();
         $wcProducts = $callApi;
-
+        log::info('product fetch compelete');
         $response_product=[];
 
         $wcholooCounter=0;
