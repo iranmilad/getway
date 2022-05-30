@@ -1034,9 +1034,9 @@ class HolooController extends Controller
     {
         $counter = 0;
         $user = auth()->user();
-        if($user->user_traffic!="light"){
-          $this->wcGetExcelProducts2();
-        }
+        // if($user->user_traffic!="light"){
+        //   $this->wcGetExcelProducts2();
+        // }
 
         $user_id = $user->id;
         $userSerial = $user->serial;
