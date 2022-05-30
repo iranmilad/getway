@@ -297,7 +297,7 @@ class WCController extends Controller
                             $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data, 'wholesale_customer_wholesale_price');
 
                             //return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  $wholesale_customer_wholesale_price);
-                            if ($wcHolooCode == $HolooProd->a_Code) {
+                            if ($wcHolooCode === $HolooProd->a_Code) {
                                 if (
                                 isset($config->update_product_price) && $config->update_product_price=="1" &&
                                 (
@@ -384,7 +384,7 @@ class WCController extends Controller
                                 //3 "کد هلو ثبت شده برای این محصول در نرم افزار هلو یافت نشد"
                                 $wholesale_customer_wholesale_price= $this->findKey($WCProdVariation->meta_data, 'wholesale_customer_wholesale_price');
                                 //return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  $wholesale_customer_wholesale_price);
-                                if ($wcHolooCode == $HolooProd->a_Code) {
+                                if ($wcHolooCode === $HolooProd->a_Code) {
                                     // if($wcHolooCode=='9502001'){
                                     //     Log::info($wcHolooCode);
                                     //     log::info($HolooProd->a_Code);
