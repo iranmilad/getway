@@ -231,8 +231,8 @@ class WCController extends Controller
 
     public function compareProductsFromWoocommerceToHoloo(Request $config){
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
-        Log::info(json_encode($config->all()));
         $user=auth()->user();
+        Log::info("compare product for user : ".$user->id);
         // $size = count(array_filter($config->product_cat, ""));
         // $size_cat = count($config->product_cat);
 
@@ -242,25 +242,32 @@ class WCController extends Controller
         if($config->search_category!=""){
             $callApi = $this->fetchAllWCProds(true,(int)$config->search_category);
             //$callApi = $this->fetchAllWCProds(true);
-
         }
         else{
             $callApi = $this->fetchAllWCProds(true);
         }
-        $WCProds = $callApi;
 
+        $WCProds = $callApi;
+        if($user->type=="heavy"){
+            $callApi = $this->fetchCategoryHolloProds($config->product_cat);
+            $HolooProds = $callApi;
+            // $callApi = $this->fetchAllHolloProds();
+            // $HolooProds = $callApi->result;
+        }
+        else{
+            $callApi = $this->fetchAllHolloProds();
+            $HolooProds = $callApi->result;
+        }
         Log::info("fetch holo and wp complete");
-        //$callApi = $this->fetchCategoryHolloProds($config->product_cat);
-        $callApi = $this->fetchAllHolloProds();
         if (!isset($WCProds) or !isset($callApi)) {
             return $this->sendResponse('داده در سمت سرور موجود نیست', Response::HTTP_OK,['result' => []]);
         }
-        $HolooProds = $callApi->result;
-        //return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  $callApi);
+        //return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  $WCProds);
         $counter_confid=0;
         $counter_wc=0;
         $products = [];
         $notneedtoProsse=[];
+
 
         foreach ($WCProds as $WCProd) {
             $counter_wc++;
@@ -346,12 +353,15 @@ class WCController extends Controller
                     }
                 }
             }
-            else{
+            else if($WCProd->type=='variable'){
                 //if($user->user_traffic=='heavy') continue;
                 $WCProdsVariation=$this->get_variation_product($WCProd->id);
+                log::info("check product id ".$WCProd->id);
                 if ($WCProdsVariation==null){
+                    log::info("not found variation for ".$WCProd->id);
                     continue;
                 }
+
                 foreach ($WCProdsVariation as $WCProdVariation) {
                     if (count($WCProdVariation->meta_data)>0) {
                         //dd($WCProdVariation->meta_data);
@@ -364,7 +374,7 @@ class WCController extends Controller
                             $messages_code = [];
 
                             $productFind = false;
-
+                            log::info("check variation code ".$wcHolooCode);
                             foreach ($HolooProds as $key=>$HolooProd) {
                                 //if( array_search($key, $notneedtoProsse)) continue;
                                 $HolooProd=(object) $HolooProd;
@@ -375,12 +385,14 @@ class WCController extends Controller
                                 $wholesale_customer_wholesale_price= $this->findKey($WCProdVariation->meta_data, 'wholesale_customer_wholesale_price');
                                 //return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK,  $wholesale_customer_wholesale_price);
                                 if ($wcHolooCode == $HolooProd->a_Code) {
-                                    // if($wcHolooCode=='0302102'){
+                                    // if($wcHolooCode=='9502001'){
                                     //     Log::info($wcHolooCode);
                                     //     log::info($HolooProd->a_Code);
                                     //     Log::info((int)$WCProdVariation->regular_price);
                                     //     log::info($this->get_price_type($config->sales_price_field, $HolooProd));
+                                    //     break;
                                     // }
+
                                     if (
                                     isset($config->update_product_price) && $config->update_product_price=="1" &&
                                     (
@@ -440,10 +452,12 @@ class WCController extends Controller
                 }
                 //$counter_confid=$counter_confid+1;
             }
+
+            if($counter_confid>=10) break;
         }
 
         if($counter_confid==0){
-            return $this->sendResponse('عدم انطباقی در محصولات یافت نشد', Response::HTTP_OK, ['result' => []]);
+            return $this->sendResponse('عدم انطباقی در محصولات یافت نشد', Response::HTTP_OK, ['result' => [],'counter_product'=>$counter_wc]);
         }
         else{
             return $this->sendResponse('نتیجه مقایسه', Response::HTTP_OK, ['result' => $products]);
@@ -1710,6 +1724,7 @@ class WCController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_USERAGENT => 'Holoo',
             CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
         ));
 
@@ -2048,6 +2063,7 @@ class WCController extends Controller
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => 'GET',
+        CURLOPT_USERAGENT => 'Holoo',
         CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
         ));
 
@@ -2179,6 +2195,7 @@ class WCController extends Controller
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => 'GET',
+        CURLOPT_USERAGENT => 'Holoo',
         CURLOPT_USERPWD => $user->consumerKey. ":" . $user->consumerSecret,
         ));
 
@@ -2190,6 +2207,49 @@ class WCController extends Controller
         }
         return null;
     }
+
+    public function get_multi_variation_product($products_id){
+        $user=auth()->user();
+        // array of curl handles
+        $multiCurl = array();
+        // data to be returned
+        $result = array();
+        // multi handle
+        $mh = curl_multi_init();
+        foreach ($products_id as $i => $product_id) {
+            // URL from which data will be fetched
+            $fetchURL = $user->siteUrl.'/wp-json/wc/v3/products/'.$product_id.'/variations';
+            $multiCurl[$i] = curl_init();
+            curl_setopt($multiCurl[$i], CURLOPT_URL,$fetchURL);
+            curl_setopt($multiCurl[$i], CURLOPT_RETURNTRANSFER,1);
+            curl_setopt($multiCurl[$i], CURLOPT_USERPWD,$user->consumerKey. ":" . $user->consumerSecret);
+            curl_setopt($multiCurl[$i], CURLOPT_HTTP_VERSION,CURL_HTTP_VERSION_1_1);
+            curl_setopt($multiCurl[$i], CURLOPT_CUSTOMREQUEST,'GET');
+            curl_setopt($multiCurl[$i], CURLOPT_USERAGENT,'Holoo');
+
+            curl_multi_add_handle($mh, $multiCurl[$i]);
+        }
+        $index=null;
+        do {
+            curl_multi_exec($mh,$index);
+        } while($index > 0);
+        // get content and remove handles
+        foreach($multiCurl as $k => $ch) {
+            $response =curl_multi_getcontent($ch);
+            if ($response) {
+                $result[$k] = json_decode($response);
+            }
+            else{
+                $result[$k] = null;
+            }
+            curl_multi_remove_handle($mh, $ch);
+        }
+        // close
+        curl_multi_close($mh);
+
+
+    }
+
 
     public function updateWCVariation($variations,$holooProducts,$config){
         //return;

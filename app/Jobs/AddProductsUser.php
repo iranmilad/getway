@@ -137,6 +137,7 @@ class AddProductsUser implements ShouldQueue
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_USERAGENT => 'Holoo',
             CURLOPT_POSTFIELDS => $data,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
@@ -212,6 +213,7 @@ class AddProductsUser implements ShouldQueue
               CURLOPT_CUSTOMREQUEST => 'POST',
               CURLOPT_POSTFIELDS => $data,
               CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
+              CURLOPT_USERAGENT => 'Holoo',
               CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
               ),

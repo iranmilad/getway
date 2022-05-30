@@ -70,6 +70,7 @@ class UpdateProductsUser implements ShouldQueue
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => $data,
+            CURLOPT_USERAGENT => 'Holoo',
             CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
             CURLOPT_HTTPHEADER => array(
               //'Content-Type: multipart/form-data',

@@ -274,6 +274,7 @@ class UpdateProductFind implements ShouldQueue
                 CURLOPT_TIMEOUT => 0,
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_USERAGENT => 'Holoo',
                 CURLOPT_CUSTOMREQUEST => 'GET',
                 CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
             ));
@@ -467,6 +468,7 @@ class UpdateProductFind implements ShouldQueue
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => 'GET',
+        CURLOPT_USERAGENT => 'Holoo',
         CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
         ));
 

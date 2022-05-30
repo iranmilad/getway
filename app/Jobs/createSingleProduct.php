@@ -140,6 +140,7 @@ class createSingleProduct implements ShouldQueue
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => $data,
+            CURLOPT_USERAGENT => 'Holoo',
             CURLOPT_USERPWD => $this->user->consumerKey. ":" . $this->user->consumerSecret,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
@@ -215,6 +216,7 @@ class createSingleProduct implements ShouldQueue
               CURLOPT_FOLLOWLOCATION => true,
               CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
               CURLOPT_CUSTOMREQUEST => 'POST',
+              CURLOPT_USERAGENT => 'Holoo',
               CURLOPT_POSTFIELDS => $data,
               CURLOPT_USERPWD =>  $this->user->consumerKey. ":" .  $this->user->consumerSecret,
               CURLOPT_HTTPHEADER => array(
