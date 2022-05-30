@@ -255,6 +255,7 @@ class HolooController extends Controller
             $DateString->setTimezone('Asia/Tehran');
 
             if (!$orderInvoice->save_pre_sale_invoice || $orderInvoice->save_pre_sale_invoice == 0) {
+                $this->InvoiceChangeStatus($invoice->id, 'ثبت پیش فاکتور انجام نشد');
                 return $this->sendResponse('ثبت پیش فاکتور انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
             else {
@@ -265,6 +266,7 @@ class HolooController extends Controller
 
             if (!$custid) {
                 log::info("کد مشتری یافت نشد");
+                $this->InvoiceChangeStatus($invoice->id, "ثبت پیش فاکتور انجام نشد");
                 return $this->sendResponse("ثبت پیش فاکتور انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
             }
 
@@ -278,12 +280,14 @@ class HolooController extends Controller
             }
             log::info("payment: ".json_encode($payment));
             if (!(array)$payment) {
+                $this->InvoiceChangeStatus($invoice->id, 'ثبت پیش فاکتور انجام نشد.روش پرداخت نامعتبر');
                 return $this->sendResponse('ثبت پیش فاکتور انجام نشد.روش پرداخت نامعتبر', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
             $payment =(object) $payment->{$orderInvoice->payment_method};
             $orderInvoiceFull=app('App\Http\Controllers\WCController')->get_invoice($orderInvoice->id);
             //$fetchAllWCProds=app('App\Http\Controllers\WCController')->fetchAllWCProds(true);
             if(!is_object($orderInvoiceFull)){
+                $this->InvoiceChangeStatus($invoice->id, 'ثبت پیش فاکتور بدلیل عدم یافت انجام نشد');
                 return $this->sendResponse('ثبت پیش فاکتور بدلیل عدم یافت انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
 
@@ -323,6 +327,7 @@ class HolooController extends Controller
 
                 }
                 elseif($orderInvoice->invoice_items_no_holo_code){
+                    $this->InvoiceChangeStatus($invoice->id, 'ثبت پیش فاکتور بدلیل ایتم فاقد کد هلو انجام نشد');
                     return $this->sendResponse('ثبت پیش فاکتور بدلیل ایتم فاقد کد هلو انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
                 }
 
@@ -424,9 +429,11 @@ class HolooController extends Controller
                 log::info(json_encode($response));
                 if (isset($response->success) and $response->success) {
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish succsessfuly");
+                    $this->InvoiceChangeStatus($invoice->id, 'ثبت سفارش فروش انجام شد');
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
                 }
                 else {
+                    $this->InvoiceChangeStatus($invoice->id, 'خطا در ثبت سفارش');
                     $invoice = new Invoice();
                     $invoice->invoice = json_encode(['data' => $data]);
                     $invoice->user_id = $user->id;
@@ -439,9 +446,10 @@ class HolooController extends Controller
 
                 return $this->sendResponse($response->message, Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
+            $this->InvoiceChangeStatus($invoice->id, 'اقلام سفارش یافت نشد');
             return $this->sendResponse('اقلام سفارش یافت نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0,"item"=>$orderInvoiceFull]]);
         }
-
+        $this->InvoiceChangeStatus($invoice->id, 'ثبت پیش فاکتور خاموش است');
         return $this->sendResponse('ثبت پیش فاکتور خاموش است', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
     }
 
@@ -465,6 +473,7 @@ class HolooController extends Controller
             $DateString->setTimezone('Asia/Tehran');
 
             if (!$orderInvoice->save_sale_invoice || $orderInvoice->save_sale_invoice == 0) {
+                $this->InvoiceChangeStatus($invoice->id, 'ثبت فاکتور غیرفعال است');
                 return $this->sendResponse('ثبت فاکتور غیرفعال است', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
             else {
@@ -475,6 +484,7 @@ class HolooController extends Controller
 
             if (!$custid) {
                 log::info("کد مشتری یافت نشد");
+                $this->InvoiceChangeStatus($invoice->id, " ثبت فاکتور انجام نشد کد مشتری یافت نشد");
                 return $this->sendResponse(" ثبت فاکتور انجام نشد کد مشتری یافت نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
             }
 
@@ -490,6 +500,7 @@ class HolooController extends Controller
             // log::info("payment: ".json_encode($payment));
             // log::info("payment: ".json_encode($orderInvoice->payment_method));
             if (!(array)$payment) {
+                $this->InvoiceChangeStatus($invoice->id, 'ثبت فاکتور انجام نشد.روش پرداخت نامعتبر');
                 return $this->sendResponse('ثبت فاکتور انجام نشد.روش پرداخت نامعتبر', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
             $payment =(object) $payment->{$orderInvoice->payment_method};
@@ -499,6 +510,7 @@ class HolooController extends Controller
 
 
             if(!is_object($orderInvoiceFull)){
+                $this->InvoiceChangeStatus($invoice->id, 'ثبت فاکتور بدلیل عدم یافت انجام نشد');
                 return $this->sendResponse('ثبت فاکتور بدلیل عدم یافت انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
             $cate=[];
@@ -536,6 +548,7 @@ class HolooController extends Controller
 
                 }
                 elseif($orderInvoice->invoice_items_no_holo_code){
+                    $this->InvoiceChangeStatus($invoice->id, 'ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد');
                     return $this->sendResponse('ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
                 }
 
@@ -636,10 +649,12 @@ class HolooController extends Controller
                 log::info(json_encode($response));
                 curl_close($curl);
                 if (isset($response->success) and $response->success) {
+                    $this->InvoiceChangeStatus($invoice->id, 'ثبت سفارش فروش انجام شد');
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish succsessfuly");
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
                 }
                 else {
+                    $this->InvoiceChangeStatus($invoice->id, json_encode([$response->message]));
                     $invoice = new Invoice();
                     $invoice->invoice = json_encode(['data' => $data]);
                     $invoice->user_id = $user->id;
@@ -652,8 +667,10 @@ class HolooController extends Controller
 
                 return $this->sendResponse($response->message, Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
             }
+            $this->InvoiceChangeStatus($invoice->id, 'اقلام سفارش یافت نشد');
             return $this->sendResponse('اقلام سفارش یافت نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0,"item"=>$orderInvoiceFull]]);
         }
+        $this->InvoiceChangeStatus($invoice->id, 'ثبت فاکتور خاموش است');
         return $this->sendResponse('ثبت فاکتور خاموش است', Response::HTTP_OK, ["result" => ["msg_code" => 0,"param"=>$orderInvoice->save_sale_invoice]]);
     }
 
@@ -1697,5 +1714,17 @@ class HolooController extends Controller
         return $this->sendResponse("ویرایش محصول دریافت شد.", Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
     }
 
+    public function InvoiceChangeStatus($id,$input){
+        if (!is_array($input)){
+            $input = [$input];
+        }
+        $input = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', function ($match) {
+            return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
+        }, $input);
+        Invoice::where(['id'=>$id,])
+        ->update([
+        'status' =>$input ,
+        ]);
+    }
 
 }
