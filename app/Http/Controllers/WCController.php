@@ -356,7 +356,7 @@ class WCController extends Controller
             else if($WCProd->type=='variable'){
                 //if($user->user_traffic=='heavy') continue;
                 $WCProdsVariation=$this->get_variation_product($WCProd->id);
-                log::info("check product id ".$WCProd->id);
+                //log::info("check product id ".$WCProd->id);
                 if ($WCProdsVariation==null){
                     log::info("not found variation for ".$WCProd->id);
                     continue;
@@ -374,7 +374,7 @@ class WCController extends Controller
                             $messages_code = [];
 
                             $productFind = false;
-                            log::info("check variation code ".$wcHolooCode);
+                            //log::info("check variation code ".$wcHolooCode);
                             foreach ($HolooProds as $key=>$HolooProd) {
                                 //if( array_search($key, $notneedtoProsse)) continue;
                                 $HolooProd=(object) $HolooProd;
