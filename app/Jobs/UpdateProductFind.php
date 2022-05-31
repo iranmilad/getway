@@ -159,7 +159,7 @@ class UpdateProductFind implements ShouldQueue
     {
         $user_id=$this->user->id;
         Log::info("update for user id $user_id");
-
+        $this->getNewToken();
 
         foreach ($this->category as $holoo_cat=>$wc_cat) {
             if ($wc_cat=="") {
