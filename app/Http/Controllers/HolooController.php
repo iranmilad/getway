@@ -1710,7 +1710,7 @@ class HolooController extends Controller
     }
 
     public function changeProduct(Request $config){
-
+        log::info($config->all());
         return $this->sendResponse("ویرایش محصول دریافت شد.", Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
     }
 
