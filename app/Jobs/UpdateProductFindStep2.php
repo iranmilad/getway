@@ -232,7 +232,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                     CURLOPT_HTTPHEADER => array(
                         'serial: ' . $this->user->serial,
                         'database: ' . $this->user->holooDatabaseName,
-                        'Authorization: Bearer ' .$this->getNewToken(),
+                        'Authorization: Bearer ' .$this->user->cloudToken,
                         'm_groupcode: ' . $m_groupcode,
                         's_groupcode: ' . $s_groupcode,
                         'isArticle: true',
