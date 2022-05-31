@@ -83,11 +83,11 @@ class UpdateProductFindStep2 implements ShouldQueue
                             $HolooProd=(object) $HolooProd;
                             if ($wcHolooCode === $HolooProd->a_Code) {
 
-                                // log::info($this->config->sales_price_field);
-                                // log::info((int)$WCProd->regular_price);
-                                // log::info($this->get_price_type($this->config->sales_price_field,$HolooProd));
+                                log::info($this->config->sales_price_field);
+                                log::info((int)$WCProd->regular_price);
+                                log::info($this->get_price_type($this->config->sales_price_field,$HolooProd));
 
-                                //log::info((isset($this->config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($this->config->sales_price_field,$HolooProd)));
+                                log::info((isset($this->config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($this->config->sales_price_field,$HolooProd)));
                                 $holooFinded=$holooFinded+1;
                                 $productFind = true;
                                 $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
