@@ -81,7 +81,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                         $productFind = false;
                         foreach ($holooProducts as $key=>$HolooProd) {
                             $HolooProd=(object) $HolooProd;
-                            if ($wcHolooCode == $HolooProd->a_Code) {
+                            if ($wcHolooCode === $HolooProd->a_Code) {
 
                                 // log::info($this->config->sales_price_field);
                                 // log::info((int)$WCProd->regular_price);
@@ -410,7 +410,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                             //if( array_search($key, $notneedtoProsse)) continue;
 
                             $HolooProd=(object) $HolooProd;
-                            if ($wcHolooCode == $HolooProd->a_Code) {
+                            if ($wcHolooCode === $HolooProd->a_Code) {
 
                                 $productFind = true;
                                 $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
