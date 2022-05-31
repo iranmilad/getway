@@ -230,7 +230,7 @@ class UpdateProductFind implements ShouldQueue
 
 
 
-                                        UpdateProductsUser::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret],$data,$wcHolooCode)->onQueue("high");
+                                        UpdateProductsUser::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret],$data,$wcHolooCode)->onQueue("low");
 
 
                                         unset($holooProducts[$key]);
@@ -552,7 +552,7 @@ class UpdateProductFind implements ShouldQueue
                                     log::info("add new update product to queue for product variation");
                                     log::info("for website id : ".$this->user->siteUrl);
 
-                                    UpdateProductsVariationUser::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret],$data,$wcHolooCode)->onQueue("high");
+                                    UpdateProductsVariationUser::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret],$data,$wcHolooCode)->onQueue("low");
 
 
                                     $notneedtoProsse[]=$key;
