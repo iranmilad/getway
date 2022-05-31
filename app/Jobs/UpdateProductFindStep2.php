@@ -7,17 +7,16 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Jobs\UpdateProductsUser;
 use Illuminate\Support\Facades\Log;
-use App\Jobs\UpdateProductFindStep2;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Jobs\UpdateProductsVariationUser;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Support\Facades\Cache;
 
 
-class UpdateProductFind implements ShouldQueue
+class UpdateProductFindStep2 implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -25,8 +24,10 @@ class UpdateProductFind implements ShouldQueue
     protected $param;
     protected $category;
     protected $config;
+    protected $holoo_cat;
+    protected $wc_cat;
     public $flag;
-    public $timeout = 2*60;
+    public $timeout = 15*60;
     public $failOnTimeout = true;
 
     /**
@@ -34,13 +35,15 @@ class UpdateProductFind implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($user,$category,$config,$flag)
+    public function __construct($user,$category,$config,$flag,$holoo_cat,$wc_cat)
     {
-        Log::info(' queue update product find start');
+        Log::info(' queue update product find step 2 start');
         $this->user=$user;
         $this->config=$config;
         $this->category=$category;
         $this->flag=$flag;
+        $this->holoo_cat=$holoo_cat;
+        $this->wc_cat=$wc_cat;
 
     }
 
@@ -49,20 +52,17 @@ class UpdateProductFind implements ShouldQueue
      *
      * @return void
      */
-    public function handle2()
+    public function handle()
     {
-        $user_id=$this->user->id;
-        Log::info("update for user id $user_id");
 
 
-
-
-        $callApi = $this->fetchCategoryHolloProds($this->category);
+        $callApi = $this->fetchCategoryHolloProds([$this->holoo_cat=>$this->wc_cat]);
         $holooProducts = $callApi;
 
-        $callApi = $this->fetchAllWCProds();
+        $callApi = $this->fetchAllWCProds(true,$this->wc_cat);
         $wcProducts = $callApi;
-        log::info('product fetch compelete');
+
+        log::info('product fetch compelete for category '.$this->wc_cat);
         $response_product=[];
 
         $wcholooCounter=0;
@@ -155,27 +155,6 @@ class UpdateProductFind implements ShouldQueue
     }
 
 
-    public function handle()
-    {
-        $user_id=$this->user->id;
-        Log::info("update for user id $user_id");
-
-
-        foreach ($this->category as $holoo_cat=>$wc_cat) {
-            if ($wc_cat=="") {
-                continue;
-            }
-
-
-            UpdateProductFindStep2::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"serial"=>$this->user->serial,"apiKey"=>$this->user->apiKey,"holooDatabaseName"=>$this->user->holooDatabaseName,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret,"cloudTokenExDate"=>$this->user->cloudTokenExDate,"cloudToken"=>$this->user->cloudToken, "holo_unit"=>$this->user->holo_unit, "plugin_unit"=>$this->user->plugin_unit],$this->config->product_cat,$this->config,1,$holoo_cat,$wc_cat)->onQueue("medium");
-
-        }
-
-
-
-
-
-    }
 
 
     /**

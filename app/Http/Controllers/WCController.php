@@ -6,17 +6,18 @@ use App\Jobs\test;
 use App\Models\User;
 use App\Models\Webhook;
 use Illuminate\Http\Request;
+use App\Models\ProductRequest;
 use App\Jobs\UpdateProductFind;
 use App\Jobs\UpdateProductsUser;
 use App\Jobs\createSingleProduct;
 use App\Jobs\updateWCSingleProduct;
-use App\Jobs\UpdateProductsVariationUser;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Artisan;
 
 use phpDocumentor\Reflection\Types\This;
+use App\Jobs\UpdateProductsVariationUser;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Client\HttpClientException;
 
@@ -1197,6 +1198,10 @@ class WCController extends Controller
     {
         //return $config->special_price_field;
         $user=auth()->user();
+
+        if (ProductRequest::where(['user_id' => $user->id])->exists()) {
+            //return $this->sendResponse('شما یک درخواست در ۱ ساعت گذشته ارسال کرده اید لطفا منتظر بمانید تا عملیات قبلی شما تکمیل گردد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+        }
         $this->updateConfig($config);
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         set_time_limit(0);

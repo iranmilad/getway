@@ -23,7 +23,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
 
         $schedule->call(function () {
-            ProductRequest::latest()->where('request_time', '<', Carbon::now()->subDay(1))->delete();
+            ProductRequest::latest()->where('request_time', '<', Carbon::now()->subHour(1))->delete();
         })->name('job_remove_old_request')->withoutOverlapping()->everyMinute();
 
 
