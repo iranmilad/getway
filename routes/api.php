@@ -107,3 +107,5 @@ Route::middleware(['auth:api','cors'])->group(function () {
 
 
 // php artisan queue:work --queue=high,medium,low,default
+// php artisan queue:flush
+// php artisan queue:clear redis --queue=high,medium,low,default
