@@ -15,7 +15,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 
 
-class UpdateProductFind implements ShouldQueue
+class UpdateProductFind implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -24,7 +24,9 @@ class UpdateProductFind implements ShouldQueue
     protected $category;
     protected $config;
     public $flag;
-
+    public $timeout = 60*60;
+    public $failOnTimeout = true;
+    public $uniqueFor = 3600;
     /**
      * Create a new job instance.
      *
