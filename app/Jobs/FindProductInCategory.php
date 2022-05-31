@@ -11,9 +11,13 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 
-class FindProductInCategory implements ShouldQueue
+class FindProductInCategory implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public $timeout = 60*60;
+    public $failOnTimeout = true;
+    public $uniqueFor = 3600;
 
     protected $user;
 
