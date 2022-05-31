@@ -271,13 +271,10 @@ class UpdateProductFind implements ShouldQueue, ShouldBeUnique
      */
     public function uniqueId()
     {
-        return $this->user->id.$this->flag;
+        return $this->user->id;
     }
 
-    public function uniqueVia()
-    {
-        return Cache::driver('redis');
-    }
+
 
     private function getNewToken(): string
     {
