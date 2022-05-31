@@ -7,13 +7,13 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Jobs\UpdateProductsUser;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Jobs\UpdateProductsVariationUser;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Support\Facades\Cache;
 
 
 class UpdateProductFind implements ShouldQueue, ShouldBeUnique
@@ -27,7 +27,7 @@ class UpdateProductFind implements ShouldQueue, ShouldBeUnique
     public $flag;
     public $timeout = 60*60;
     public $failOnTimeout = true;
-    public $uniqueFor = 3600;
+
     /**
      * Create a new job instance.
      *
@@ -271,9 +271,8 @@ class UpdateProductFind implements ShouldQueue, ShouldBeUnique
      */
     public function uniqueId()
     {
-        return $this->user->id;
+        return $this->user->id.$this->flag;
     }
-
 
 
     private function getNewToken(): string
