@@ -146,7 +146,8 @@ class UpdateProductFindStep2 implements ShouldQueue
             }
         }
         if(count($variation)>0){
-            $this->updateWCVariation($variation,$holooProducts,$this->config);
+            $countvariation=$this->updateWCVariation($variation,$holooProducts,$this->config);
+            $wcholooCounter=$wcholooCounter+$countvariation;
         }
 
         Log::info( $wcholooCounter ." product(s) update");
@@ -392,6 +393,7 @@ class UpdateProductFindStep2 implements ShouldQueue
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         set_time_limit(0);
         $notneedtoProsse=[];
+        $wcholooCounter=0;
         foreach ($variations as $wcId){
 
             $wcProducts=$this->get_variation_product($wcId);
@@ -404,7 +406,7 @@ class UpdateProductFindStep2 implements ShouldQueue
 
                     $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
                     if ($wcHolooCode) {
-
+                        $wcholooCounter=$wcholooCounter+1;
                         $productFind = false;
                         foreach ($holooProducts as $key=>$HolooProd) {
                             //if( array_search($key, $notneedtoProsse)) continue;
@@ -463,7 +465,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                 }
             }
         }
-
+        return $wcholooCounter;
 
     }
 
