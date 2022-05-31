@@ -506,6 +506,10 @@ class UpdateProductFind implements ShouldQueue
         foreach ($variations as $wcId){
 
             $wcProducts=$this->get_variation_product($wcId);
+            if(!$wcProducts){
+                log::alert("not found wc product for variation $wcId");
+                continue;
+            }
             foreach ($wcProducts as $WCProd) {
                 if (count($WCProd->meta_data)>0) {
 
