@@ -37,7 +37,7 @@ class UpdateProductFindStep2 implements ShouldQueue
      */
     public function __construct($user,$category,$config,$flag,$holoo_cat,$wc_cat)
     {
-        Log::info(' queue update product find step 2 start');
+
         $this->user=$user;
         $this->config=$config;
         $this->category=$category;
@@ -55,7 +55,7 @@ class UpdateProductFindStep2 implements ShouldQueue
     public function handle()
     {
 
-
+        Log::info(' queue update product find step 2 start for '.$this->wc_cat);
         $callApi = $this->fetchCategoryHolloProds([$this->holoo_cat=>$this->wc_cat]);
         $holooProducts = $callApi;
 
