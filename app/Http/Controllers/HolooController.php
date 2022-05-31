@@ -1047,11 +1047,11 @@ class HolooController extends Controller
         log::info('request resive download file for user: ' . $user->id);
         $file=public_path("download/$user_id.xls");
         $yesdate = strtotime("-1 days");
-        if (File::exists($file) and filemtime($file) < $yesdate ) {
-            $filename = $user_id;
-            $file = "download/" . $filename . ".xls";
-            return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
-        }
+        // if (File::exists($file) and filemtime($file) < $yesdate ) {
+        //     $filename = $user_id;
+        //     $file = "download/" . $filename . ".xls";
+        //     return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => asset($file)]]);
+        // }
         log::info('products file not found try for make new for user: ' . $user->id);
         return $this->sendResponse('ادرس فایل دانلود', Response::HTTP_OK, ["result" => ["url" => route("liveWcGetExcelProducts", ["user_id" => $user->id])]]);
 
@@ -1710,8 +1710,8 @@ class HolooController extends Controller
     }
 
     public function changeProduct(Request $config){
-        log::info($config->id);
-        log::info($config->meta_data);
+        // log::info($config->id);
+        // log::info($config->meta_data);
         return $this->sendResponse("ویرایش محصول دریافت شد.", Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
     }
 
