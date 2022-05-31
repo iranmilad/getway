@@ -3,7 +3,7 @@
 	"slug" : "wc-holo-main",
 	"author" : "<a href='https://laravel.clawar-services.org'>holooideh</a>",
 	"author_profile" : "https://laravel.clawar-services.org/about",
-	"version" : "2.01.001",
+	"version" : "2.01.02",
 	"download_url" : "https://laravel.clawar-services.org/update/wc-holo-main.zip",
 	"requires" : "5.0",
 	"tested" : "5.9.2",
