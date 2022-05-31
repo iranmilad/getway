@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Jobs\UpdateProductsUser;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Jobs\UpdateProductsVariationUser;
@@ -271,6 +272,11 @@ class UpdateProductFind implements ShouldQueue, ShouldBeUnique
     public function uniqueId()
     {
         return $this->user->id.$this->flag;
+    }
+
+    public function uniqueVia()
+    {
+        return Cache::driver('redis');
     }
 
     private function getNewToken(): string
