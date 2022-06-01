@@ -88,6 +88,10 @@ class UpdateProductFindStep2 implements ShouldQueue
                                 log::info($this->get_price_type($this->config->sales_price_field,$HolooProd));
 
                                 log::info((isset($this->config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($this->config->sales_price_field,$HolooProd)));
+
+                                log::info($WCProd->stock_quantity);
+                                log::info((int)$HolooProd->exist);
+
                                 $holooFinded=$holooFinded+1;
                                 $productFind = true;
                                 $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
@@ -116,7 +120,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                                         'price' => (isset($this->config->update_product_price) && $this->config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($this->config->special_price_field,$HolooProd)) ? $this->get_price_type($this->config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                         'sale_price' => (isset($this->config->update_product_price) && $this->config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($this->config->special_price_field,$HolooProd)) ? $this->get_price_type($this->config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                         'wholesale_customer_wholesale_price' => (isset($this->config->update_product_price) && $this->config->update_product_price=="1") && (isset($wholesale_customer_wholesale_price) && (int)$wholesale_customer_wholesale_price != $this->get_price_type($this->config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($this->config->wholesale_price_field,$HolooProd)  : ((isset($wholesale_customer_wholesale_price)) ? (int)$wholesale_customer_wholesale_price : null),
-                                        'stock_quantity' => (isset($this->config->update_product_stock) && $this->config->update_product_stock=="1") ? (int) $HolooProd->exist : 0,
+                                        'stock_quantity' => (isset($this->config->update_product_stock) && $this->config->update_product_stock=="1") ? (int) $HolooProd->exist : (int)$WCProd->stock_quantity,
                                     ];
                                     log::info("add new update product to queue for product ");
                                     log::info("for website id : ".$this->user->siteUrl);
