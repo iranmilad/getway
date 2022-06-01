@@ -135,7 +135,7 @@ class UpdateProductFindStep2 implements ShouldQueue
 
                                 }
                                 else{
-                                    unset($holooProducts[$key]);
+                                    //unset($holooProducts[$key]);
                                 }
                             }
 
