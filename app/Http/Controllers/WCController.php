@@ -1200,7 +1200,7 @@ class WCController extends Controller
         $user=auth()->user();
 
         if (ProductRequest::where(['user_id' => $user->id])->exists()) {
-            //return $this->sendResponse('شما یک درخواست در ۱ ساعت گذشته ارسال کرده اید لطفا منتظر بمانید تا عملیات قبلی شما تکمیل گردد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+            return $this->sendResponse('شما یک درخواست در ۱ ساعت گذشته ارسال کرده اید لطفا منتظر بمانید تا عملیات قبلی شما تکمیل گردد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
         }
         $this->updateConfig($config);
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
