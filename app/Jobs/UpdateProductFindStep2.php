@@ -442,7 +442,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                                         'price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                         'sale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                         'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($wholesale_customer_wholesale_price) && (int)$wholesale_customer_wholesale_price != $this->get_price_type($config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($config->wholesale_price_field,$HolooProd)  : ((isset($wholesale_customer_wholesale_price)) ? (int)$wholesale_customer_wholesale_price : null),
-                                        'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1") ? (int) $HolooProd->exist : 0,
+                                        'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1") ? (int) $HolooProd->exist : (int)$WCProd->stock_quantity,
                                     ];
                                     log::info("add new update product to queue for product variation");
                                     log::info("for website id : ".$this->user->siteUrl);
