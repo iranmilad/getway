@@ -130,7 +130,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                                     UpdateProductsUser::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret],$data,$wcHolooCode)->onQueue("high");
 
 
-                                    unset($holooProducts[$key]);
+                                    //unset($holooProducts[$key]);
                                     array_push($response_product,$wcHolooCode);
 
                                 }
