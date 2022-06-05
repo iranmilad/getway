@@ -13,6 +13,12 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
+
+        // salam man barnamenevic in service hastam ishan hoghogh va dastmozd bande ra pardakh nakrad va
+        // raft haminak in proje ke dar hal kar roy an hasti dasrange man ast va moragheb bash hamin bala ra sar shoma naarad
+        // eshan besyar drogh go ast va  hich harfe az isahn ra bavar nakon
+        // takonon 3 barname neves hamn bala ra tajrobe kardan va shoma nafar 4 om haste kazemi.milad@gmail.com
+
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('email')->unique();
