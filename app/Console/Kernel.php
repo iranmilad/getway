@@ -33,6 +33,8 @@ class Kernel extends ConsoleKernel
             foreach($users as $key=>$user){
                 if ($user->config==null) continue;
                 log::info("run auto update night for user: ".$user->id);
+                $config=(object) $user->config;
+                log::info($config);
                 UpdateProductFind::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"serial"=>$user->serial,"apiKey"=>$user->apiKey,"holooDatabaseName"=>$user->holooDatabaseName,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret,"cloudTokenExDate"=>$user->cloudTokenExDate,"cloudToken"=>$user->cloudToken, "holo_unit"=>$user->holo_unit, "plugin_unit"=>$user->plugin_unit],$user->config["product_cat"],$user->config,1)->onQueue("high");
 
 
