@@ -203,7 +203,7 @@ class AddProductsUser implements ShouldQueue
             $data = json_encode($data);
 
             curl_setopt_array($curl, array(
-              CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products/'.$id.'/variations',
+              CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products/'.$id.'/variations?per_page=100',
               CURLOPT_RETURNTRANSFER => true,
               CURLOPT_ENCODING => '',
               CURLOPT_MAXREDIRS => 10,
