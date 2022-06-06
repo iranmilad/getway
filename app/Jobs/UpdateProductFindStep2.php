@@ -409,6 +409,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                 if (count($WCProd->meta_data)>0) {
 
                     $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
+                    log::warning("wcHolooCode: $wcHolooCode");
                     if ($wcHolooCode) {
                         $wcholooCounter=$wcholooCounter+1;
                         $productFind = false;
