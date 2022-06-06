@@ -399,8 +399,10 @@ class UpdateProductFindStep2 implements ShouldQueue
         $notneedtoProsse=[];
         $wcholooCounter=0;
         foreach ($variations as $wcId){
-
             $wcProducts=$this->get_variation_product($wcId);
+            if($wcId==9865){
+                log::warning("wcHolooCode: $wcProducts");
+            }
             if(!$wcProducts){
                 log::alert("not found wc product for variation $wcId");
                 continue;
@@ -409,9 +411,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                 if (count($WCProd->meta_data)>0) {
 
                     $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
-                    if($wcHolooCode=="0111056"){
-                        log::warning("wcHolooCode: $wcHolooCode");
-                    }
+
                     if ($wcHolooCode) {
                         $wcholooCounter=$wcholooCounter+1;
                         $productFind = false;
