@@ -1303,7 +1303,7 @@ class HolooController extends Controller
         foreach ($holooCustomers->result as $holloCustomer) {
             if ($holloCustomer->c_Mobile == $customer->phone) {
                 log::info("finded customer: ".$holloCustomer->c_Code_C);
-
+                log::info("customer holoo mobile: ".$holloCustomer->c_Mobile);
                 return $holloCustomer->c_Code_C;
             }
         }
