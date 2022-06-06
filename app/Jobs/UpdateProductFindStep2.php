@@ -401,7 +401,7 @@ class UpdateProductFindStep2 implements ShouldQueue
         foreach ($variations as $wcId){
             $wcProducts=$this->get_variation_product($wcId);
             if($wcId==9865){
-                log::warning("wcHolooCode: $wcProducts");
+                log::warning ($wcProducts);
             }
             if(!$wcProducts){
                 log::alert("not found wc product for variation $wcId");
