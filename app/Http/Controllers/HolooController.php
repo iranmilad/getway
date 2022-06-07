@@ -246,6 +246,8 @@ class HolooController extends Controller
         $invoice = new Invoice();
         $invoice->invoice = json_encode($orderInvoice->request->all());
         $invoice->user_id = $user->id;
+        $invoice->invoiceId = isset($orderInvoice->request->id) ? $orderInvoice->request->id : null;
+        $invoice->invoiceStatus = isset($orderInvoice->request->status) ? $orderInvoice->request->status : null;
         $invoice->save();
 
         if (isset($orderInvoice->save_pre_sale_invoice) and $orderInvoice->save_pre_sale_invoice=="3") {
@@ -464,6 +466,8 @@ class HolooController extends Controller
         $invoice = new Invoice();
         $invoice->invoice = json_encode($orderInvoice->request->all());
         $invoice->user_id = $user->id;
+        $invoice->invoiceId = isset($orderInvoice->request->id) ? $orderInvoice->request->id : null;
+        $invoice->invoiceStatus = isset($orderInvoice->request->status) ? $orderInvoice->request->status : null;
         $invoice->save();
 
         if ($orderInvoice->save_sale_invoice != "0") {
