@@ -248,7 +248,7 @@ class HolooController extends Controller
         $invoice->user_id = $user->id;
         $invoice->save();
 
-        if ($orderInvoice->save_pre_sale_invoice) {
+        if (isset($orderInvoice->save_pre_sale_invoice) and $orderInvoice->save_pre_sale_invoice=="3") {
 
             $_data = (object) $orderInvoice->input("date_created");
             $DateString = Carbon::parse($_data->date ?? now(), $_data->timezone);
