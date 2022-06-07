@@ -470,7 +470,7 @@ class HolooController extends Controller
         $invoice->invoiceStatus = isset($orderInvoice->request->status) ? $orderInvoice->request->status : null;
         $invoice->save();
 
-        if ($orderInvoice->save_sale_invoice != "0") {
+        if (isset($orderInvoice->save_sale_invoice) and $orderInvoice->save_sale_invoice != "0") {
 
             $_data = (object) $orderInvoice->input("date_created");
             $DateString = Carbon::parse($_data->date ?? now(), $_data->timezone);
