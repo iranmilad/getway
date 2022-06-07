@@ -460,8 +460,19 @@ class HolooController extends Controller
         $user = auth()->user();
         $this->recordLog("Invoice Payed", $user->siteUrl, "Invoice Payed receive");
 
-        // return response()->json($this->genericFee("#102564#25000%3", 25000));
-        //log::info("order: ".json_encode($orderInvoice->request->all()));
+        $invoice = Invoice::where(['invoiceId'=>$orderInvoice->id,"invoiceStatus"=>"processing"])
+        ->first();
+
+        if($invoice){
+            $invoice = new Invoice();
+            $invoice->invoice = json_encode($orderInvoice->request->all());
+            $invoice->user_id = $user->id;
+            $invoice->invoiceId = isset($orderInvoice->id) ? $orderInvoice->id : null;
+            $invoice->invoiceStatus = isset($orderInvoice->status) ? $orderInvoice->status : null;
+            $invoice->save();
+            $this->InvoiceChangeStatus($invoice->id, 'ثبت سفارش فروش از قبل انجام شده است');
+            return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
+        }
 
         $invoice = new Invoice();
         $invoice->invoice = json_encode($orderInvoice->request->all());
