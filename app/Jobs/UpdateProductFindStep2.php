@@ -224,26 +224,48 @@ class UpdateProductFindStep2 implements ShouldQueue
             if ($category_value != "") {
                 $m_groupcode=explode("-",$category_key)[0];
                 $s_groupcode=explode("-",$category_key)[1];
+                if ($this->user->user_traffic=='heavy') {
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'GET',
+                        CURLOPT_HTTPHEADER => array(
+                            'serial: ' . $this->user->serial,
+                            'database: ' . $this->user->holooDatabaseName,
+                            'Authorization: Bearer ' .$this->user->cloudToken,
+                            'm_groupcode: ' . $m_groupcode,
+                            'isArticle: true',
+                            'access_token: ' .$this->user->apiKey
+                        ),
+                    ));
+                }
+                else{
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'GET',
+                        CURLOPT_HTTPHEADER => array(
+                            'serial: ' . $this->user->serial,
+                            'database: ' . $this->user->holooDatabaseName,
+                            'Authorization: Bearer ' .$this->user->cloudToken,
+                            'm_groupcode: ' . $m_groupcode,
+                            's_groupcode: ' . $s_groupcode,
+                            'isArticle: true',
+                            'access_token: ' .$this->user->apiKey
+                        ),
+                    ));
+                }
 
-                curl_setopt_array($curl, array(
-                    CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_ENCODING => '',
-                    CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 0,
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                    CURLOPT_CUSTOMREQUEST => 'GET',
-                    CURLOPT_HTTPHEADER => array(
-                        'serial: ' . $this->user->serial,
-                        'database: ' . $this->user->holooDatabaseName,
-                        'Authorization: Bearer ' .$this->user->cloudToken,
-                        'm_groupcode: ' . $m_groupcode,
-                        's_groupcode: ' . $s_groupcode,
-                        'isArticle: true',
-                        'access_token: ' .$this->user->apiKey
-                    ),
-                ));
                 $response = curl_exec($curl);
 
                 if($response){
