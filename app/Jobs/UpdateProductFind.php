@@ -165,9 +165,15 @@ class UpdateProductFind implements ShouldQueue
             if ($wc_cat=="") {
                 continue;
             }
+            if(is_array($wc_cat)){
+                foreach ($wc_cat as $wc_cat_id) {
+                    UpdateProductFindStep2::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"serial"=>$this->user->serial,"apiKey"=>$this->user->apiKey,"holooDatabaseName"=>$this->user->holooDatabaseName,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret,"cloudTokenExDate"=>$this->user->cloudTokenExDate,"cloudToken"=>$this->user->cloudToken, "holo_unit"=>$this->user->holo_unit, "plugin_unit"=>$this->user->plugin_unit],$this->config->product_cat,$this->config,1,$holoo_cat,$wc_cat_id)->onQueue("medium");
+                }
+            }
+            else{
+                UpdateProductFindStep2::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"serial"=>$this->user->serial,"apiKey"=>$this->user->apiKey,"holooDatabaseName"=>$this->user->holooDatabaseName,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret,"cloudTokenExDate"=>$this->user->cloudTokenExDate,"cloudToken"=>$this->user->cloudToken, "holo_unit"=>$this->user->holo_unit, "plugin_unit"=>$this->user->plugin_unit],$this->config->product_cat,$this->config,1,$holoo_cat,$wc_cat)->onQueue("medium");
+            }
 
-
-            UpdateProductFindStep2::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"serial"=>$this->user->serial,"apiKey"=>$this->user->apiKey,"holooDatabaseName"=>$this->user->holooDatabaseName,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret,"cloudTokenExDate"=>$this->user->cloudTokenExDate,"cloudToken"=>$this->user->cloudToken, "holo_unit"=>$this->user->holo_unit, "plugin_unit"=>$this->user->plugin_unit],$this->config->product_cat,$this->config,1,$holoo_cat,$wc_cat)->onQueue("medium");
 
         }
 
