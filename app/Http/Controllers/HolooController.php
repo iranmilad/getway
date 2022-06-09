@@ -1379,7 +1379,7 @@ class HolooController extends Controller
                             "city" => $customer->city,
                             "ostan" => $customer->state,
                             "email" => $customer->email,
-                            "zipcode" => $customer->postcode,
+                            //"zipcode" => $customer->postcode,
                             "address" => $customer->address_1,
                         ],
                     ],
@@ -1414,6 +1414,7 @@ class HolooController extends Controller
         if (isset($response->success) and $response->success) {
             return $this->getHolooCustomerID($customer, $customerId);
         }
+
         return false;
     }
 
