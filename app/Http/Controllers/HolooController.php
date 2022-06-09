@@ -1380,7 +1380,7 @@ class HolooController extends Controller
                             "ostan" => $customer->state,
                             "email" => $customer->email,
                             //"zipcode" => $customer->postcode,
-                            "address" => $customer->address_1,
+                            //"address" => $customer->address_1,
                         ],
                     ],
                 ],
