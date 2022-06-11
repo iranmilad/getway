@@ -305,7 +305,7 @@ class UpdateProductFindStep2All implements ShouldQueue
         $response = curl_exec($curl);
         curl_close($curl);
         $response=json_decode($response, true);
-        return $response;
+        return $response->result;
     }
 
 
@@ -467,7 +467,7 @@ class UpdateProductFindStep2All implements ShouldQueue
                         $productFind = false;
                         foreach ($holooProducts as $key=>$HolooProd) {
                             //if( array_search($key, $notneedtoProsse)) continue;
-                            $HolooProd= $HolooProd->result;
+                            //$HolooProd= $HolooProd->result;
                             $HolooProd=(object) $HolooProd;
 
                             if ($wcHolooCode === $HolooProd->a_Code) {
