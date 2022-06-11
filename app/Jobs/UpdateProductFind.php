@@ -161,7 +161,7 @@ class UpdateProductFind implements ShouldQueue
         $user_id=$this->user->id;
         Log::info("update for user id $user_id");
         $this->getNewToken();
-        log::info (json_decode($this->user));
+        log::info (json_decode($this->user->siteUrl));
         if ($this->user->user_traffic=="heavy"){
             UpdateProductFindStep2All::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"serial"=>$this->user->serial,"apiKey"=>$this->user->apiKey,"holooDatabaseName"=>$this->user->holooDatabaseName,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret,"cloudTokenExDate"=>$this->user->cloudTokenExDate,"cloudToken"=>$this->user->cloudToken, "holo_unit"=>$this->user->holo_unit, "plugin_unit"=>$this->user->plugin_unit,"user_traffic"=>$this->user->user_traffic],$this->config->product_cat,$this->config,1,[],[])->onQueue("default");
         }
