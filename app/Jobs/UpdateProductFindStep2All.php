@@ -305,7 +305,8 @@ class UpdateProductFindStep2All implements ShouldQueue
         $response = curl_exec($curl);
         curl_close($curl);
         $response=json_decode($response, true);
-        return $response->result;
+        echo $response;
+        return $response;
     }
 
 
