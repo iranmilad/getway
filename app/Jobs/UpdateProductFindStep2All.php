@@ -16,7 +16,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Support\Facades\Cache;
 
 
-class UpdateProductFindStep2 implements ShouldQueue
+class UpdateProductFindStep2All implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
