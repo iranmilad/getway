@@ -7,18 +7,16 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Jobs\UpdateProductsUser;
 use Illuminate\Support\Facades\Log;
-use App\Jobs\UpdateProductFindStep2;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Queue\SerializesModels;
-use App\Jobs\UpdateProductFindStep2All;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Jobs\UpdateProductsVariationUser;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Support\Facades\Cache;
 
 
-class UpdateProductFind implements ShouldQueue
+class UpdateProductFindStep2 implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -26,8 +24,10 @@ class UpdateProductFind implements ShouldQueue
     protected $param;
     protected $category;
     protected $config;
+    protected $holoo_cat;
+    protected $wc_cat;
     public $flag;
-    public $timeout = 2*60;
+    public $timeout = 60*60;
     public $failOnTimeout = true;
 
     /**
@@ -35,13 +35,15 @@ class UpdateProductFind implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($user,$category,$config,$flag)
+    public function __construct($user,$category,$config,$flag,$holoo_cat,$wc_cat)
     {
-        Log::info(' queue update product find start');
+
         $this->user=$user;
         $this->config=$config;
         $this->category=$category;
         $this->flag=$flag;
+        $this->holoo_cat=$holoo_cat;
+        $this->wc_cat=$wc_cat;
 
     }
 
@@ -50,20 +52,17 @@ class UpdateProductFind implements ShouldQueue
      *
      * @return void
      */
-    public function handle2()
+    public function handle()
     {
-        $user_id=$this->user->id;
-        Log::info("update for user id $user_id");
 
-
-
-
-        $callApi = $this->fetchCategoryHolloProds($this->category);
+        Log::info(' queue update product find step 2 start for all category');
+        $callApi = $this->fetchAllHolloProds();
         $holooProducts = $callApi;
 
-        $callApi = $this->fetchAllWCProds();
+        $callApi = $this->fetchAllWCProds(true);
         $wcProducts = $callApi;
-        log::info('product fetch compelete');
+
+        log::info('product fetch compelete for all category ');
         $response_product=[];
 
         $wcholooCounter=0;
@@ -82,13 +81,17 @@ class UpdateProductFind implements ShouldQueue
                         $productFind = false;
                         foreach ($holooProducts as $key=>$HolooProd) {
                             $HolooProd=(object) $HolooProd;
-                            if ($wcHolooCode == $HolooProd->a_Code) {
+                            if ($wcHolooCode === $HolooProd->a_Code) {
 
                                 // log::info($this->config->sales_price_field);
                                 // log::info((int)$WCProd->regular_price);
                                 // log::info($this->get_price_type($this->config->sales_price_field,$HolooProd));
 
-                                //log::info((isset($this->config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($this->config->sales_price_field,$HolooProd)));
+                                // log::info((isset($this->config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($this->config->sales_price_field,$HolooProd)));
+
+                                // log::info($WCProd->stock_quantity);
+                                // log::info((int)$HolooProd->exist);
+
                                 $holooFinded=$holooFinded+1;
                                 $productFind = true;
                                 $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
@@ -117,7 +120,7 @@ class UpdateProductFind implements ShouldQueue
                                         'price' => (isset($this->config->update_product_price) && $this->config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($this->config->special_price_field,$HolooProd)) ? $this->get_price_type($this->config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                         'sale_price' => (isset($this->config->update_product_price) && $this->config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($this->config->special_price_field,$HolooProd)) ? $this->get_price_type($this->config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                         'wholesale_customer_wholesale_price' => (isset($this->config->update_product_price) && $this->config->update_product_price=="1") && (isset($wholesale_customer_wholesale_price) && (int)$wholesale_customer_wholesale_price != $this->get_price_type($this->config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($this->config->wholesale_price_field,$HolooProd)  : ((isset($wholesale_customer_wholesale_price)) ? (int)$wholesale_customer_wholesale_price : null),
-                                        'stock_quantity' => (isset($this->config->update_product_stock) && $this->config->update_product_stock=="1" && (int) $HolooProd->exist>0 and isset($WCProd->stock_quantity)) ? (int) $HolooProd->exist : 0,
+                                        'stock_quantity' => (isset($this->config->update_product_stock) && $this->config->update_product_stock=="1") ? (int) $HolooProd->exist : (int)$WCProd->stock_quantity,
                                     ];
                                     log::info("add new update product to queue for product ");
                                     log::info("for website id : ".$this->user->siteUrl);
@@ -127,12 +130,12 @@ class UpdateProductFind implements ShouldQueue
                                     UpdateProductsUser::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret],$data,$wcHolooCode)->onQueue("high");
 
 
-                                    unset($holooProducts[$key]);
+                                    //unset($holooProducts[$key]);
                                     array_push($response_product,$wcHolooCode);
 
                                 }
                                 else{
-                                    unset($holooProducts[$key]);
+                                    //unset($holooProducts[$key]);
                                 }
                             }
 
@@ -147,7 +150,8 @@ class UpdateProductFind implements ShouldQueue
             }
         }
         if(count($variation)>0){
-            $this->updateWCVariation($variation,$holooProducts,$this->config);
+            $countvariation=$this->updateWCVariation($variation,$holooProducts,$this->config);
+            $wcholooCounter=$wcholooCounter+$countvariation;
         }
 
         Log::info( $wcholooCounter ." product(s) update");
@@ -156,38 +160,6 @@ class UpdateProductFind implements ShouldQueue
     }
 
 
-    public function handle()
-    {
-        $user_id=$this->user->id;
-        Log::info("update for user id $user_id");
-        $this->getNewToken();
-        log::info (json_decode($this->user));
-        if ($this->user->user_traffic=="heavy"){
-            UpdateProductFindStep2All::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"serial"=>$this->user->serial,"apiKey"=>$this->user->apiKey,"holooDatabaseName"=>$this->user->holooDatabaseName,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret,"cloudTokenExDate"=>$this->user->cloudTokenExDate,"cloudToken"=>$this->user->cloudToken, "holo_unit"=>$this->user->holo_unit, "plugin_unit"=>$this->user->plugin_unit,"user_traffic"=>$this->user->user_traffic],$this->config->product_cat,$this->config,1,[],[])->onQueue("medium");
-        }
-        else{
-            foreach ($this->category as $holoo_cat=>$wc_cat) {
-                if ($wc_cat=="") {
-                    continue;
-                }
-                if(is_array($wc_cat)){
-                    foreach ($wc_cat as $wc_cat_id) {
-                        UpdateProductFindStep2::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"serial"=>$this->user->serial,"apiKey"=>$this->user->apiKey,"holooDatabaseName"=>$this->user->holooDatabaseName,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret,"cloudTokenExDate"=>$this->user->cloudTokenExDate,"cloudToken"=>$this->user->cloudToken, "holo_unit"=>$this->user->holo_unit, "plugin_unit"=>$this->user->plugin_unit,"user_traffic"=>$this->user->user_traffic],$this->config->product_cat,$this->config,1,$holoo_cat,$wc_cat_id)->onQueue("medium");
-                    }
-                }
-                else{
-                    UpdateProductFindStep2::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"serial"=>$this->user->serial,"apiKey"=>$this->user->apiKey,"holooDatabaseName"=>$this->user->holooDatabaseName,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret,"cloudTokenExDate"=>$this->user->cloudTokenExDate,"cloudToken"=>$this->user->cloudToken, "holo_unit"=>$this->user->holo_unit, "plugin_unit"=>$this->user->plugin_unit,"user_traffic"=>$this->user->user_traffic],$this->config->product_cat,$this->config,1,$holoo_cat,$wc_cat)->onQueue("medium");
-                }
-
-
-            }
-        }
-
-
-
-
-
-    }
 
 
     /**
@@ -252,26 +224,48 @@ class UpdateProductFind implements ShouldQueue
             if ($category_value != "") {
                 $m_groupcode=explode("-",$category_key)[0];
                 $s_groupcode=explode("-",$category_key)[1];
+                if ($this->user->user_traffic=='heavy') {
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'GET',
+                        CURLOPT_HTTPHEADER => array(
+                            'serial: ' . $this->user->serial,
+                            'database: ' . $this->user->holooDatabaseName,
+                            'Authorization: Bearer ' .$this->user->cloudToken,
+                            'm_groupcode: ' . $m_groupcode,
+                            'isArticle: true',
+                            'access_token: ' .$this->user->apiKey
+                        ),
+                    ));
+                }
+                else{
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'GET',
+                        CURLOPT_HTTPHEADER => array(
+                            'serial: ' . $this->user->serial,
+                            'database: ' . $this->user->holooDatabaseName,
+                            'Authorization: Bearer ' .$this->user->cloudToken,
+                            'm_groupcode: ' . $m_groupcode,
+                            's_groupcode: ' . $s_groupcode,
+                            'isArticle: true',
+                            'access_token: ' .$this->user->apiKey
+                        ),
+                    ));
+                }
 
-                curl_setopt_array($curl, array(
-                    CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_ENCODING => '',
-                    CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 0,
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                    CURLOPT_CUSTOMREQUEST => 'GET',
-                    CURLOPT_HTTPHEADER => array(
-                        'serial: ' . $this->user->serial,
-                        'database: ' . $this->user->holooDatabaseName,
-                        'Authorization: Bearer ' .$this->getNewToken(),
-                        'm_groupcode: ' . $m_groupcode,
-                        's_groupcode: ' . $s_groupcode,
-                        'isArticle: true',
-                        'access_token: ' .$this->user->apiKey
-                    ),
-                ));
                 $response = curl_exec($curl);
 
                 if($response){
@@ -286,6 +280,34 @@ class UpdateProductFind implements ShouldQueue
 
         return $totalProduct;
     }
+
+    public function fetchAllHolloProds()
+    {
+        $user = auth()->user();
+        $curl = curl_init();
+        // log::info("yes");
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://myholoo.ir/api/Service/article/' . $this->user->holooDatabaseName,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'serial: ' . $this->user->serial,
+                'database: ' . $this->user->holooDatabaseName,
+
+                'Authorization: Bearer ' . $this->getNewToken(),
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $response=json_decode($response, true);
+        return $response;
+    }
+
 
     public function fetchAllWCProds($published=false,$category=null)
     {
@@ -425,9 +447,12 @@ class UpdateProductFind implements ShouldQueue
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         set_time_limit(0);
         $notneedtoProsse=[];
+        $wcholooCounter=0;
         foreach ($variations as $wcId){
-
             $wcProducts=$this->get_variation_product($wcId);
+            // if($wcId==9865){
+            //     log::warning ($wcProducts);
+            // }
             if(!$wcProducts){
                 log::alert("not found wc product for variation $wcId");
                 continue;
@@ -436,14 +461,15 @@ class UpdateProductFind implements ShouldQueue
                 if (count($WCProd->meta_data)>0) {
 
                     $wcHolooCode = $this->findKey($WCProd->meta_data,'_holo_sku');
-                    if ($wcHolooCode) {
 
+                    if ($wcHolooCode) {
+                        $wcholooCounter=$wcholooCounter+1;
                         $productFind = false;
                         foreach ($holooProducts as $key=>$HolooProd) {
                             //if( array_search($key, $notneedtoProsse)) continue;
 
                             $HolooProd=(object) $HolooProd;
-                            if ($wcHolooCode == $HolooProd->a_Code) {
+                            if ($wcHolooCode === $HolooProd->a_Code) {
 
                                 $productFind = true;
                                 $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
@@ -469,7 +495,7 @@ class UpdateProductFind implements ShouldQueue
                                         'price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                         'sale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                         'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($wholesale_customer_wholesale_price) && (int)$wholesale_customer_wholesale_price != $this->get_price_type($config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($config->wholesale_price_field,$HolooProd)  : ((isset($wholesale_customer_wholesale_price)) ? (int)$wholesale_customer_wholesale_price : null),
-                                        'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1") ? (int) $HolooProd->exist : 0,
+                                        'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1") ? (int) $HolooProd->exist : (int)$WCProd->stock_quantity,
                                     ];
                                     log::info("add new update product to queue for product variation");
                                     log::info("for website id : ".$this->user->siteUrl);
@@ -496,7 +522,7 @@ class UpdateProductFind implements ShouldQueue
                 }
             }
         }
-
+        return $wcholooCounter;
 
     }
 
