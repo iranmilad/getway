@@ -471,7 +471,8 @@ class UpdateProductFindStep2All implements ShouldQueue
                             //$HolooProd= $HolooProd->result;
 
                             $HolooProd=(object) json_decode($HolooProd,true);
-
+                            print_r($HolooProd);
+                            die();
                             if ($wcHolooCode === $HolooProd->a_Code) {
 
                                 $productFind = true;
