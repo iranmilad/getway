@@ -298,7 +298,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                 'serial: ' . $this->user->serial,
                 'database: ' . $this->user->holooDatabaseName,
 
-                'Authorization: Bearer ' . $this->getNewToken(),
+                'Authorization: Bearer ' . $this->user->cloudToken,
             ),
         ));
 
