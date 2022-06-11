@@ -27,7 +27,7 @@ class UpdateProductFindStep2All implements ShouldQueue
     protected $holoo_cat;
     protected $wc_cat;
     public $flag;
-    public $timeout = 60*60;
+    public $timeout = 3*60;
     public $failOnTimeout = true;
 
     /**
@@ -290,7 +290,7 @@ class UpdateProductFindStep2All implements ShouldQueue
             CURLOPT_URL => 'https://myholoo.ir/api/Service/article/' . $this->user->holooDatabaseName,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
+            CURLOPT_TIMEOUT => 120,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
@@ -306,7 +306,7 @@ class UpdateProductFindStep2All implements ShouldQueue
         curl_close($curl);
         $response=json_decode($response, true);
         //print_r($response);
-        return $response;
+        return $response["result"];
     }
 
 
@@ -335,7 +335,7 @@ class UpdateProductFindStep2All implements ShouldQueue
                 CURLOPT_URL => $this->user->siteUrl.'/wp-json/wc/v3/products?'.$status.$category.'meta=_holo_sku&page='.$page.'&per_page=10000',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
+                CURLOPT_TIMEOUT => 300,
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_USERAGENT => 'Holoo',
@@ -467,12 +467,14 @@ class UpdateProductFindStep2All implements ShouldQueue
                         $wcholooCounter=$wcholooCounter+1;
                         $productFind = false;
                         foreach ($holooProducts as $key=>$HolooProd) {
-                            //if( array_search($key, $notneedtoProsse)) continue;
+                            if( array_search($key, $notneedtoProsse)) continue;
                             //$HolooProd= $HolooProd->result;
+                            
+                            $HolooProd=(object)$HolooProd;
+                            // print($key);
+                            // print_r($HolooProd);
+                            // die();
 
-                            $HolooProd=$HolooProd;
-                     echo($HolooProd);
-                            die();
                             if ($wcHolooCode === $HolooProd->a_Code) {
 
                                 $productFind = true;

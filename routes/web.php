@@ -37,4 +37,5 @@ Route::get('cashClear', [WCController::class, 'clearCache']);
 
 
 Route::get('/liveWcGetExcelProducts/{user_id}', [DownloadController::class, 'index'])->name("liveWcGetExcelProducts");
+Route::get('/liveWcGetExcelProducts2/{user_id}', [DownloadController::class, 'index2'])->name("liveWcGetExcelProducts2");
 Route::get('/conf/{user_id}/{token}', [ViewController::class, 'index'])->name("conf");
