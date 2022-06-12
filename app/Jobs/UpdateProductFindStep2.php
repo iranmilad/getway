@@ -79,6 +79,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                         $wcholooCounter=$wcholooCounter+1;
 
                         $productFind = false;
+
                         foreach ($holooProducts as $key=>$HolooProd) {
                             $HolooProd=(object) $HolooProd;
                             if ($wcHolooCode === $HolooProd->a_Code) {
@@ -522,5 +523,15 @@ class UpdateProductFindStep2 implements ShouldQueue
             return $decodedResponse;
         }
         return null;
+    }
+
+
+    public function reMapHolooProduct($holooProducts){
+        $newHolooProducts = [];
+        foreach ($holooProducts as $key=>$HolooProd) {
+            $HolooProd=(object) $HolooProd;
+            $newHolooProducts[$HolooProd->a_Code]=$HolooProd;
+        }
+        return $newHolooProducts;
     }
 }

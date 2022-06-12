@@ -59,6 +59,7 @@ class UpdateProductFindStep2All implements ShouldQueue
         Log::info(' queue update product find step 2 start for all category');
         $callApi = $this->fetchAllHolloProds();
         $holooProducts = $callApi;
+        $holooProducts = $this->reMapHolooProduct($holooProducts);
 
         $callApi = $this->fetchAllWCProds(true);
         $wcProducts = $callApi;
@@ -81,7 +82,8 @@ class UpdateProductFindStep2All implements ShouldQueue
                         $wcholooCounter=$wcholooCounter+1;
 
                         $productFind = false;
-                        foreach ($holooProducts as $key=>$HolooProd) {
+                        $HolooProd= $holooProducts[$wcHolooCode];
+                        //foreach ($holooProducts as $key=>$HolooProd) {
                             $HolooProd=(object) $HolooProd;
                             if ($wcHolooCode === $HolooProd->a_Code) {
 
@@ -141,7 +143,7 @@ class UpdateProductFindStep2All implements ShouldQueue
                                 }
                             }
 
-                        }
+                        //}
 
                     }
 
@@ -469,8 +471,9 @@ class UpdateProductFindStep2All implements ShouldQueue
                     if ($wcHolooCode) {
                         $wcholooCounter=$wcholooCounter+1;
                         $productFind = false;
-                        foreach ($holooProducts as $key=>$HolooProd) {
-                            if( array_search($key, $notneedtoProsse)) continue;
+                        $HolooProd= $holooProducts[$wcHolooCode];
+                        //foreach ($holooProducts as $key=>$HolooProd) {
+                            //if( array_search($key, $notneedtoProsse)) continue;
                             //$HolooProd= $HolooProd->result;
 
                             $HolooProd=(object)$HolooProd;
@@ -523,7 +526,7 @@ class UpdateProductFindStep2All implements ShouldQueue
                                 }
                             }
 
-                        }
+                        //}
 
 
                     }
@@ -560,4 +563,14 @@ class UpdateProductFindStep2All implements ShouldQueue
         }
         return null;
     }
+
+    public function reMapHolooProduct($holooProducts){
+        $newHolooProducts = [];
+        foreach ($holooProducts as $key=>$HolooProd) {
+            $HolooProd=(object) $HolooProd;
+            $newHolooProducts[$HolooProd->a_Code]=$HolooProd;
+        }
+        return $newHolooProducts;
+    }
+
 }
