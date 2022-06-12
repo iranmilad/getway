@@ -1323,7 +1323,7 @@ class HolooController extends Controller
                 return $holloCustomer->c_Code_C;
             }
         }
-        log::info("customer for your mobile number not found i want to create new customer to holoo for mobile".$holloCustomer->c_Mobile);
+        log::info("customer for your mobile number not found i want to create new customer to holoo for mobile ".$customer->phone);
         return $this->createHolooCustomer($customer, $customerId);
 
     }
