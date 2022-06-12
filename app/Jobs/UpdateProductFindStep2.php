@@ -79,8 +79,13 @@ class UpdateProductFindStep2 implements ShouldQueue
                         $wcholooCounter=$wcholooCounter+1;
 
                         $productFind = false;
-
-                        foreach ($holooProducts as $key=>$HolooProd) {
+                        if(isset($holooProducts[$wcHolooCode])){
+                            $HolooProd=$holooProducts[$wcHolooCode];
+                        }
+                        else{
+                            continue;
+                        }
+                        //foreach ($holooProducts as $key=>$HolooProd) {
                             $HolooProd=(object) $HolooProd;
                             if ($wcHolooCode === $HolooProd->a_Code) {
 
@@ -140,7 +145,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                                 }
                             }
 
-                        }
+                        //}
 
                     }
 
@@ -438,7 +443,13 @@ class UpdateProductFindStep2 implements ShouldQueue
                     if ($wcHolooCode) {
                         $wcholooCounter=$wcholooCounter+1;
                         $productFind = false;
-                        foreach ($holooProducts as $key=>$HolooProd) {
+                        if(isset($holooProducts[$wcHolooCode])){
+                            $HolooProd=$holooProducts[$wcHolooCode];
+                        }
+                        else{
+                            continue;
+                        }
+                        //foreach ($holooProducts as $key=>$HolooProd) {
                             //if( array_search($key, $notneedtoProsse)) continue;
 
                             $HolooProd=(object) $HolooProd;
@@ -476,18 +487,18 @@ class UpdateProductFindStep2 implements ShouldQueue
                                     UpdateProductsVariationUser::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret],$data,$wcHolooCode)->onQueue("low");
 
 
-                                    $notneedtoProsse[]=$key;
+                                    //$notneedtoProsse[]=$key;
 
 
 
                                 }
                                 else{
-                                    $notneedtoProsse[]=$key;
+                                    //$notneedtoProsse[]=$key;
 
                                 }
                             }
 
-                        }
+                        //}
 
 
                     }

@@ -476,12 +476,12 @@ class UpdateProductFindStep2All implements ShouldQueue
                     if ($wcHolooCode) {
                         $wcholooCounter=$wcholooCounter+1;
                         $productFind = false;
-                            if(isset($holooProducts[$wcHolooCode])){
-                                $HolooProd=$holooProducts[$wcHolooCode];
-                            }
-                            else{
-                                continue;
-                            }
+                        if(isset($holooProducts[$wcHolooCode])){
+                            $HolooProd=$holooProducts[$wcHolooCode];
+                        }
+                        else{
+                            continue;
+                        }
 
                         //foreach ($holooProducts as $key=>$HolooProd) {
                             //if( array_search($key, $notneedtoProsse)) continue;
