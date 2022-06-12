@@ -515,13 +515,13 @@ class UpdateProductFindStep2All implements ShouldQueue
                                     UpdateProductsVariationUser::dispatch((object)["id"=>$this->user->id,"siteUrl"=>$this->user->siteUrl,"consumerKey"=>$this->user->consumerKey,"consumerSecret"=>$this->user->consumerSecret],$data,$wcHolooCode)->onQueue("low");
 
 
-                                    $notneedtoProsse[]=$key;
+                                    //$notneedtoProsse[]=$key;
 
 
 
                                 }
                                 else{
-                                    $notneedtoProsse[]=$key;
+                                    //$notneedtoProsse[]=$key;
 
                                 }
                             }
