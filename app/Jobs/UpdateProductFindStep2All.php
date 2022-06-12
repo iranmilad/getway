@@ -158,7 +158,7 @@ class UpdateProductFindStep2All implements ShouldQueue
         }
 
 
-
+        log::info("update finish for website : ".$this->user->siteUrl."for product count : ".$wcholooCounter);
 
     }
 
