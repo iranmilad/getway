@@ -1413,7 +1413,7 @@ class HolooController extends Controller
         $response = json_decode($response);
         log::info("customer: ".json_encode($response));
         if (isset($response->success) and $response->success) {
-            sleep(60);
+            sleep(20);
             return $this->getHolooCustomerID($customer, $customerId);
         }
 
