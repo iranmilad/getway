@@ -16,7 +16,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Support\Facades\Cache;
 
 
-class UpdateProductFindStep2All implements ShouldQueue
+class UpdateProductFindStep3All implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -24,8 +24,8 @@ class UpdateProductFindStep2All implements ShouldQueue
     protected $param;
     protected $category;
     protected $config;
-    protected $holoo_cat;
-    protected $wc_cat;
+    protected $holooProducts;
+    protected $WCProd;
     public $flag;
     public $timeout = 3*60*60;
     public $failOnTimeout = true;
@@ -35,15 +35,15 @@ class UpdateProductFindStep2All implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($user,$category,$config,$flag,$holoo_cat,$wc_cat)
+    public function __construct($user,$category,$config,$flag,$holooProducts,$WCProd)
     {
 
         $this->user=$user;
         $this->config=$config;
         $this->category=$category;
         $this->flag=$flag;
-        $this->holoo_cat=$holoo_cat;
-        $this->wc_cat=$wc_cat;
+        $this->holooProducts=$holooProducts;
+        $this->WCProd=$WCProd;
 
     }
 
