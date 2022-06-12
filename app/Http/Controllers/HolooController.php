@@ -1319,6 +1319,7 @@ class HolooController extends Controller
             if ($holloCustomer->c_Mobile == $customer->phone) {
                 log::info("finded customer: ".$holloCustomer->c_Code_C);
                 log::info("customer holoo mobile: ".$holloCustomer->c_Mobile);
+                log::info("customer holoo name: ".$holloCustomer->c_Name);
                 return $holloCustomer->c_Code_C;
             }
         }
@@ -1369,7 +1370,7 @@ class HolooController extends Controller
 
                             "id" => rand(100000, 999999),
                             "bedsarfasl" => $customer_account,
-                            "name" => $customer->first_name . ' ' . $customer->last_name.' - '.rand(100000, 999999),
+                            "name" => $customer->first_name . ' ' . $customer->last_name.' - '.$customer->phone,
                             "ispurchaser" => true,
                             "isseller" => false,
                             "custtype" => 0,
@@ -1412,6 +1413,7 @@ class HolooController extends Controller
         $response = json_decode($response);
         log::info("customer: ".json_encode($response));
         if (isset($response->success) and $response->success) {
+            sleep(60);
             return $this->getHolooCustomerID($customer, $customerId);
         }
 
