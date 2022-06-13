@@ -903,7 +903,8 @@ class HolooController extends Controller
         $user = auth()->user();
         $user_id = $user->id;
         $counter = 0;
-        return $this->sendResponse('این سرویس توسط مدیریت روی اشتراک شما غیر فعال است', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+        if(!$user->allow_insert_product)
+            return $this->sendResponse('این سرویس توسط مدیریت روی اشتراک شما غیر فعال است', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
 
         if (ProductRequest::where(['user_id' => $user_id])->exists()) {
             return $this->sendResponse('شما یک درخواست ثبت محصول در ۲۴ ساعت گذشته ارسال کرده اید لطفا منتظر بمانید تا عملیات قبلی شما تکمیل گردد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
