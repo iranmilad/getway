@@ -79,8 +79,8 @@ class UpdateProductFindStep2 implements ShouldQueue
                         $wcholooCounter=$wcholooCounter+1;
 
                         $productFind = false;
-                        if(isset($holooProducts[$wcHolooCode])){
-                            $HolooProd=$holooProducts[$wcHolooCode];
+                        if(isset($holooProducts[(string)$wcHolooCode])){
+                            $HolooProd=$holooProducts[(string)$wcHolooCode];
                         }
                         else{
                             continue;
@@ -443,8 +443,8 @@ class UpdateProductFindStep2 implements ShouldQueue
                     if ($wcHolooCode) {
                         $wcholooCounter=$wcholooCounter+1;
                         $productFind = false;
-                        if(isset($holooProducts[$wcHolooCode])){
-                            $HolooProd=$holooProducts[$wcHolooCode];
+                        if(isset($holooProducts[(string)$wcHolooCode])){
+                            $HolooProd=$holooProducts[(string)$wcHolooCode];
                         }
                         else{
                             continue;
@@ -541,7 +541,7 @@ class UpdateProductFindStep2 implements ShouldQueue
         $newHolooProducts = [];
         foreach ($holooProducts as $key=>$HolooProd) {
             $HolooProd=(object) $HolooProd;
-            $newHolooProducts[$HolooProd->a_Code]=$HolooProd;
+            $newHolooProducts[(string)$HolooProd->a_Code]=$HolooProd;
         }
         return $newHolooProducts;
     }
