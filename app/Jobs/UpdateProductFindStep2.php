@@ -58,6 +58,7 @@ class UpdateProductFindStep2 implements ShouldQueue
         Log::info(' queue update product find step 2 start for '.$this->wc_cat);
         $callApi = $this->fetchCategoryHolloProds([$this->holoo_cat=>$this->wc_cat]);
         $holooProducts = $callApi;
+        $holooProducts = $this->reMapHolooProduct($holooProducts);
 
         $callApi = $this->fetchAllWCProds(true,$this->wc_cat);
         $wcProducts = $callApi;
