@@ -42,6 +42,9 @@ class CreateUsersTable extends Migration
             $table->string('consumerKey')->nullable();
             $table->string('consumerSecret')->nullable();
 
+            $table->string('server_url',500)->nullable();
+            $table->json('config')->nullable();
+
             $table->string('password');
             $table->rememberToken();
 
