@@ -538,28 +538,37 @@ class HolooController extends Controller
 
                 if (isset($item->meta_data)) {
                     $HoloID=$this->findKey($item->meta_data,'_holo_sku');
+                    if($HoloID){
 
-                    // if($item->total==0){
-                    //     continue;
-                    // }
-                    //$totalfactor=$item->total ?? $item->subtotal;
-                    $total = $this->getAmount($item->total, $orderInvoiceFull->currency);
-                    $lazy = 0;
-                    $scot = 0;
-                    if ($payment->vat) {
-                        $lazy = $total * 6 / 100;
-                        $scot = $total * 3 / 100;
+                        // if($item->total==0){
+                        //     continue;
+                        // }
+                        //$totalfactor=$item->total ?? $item->subtotal;
+                        $total = $this->getAmount($item->total, $orderInvoiceFull->currency);
+                        $lazy = 0;
+                        $scot = 0;
+                        if ($payment->vat) {
+                            $lazy = $total * 6 / 100;
+                            $scot = $total * 3 / 100;
+                        }
+                        $items[] = array(
+                            'id' => (int)$HoloID,
+                            'Productid' => $HoloID,
+                            'few' => $item->quantity,
+                            'price' => $this->getAmount($item->price, $orderInvoiceFull->currency),
+                            'discount' => '0',
+                            'levy' => $lazy,
+                            'scot' => $scot,
+                        );
+                        $sum_total += $total;
                     }
-                    $items[] = array(
-                        'id' => (int)$HoloID,
-                        'Productid' => $HoloID,
-                        'few' => $item->quantity,
-                        'price' => $this->getAmount($item->price, $orderInvoiceFull->currency),
-                        'discount' => '0',
-                        'levy' => $lazy,
-                        'scot' => $scot,
-                    );
-                    $sum_total += $total;
+                    elseif($orderInvoice->invoice_items_no_holo_code){
+                        $this->InvoiceChangeStatus($invoice->id, 'ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد');
+                        return $this->sendResponse('ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
+                    }
+                    else{
+                        continue;
+                    }
 
                 }
                 elseif($orderInvoice->invoice_items_no_holo_code){
@@ -665,15 +674,19 @@ class HolooController extends Controller
                 curl_close($curl);
                 if (isset($response->success) and $response->success) {
                     $this->InvoiceChangeStatus($invoice->id, 'ثبت سفارش فروش انجام شد');
+                    Invoice::where(['id'=>$invoice->id])
+                    ->update([
+                    'holooInvoice' => $data,
+                    ]);
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish succsessfuly");
                     return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
                 }
                 else {
                     $this->InvoiceChangeStatus($invoice->id, json_encode([$response->message]));
-                    $invoice = new Invoice();
-                    $invoice->invoice = json_encode(['data' => $data]);
-                    $invoice->user_id = $user->id;
-                    $invoice->save();
+                    Invoice::where(['id'=>$invoice->id])
+                    ->update([
+                        'holooInvoice' => $data
+                    ]);
                     //return $this->sendResponse('test', Response::HTTP_OK,$response);
                     $this->recordLog("Invoice Registration", $user->siteUrl, json_encode(['data' => $data]), "error");
                     $this->recordLog("Invoice Registration", $user->siteUrl, "Invoice Registration finish wrong", "error");
