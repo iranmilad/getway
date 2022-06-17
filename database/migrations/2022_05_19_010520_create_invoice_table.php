@@ -18,6 +18,8 @@ class CreateInvoiceTable extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
             $table->longText('invoice');
+            $table->json('holooInvoice');
+
             $table->json('status');
             $table->enum('invoiceStatus', ['processing', 'pending','completed'])->nullable();
 
