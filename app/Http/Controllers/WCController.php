@@ -1452,7 +1452,7 @@ class WCController extends Controller
                 //$HolooProds  = $this->fetchCategoryHolloProds($config->product_cat);
                 $HolooProds  = $this->fetchAllHolloProds();
                 $HolooProds  =$HolooProds->result;
-                dd($HolooProds);
+                //dd($HolooProds);
             }
             foreach($HolooIDs as $holooID){
 
