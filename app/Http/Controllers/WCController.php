@@ -1447,7 +1447,8 @@ class WCController extends Controller
             log::info($this->getWcConfig());
 
             if ($request->MsgType==0 && isset($config->insert_new_product) && $config->insert_new_product==1) {
-                $HolooProds  = $this->fetchCategoryHolloProds($config->product_cat);
+                //$HolooProds  = $this->fetchCategoryHolloProds($config->product_cat);
+                $HolooProds  = $this->fetchAllHolloProds();
             }
             foreach($HolooIDs as $holooID){
 
