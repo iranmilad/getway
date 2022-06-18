@@ -1475,7 +1475,7 @@ class WCController extends Controller
                     $WCProd=$WCProd[0];
                     if($WCProd->type=="variable"){
                         if($user->id==10){
-                            dd($WCProd);
+                            dd($holooProduct);
                         }
                         $WCProd=$this->getVariationProductWithHoloo($holooID,$WCProd,$holooProduct,$config);
                         Log::info("holo code found variation product ".$holooID);
