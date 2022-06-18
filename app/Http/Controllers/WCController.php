@@ -1476,10 +1476,12 @@ class WCController extends Controller
                     if($WCProd->type=="variable"){
                         $WCProd=$this->getVariationProductWithHoloo($holooID,$WCProd,$holooProduct,$config);
                         Log::info("holo code found variation product ".$holooID);
+                        if(!$WCProd) continue;
                         if($user->id==10){
                             dd($WCProd);
                         }
-                        continue;
+
+
                     }
 
                     if(isset($WCProd->meta_data) and count($WCProd->meta_data)>0){
