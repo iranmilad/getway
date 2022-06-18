@@ -1444,6 +1444,7 @@ class WCController extends Controller
 
             $config=json_decode($this->getWcConfig());
             if(!$config) return;
+            dd($config);
             log::info($this->getWcConfig());
 
             if ($request->MsgType==0 && isset($config->insert_new_product) && $config->insert_new_product==1) {
@@ -1453,7 +1454,7 @@ class WCController extends Controller
             foreach($HolooIDs as $holooID){
 
                 $WCProd=$this->getWcProductWithHolooId($holooID);
-                dd($WCProd);
+
                 if ($request->MsgType==0 && $WCProd) {    // if ($request->MsgType==1) {
 
 
