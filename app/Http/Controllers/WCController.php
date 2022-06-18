@@ -52,7 +52,7 @@ class WCController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products/' . $id . '/variations/' . $id . '?context=view&context=view',
+            CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products/' . $id . '/variations/' . $id . '?context=view&context=view&per_page=100',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
@@ -2210,7 +2210,7 @@ class WCController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-        CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products/'.$product_id.'/variations',
+        CURLOPT_URL => $user->siteUrl.'/wp-json/wc/v3/products/'.$product_id.'/variations?per_page=100',
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
@@ -2241,7 +2241,7 @@ class WCController extends Controller
         $mh = curl_multi_init();
         foreach ($products_id as $i => $product_id) {
             // URL from which data will be fetched
-            $fetchURL = $user->siteUrl.'/wp-json/wc/v3/products/'.$product_id.'/variations';
+            $fetchURL = $user->siteUrl.'/wp-json/wc/v3/products/'.$product_id.'/variations?per_page=100';
             $multiCurl[$i] = curl_init();
             curl_setopt($multiCurl[$i], CURLOPT_URL,$fetchURL);
             curl_setopt($multiCurl[$i], CURLOPT_RETURNTRANSFER,1);
@@ -2358,9 +2358,9 @@ class WCController extends Controller
         //foreach ($variations as $wcId){
 
             $wcProducts=$this->get_variation_product($wcId);
-            if($user->id==10 and $wcId==10555){
-                dd($wcProducts);
-            }
+            // if($user->id==10 and $wcId==10555){
+            //     dd($wcProducts);
+            // }
             //$wcProducts=$wcProducts[0];
 
             foreach ($wcProducts as $WCProd) {
@@ -2373,7 +2373,8 @@ class WCController extends Controller
                         $productFind = false;
                         $HolooProd=$holooProducts->result;
                         $holooCode=$HolooProd->a_Code;
-                        if ($wcHolooCode == $holooCode) {
+
+                        if ($wcHolooCode === $holooCode) {
 
                             // log::info("holo ".json_encode($HolooProd));
                             // log::info("wp ".json_encode($WCProd));
