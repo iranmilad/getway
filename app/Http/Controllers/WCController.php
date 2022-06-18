@@ -1474,9 +1474,7 @@ class WCController extends Controller
                     //$WCProd=$this->getWcProductWithHolooId($holooID);
                     $WCProd=$WCProd[0];
                     if($WCProd->type=="variable"){
-                        if($user->id==10){
-                            dd($holooProduct);
-                        }
+
                         $WCProd=$this->getVariationProductWithHoloo($holooID,$WCProd,$holooProduct,$config);
                         Log::info("holo code found variation product ".$holooID);
                         if(!$WCProd) continue;
@@ -2360,7 +2358,9 @@ class WCController extends Controller
         //foreach ($variations as $wcId){
 
             $wcProducts=$this->get_variation_product($wcId);
-
+            if($user->id==10){
+                dd($wcProducts);
+            }
             //$wcProducts=$wcProducts[0];
 
             foreach ($wcProducts as $WCProd) {
