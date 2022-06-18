@@ -1470,7 +1470,9 @@ class WCController extends Controller
                         Log::alert(json_encode($holooProduct));
                         continue;
                     }
-
+                    if($user->id==10){
+                        dd($WCProd);
+                    }
                     //$WCProd=$this->getWcProductWithHolooId($holooID);
                     $WCProd=$WCProd[0];
                     if($WCProd->type=="variable"){
@@ -1607,12 +1609,16 @@ class WCController extends Controller
             $HolooIDs=array_reverse($HolooIDs);
             //array_shift($HolooIDs);
 
-            $config=json_decode($this->getWcConfig());
+            $config=json_decode($user->config);
+            if(!$config) return;
 
 
 
             if ($request->MsgType==0 && $config->insert_new_product==1) {
-                $HolooProds  = $this->fetchCategoryHolloProds($config->product_cat);
+                //$HolooProds  = $this->fetchCategoryHolloProds($config->product_cat);
+                $HolooProds  = $this->fetchAllHolloProds();
+                $HolooProds  =$HolooProds->result;
+
             }
             foreach($HolooIDs as $holooID){
 
@@ -1627,6 +1633,12 @@ class WCController extends Controller
                     $holooProduct=json_decode($holooProduct);
                     $WCProd=$this->getWcProductWithHolooId($holooID);
                     $WCProd=$WCProd[0];
+
+                    if($WCProd->type=="variable"){
+                        $WCProd=$this->getVariationProductWithHoloo($holooID,$WCProd,$holooProduct,$config);
+                        Log::info("holo code found variation product ".$holooID);
+                        continue;
+                    }
 
                     if(isset($WCProd->meta_data) and count($WCProd->meta_data)>0){
                         $wholesale_customer_wholesale_price= $this->findKey($WCProd->meta_data,'wholesale_customer_wholesale_price');
