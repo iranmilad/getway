@@ -1444,7 +1444,7 @@ class WCController extends Controller
 
             $config=json_decode($user->config);
             if(!$config) return;
-            dd($config);
+            //dd($config);
 
             log::info($this->getWcConfig());
 
