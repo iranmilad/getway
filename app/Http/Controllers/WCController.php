@@ -1470,14 +1470,15 @@ class WCController extends Controller
                         Log::alert(json_encode($holooProduct));
                         continue;
                     }
-                    if($user->id==10){
-                        dd($WCProd);
-                    }
+
                     //$WCProd=$this->getWcProductWithHolooId($holooID);
                     $WCProd=$WCProd[0];
                     if($WCProd->type=="variable"){
                         $WCProd=$this->getVariationProductWithHoloo($holooID,$WCProd,$holooProduct,$config);
                         Log::info("holo code found variation product ".$holooID);
+                        if($user->id==10){
+                            dd($WCProd);
+                        }
                         continue;
                     }
 
