@@ -2039,7 +2039,7 @@ class WCController extends Controller
         foreach ($products as $product) {
             $product=(object) $product;
 
-            if ($product->a_Code==$holooCode) {
+            if (isset($product->a_Code) and $product->a_Code==$holooCode) {
                 return $product;
             }
         }
