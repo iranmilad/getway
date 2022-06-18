@@ -1442,9 +1442,9 @@ class WCController extends Controller
             $HolooIDs=array_reverse($HolooIDs);
             //array_shift($HolooIDs);
 
-            $config=json_decode($this->getWcConfig());
-            dd($config);
+            $config=json_decode($user->config);
             if(!$config) return;
+            dd($config);
 
             log::info($this->getWcConfig());
 
