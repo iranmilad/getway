@@ -2358,7 +2358,7 @@ class WCController extends Controller
         //foreach ($variations as $wcId){
 
             $wcProducts=$this->get_variation_product($wcId);
-            if($user->id==10){
+            if($user->id==10 and $wcId==10555){
                 dd($wcProducts);
             }
             //$wcProducts=$wcProducts[0];
