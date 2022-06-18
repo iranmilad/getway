@@ -1453,7 +1453,7 @@ class WCController extends Controller
             foreach($HolooIDs as $holooID){
 
                 $WCProd=$this->getWcProductWithHolooId($holooID);
-
+                dd($WCProd);
                 if ($request->MsgType==0 && $WCProd) {    // if ($request->MsgType==1) {
 
 
@@ -1510,7 +1510,7 @@ class WCController extends Controller
                 else if ($request->MsgType==0 && property_exists($config, "insert_new_product") && $config->insert_new_product==1) {
 
                     $holooProduct=$this->findProduct($HolooProds,$holooID);
-                    dd($holooProduct);
+
                     if(!$holooProduct) continue;
 
                     $param = [
