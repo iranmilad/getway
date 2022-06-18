@@ -1510,7 +1510,7 @@ class WCController extends Controller
                 else if ($request->MsgType==0 && property_exists($config, "insert_new_product") && $config->insert_new_product==1) {
 
                     $holooProduct=$this->findProduct($HolooProds,$holooID);
-                    //dd($holooProduct);
+                    dd($holooProduct);
                     if(!$holooProduct) continue;
 
                     $param = [
