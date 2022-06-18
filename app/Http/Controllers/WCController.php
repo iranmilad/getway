@@ -1443,8 +1443,9 @@ class WCController extends Controller
             //array_shift($HolooIDs);
 
             $config=json_decode($this->getWcConfig());
-            if(!$config) return;
             dd($config);
+            if(!$config) return;
+
             log::info($this->getWcConfig());
 
             if ($request->MsgType==0 && isset($config->insert_new_product) && $config->insert_new_product==1) {
