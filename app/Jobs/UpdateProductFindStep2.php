@@ -60,10 +60,13 @@ class UpdateProductFindStep2 implements ShouldQueue
         $holooProducts = $callApi;
         $holooProducts = $this->reMapHolooProduct($holooProducts);
 
+
         $callApi = $this->fetchAllWCProds(true,$this->wc_cat);
         $wcProducts = $callApi;
 
         log::info('product fetch compelete for category '.$this->wc_cat);
+
+
         $response_product=[];
 
         $wcholooCounter=0;
@@ -80,14 +83,17 @@ class UpdateProductFindStep2 implements ShouldQueue
                         $wcholooCounter=$wcholooCounter+1;
 
                         $productFind = false;
+
                         if(isset($holooProducts[(string)$wcHolooCode])){
                             $HolooProd=$holooProducts[(string)$wcHolooCode];
+
                         }
                         else{
                             continue;
                         }
                         //foreach ($holooProducts as $key=>$HolooProd) {
                             $HolooProd=(object) $HolooProd;
+
                             if ($wcHolooCode === $HolooProd->a_Code) {
 
                                 // log::info($this->config->sales_price_field);
@@ -97,7 +103,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                                 // log::info((isset($this->config->sales_price_field) && (int)$WCProd->regular_price != $this->get_price_type($this->config->sales_price_field,$HolooProd)));
 
                                 // log::info($WCProd->stock_quantity);
-                                // log::info((int)$HolooProd->exist);
+                                // log::info($this->get_exist_type($this->config->product_stock_field,$HolooProd));
 
                                 $holooFinded=$holooFinded+1;
                                 $productFind = true;
@@ -110,8 +116,8 @@ class UpdateProductFindStep2 implements ShouldQueue
                                 (isset($this->config->special_price_field) && (int)$WCProd->sale_price  != $this->get_price_type($this->config->special_price_field,$HolooProd)) or
                                 (isset($this->config->wholesale_price_field) && $wholesale_customer_wholesale_price && (int)$wholesale_customer_wholesale_price  != $this->get_price_type($this->config->wholesale_price_field,$HolooProd))
                                 ) or
-                                ((isset($this->config->update_product_stock) && $this->config->update_product_stock=="1")  and $WCProd->stock_quantity != (int)$HolooProd->exist) or
-                                ((isset($this->config->update_product_name) && $this->config->update_product_name=="1") && $WCProd->name != trim($this->arabicToPersian($HolooProd->a_Name)))
+                                ((isset($this->config->update_product_stock) && $this->config->update_product_stock=="1")  and $WCProd->stock_quantity != $this->get_exist_type($this->config->product_stock_field,$HolooProd)) or
+                                ((isset($this->config->update_product_name) && $this->config->update_product_name=="1") && $WCProd->name != trim($this->arabicToPersian($HolooProd->name)))
 
                                 ){
 
@@ -122,12 +128,12 @@ class UpdateProductFindStep2 implements ShouldQueue
 
                                     $data = [
                                         'id' => $WCProd->id,
-                                        'name' =>(isset($this->config->update_product_name) && $this->config->update_product_name=="1") && ($WCProd->name != $this->arabicToPersian($HolooProd->a_Name)) ? $this->arabicToPersian($HolooProd->a_Name) :$WCProd->name,
+                                        'name' =>(isset($this->config->update_product_name) && $this->config->update_product_name=="1") && ($WCProd->name != $this->arabicToPersian($HolooProd->name)) ? $this->arabicToPersian($HolooProd->name) :$WCProd->name,
                                         'regular_price' => (isset($this->config->update_product_price) && $this->config->update_product_price=="1") && ((int)$WCProd->regular_price != $this->get_price_type($this->config->sales_price_field,$HolooProd)) ? $this->get_price_type($this->config->sales_price_field,$HolooProd) : (int)$WCProd->regular_price,
                                         'price' => (isset($this->config->update_product_price) && $this->config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($this->config->special_price_field,$HolooProd)) ? $this->get_price_type($this->config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                         'sale_price' => (isset($this->config->update_product_price) && $this->config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($this->config->special_price_field,$HolooProd)) ? $this->get_price_type($this->config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                         'wholesale_customer_wholesale_price' => (isset($this->config->update_product_price) && $this->config->update_product_price=="1") && (isset($wholesale_customer_wholesale_price) && (int)$wholesale_customer_wholesale_price != $this->get_price_type($this->config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($this->config->wholesale_price_field,$HolooProd)  : ((isset($wholesale_customer_wholesale_price)) ? (int)$wholesale_customer_wholesale_price : null),
-                                        'stock_quantity' => (isset($this->config->update_product_stock) && $this->config->update_product_stock=="1") ? (int) $HolooProd->exist : (int)$WCProd->stock_quantity,
+                                        'stock_quantity' => (isset($this->config->update_product_stock) && $this->config->update_product_stock=="1") ? $this->get_exist_type($this->config->product_stock_field,$HolooProd) : (int)$WCProd->stock_quantity,
                                     ];
                                     log::info("add new update product to queue for product ");
                                     log::info("for website id : ".$this->user->siteUrl);
@@ -157,6 +163,8 @@ class UpdateProductFindStep2 implements ShouldQueue
             }
         }
         if(count($variation)>0){
+
+
             $countvariation=$this->updateWCVariation($variation,$holooProducts,$this->config);
             $wcholooCounter=$wcholooCounter+$countvariation;
         }
@@ -233,7 +241,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                 $s_groupcode=explode("-",$category_key)[1];
                 if ($this->user->user_traffic=='heavy') {
                     curl_setopt_array($curl, array(
-                        CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
+                        CURLOPT_URL => 'https://myholoo.ir/api/Article/GetProducts?maingroupcode='.$m_groupcode,
                         CURLOPT_RETURNTRANSFER => true,
                         CURLOPT_ENCODING => '',
                         CURLOPT_MAXREDIRS => 10,
@@ -244,17 +252,17 @@ class UpdateProductFindStep2 implements ShouldQueue
                         CURLOPT_HTTPHEADER => array(
                             'serial: ' . $this->user->serial,
                             'database: ' . $this->user->holooDatabaseName,
-                            'Authorization: Bearer ' .$this->user->cloudToken,
-                            'm_groupcode: ' . $m_groupcode,
-                            'isArticle: true',
-                            'access_token: ' .$this->user->apiKey
+                            'access_token: ' . $this->user->apiKey,
+                            'Authorization: Bearer ' .$this->getNewToken(),
                         ),
                     ));
+
                 }
                 else{
                     curl_setopt_array($curl, array(
-                        CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
+                        CURLOPT_URL => 'https://myholoo.ir/api/Article/GetProducts?sidegroupcode='.$s_groupcode.'&maingroupcode='.$m_groupcode,
                         CURLOPT_RETURNTRANSFER => true,
+
                         CURLOPT_ENCODING => '',
                         CURLOPT_MAXREDIRS => 10,
                         CURLOPT_TIMEOUT => 0,
@@ -264,19 +272,17 @@ class UpdateProductFindStep2 implements ShouldQueue
                         CURLOPT_HTTPHEADER => array(
                             'serial: ' . $this->user->serial,
                             'database: ' . $this->user->holooDatabaseName,
-                            'Authorization: Bearer ' .$this->user->cloudToken,
-                            'm_groupcode: ' . $m_groupcode,
-                            's_groupcode: ' . $s_groupcode,
-                            'isArticle: true',
-                            'access_token: ' .$this->user->apiKey
+                            'access_token: ' . $this->user->apiKey,
+                            'Authorization: Bearer ' .$this->getNewToken(),
                         ),
                     ));
+
                 }
 
                 $response = curl_exec($curl);
 
-                if($response){
-                    $totalProduct=array_merge(json_decode($response, true)??[],$totalProduct??[]);
+                if($response and json_decode($response, true)["data"]["product"]){
+                    $totalProduct=array_merge(json_decode($response, true)["data"]["product"] ??[],$totalProduct??[]);
                 }
 
             }
@@ -358,23 +364,23 @@ class UpdateProductFindStep2 implements ShouldQueue
         // "special_price_field": "2",
         // "wholesale_price_field": "3",
 
-        // "sel_Price": 12000,
-        // "sel_Price2": 0,
-        // "sel_Price3": 0,
-        // "sel_Price4": 0,
-        // "sel_Price5": 0,
-        // "sel_Price6": 0,
-        // "sel_Price7": 0,
-        // "sel_Price8": 0,
-        // "sel_Price9": 0,
-        // "sel_Price10": 0,
+        // "sellPrice": 12000,
+        // "sellPrice2": 0,
+        // "sellPrice3": 0,
+        // "sellPrice4": 0,
+        // "sellPrice5": 0,
+        // "sellPrice6": 0,
+        // "sellPrice7": 0,
+        // "sellPrice8": 0,
+        // "sellPrice9": 0,
+        // "sellPrice10": 0,
 
 
         if((int)$price_field==1){
-            return (int)(float) $HolooProd->sel_Price*$this->get_tabdel_vahed();
+            return (int)(float) $HolooProd->sellPrice*$this->get_tabdel_vahed();
         }
         else{
-            return (int)(float) $HolooProd->{"sel_Price".$price_field}*$this->get_tabdel_vahed();
+            return (int)(float) $HolooProd->{"sellPrice".$price_field}*$this->get_tabdel_vahed();
         }
     }
 
@@ -454,6 +460,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                             //if( array_search($key, $notneedtoProsse)) continue;
 
                             $HolooProd=(object) $HolooProd;
+
                             if ($wcHolooCode === $HolooProd->a_Code) {
 
                                 $productFind = true;
@@ -466,8 +473,8 @@ class UpdateProductFindStep2 implements ShouldQueue
                                 (isset($config->special_price_field) && (int)$WCProd->sale_price  != $this->get_price_type($config->special_price_field,$HolooProd)) or
                                 (isset($config->wholesale_price_field) && $wholesale_customer_wholesale_price && (int)$wholesale_customer_wholesale_price  != $this->get_price_type($config->wholesale_price_field,$HolooProd))
                                 ) or
-                                ((isset($config->update_product_stock) && $config->update_product_stock=="1") and $WCProd->stock_quantity != (int)$HolooProd->exist) or
-                                ((isset($config->update_product_name) && $config->update_product_name=="1") && $WCProd->name != trim($this->arabicToPersian($HolooProd->a_Name)))
+                                ((isset($config->update_product_stock) && $config->update_product_stock=="1") and $WCProd->stock_quantity != $this->get_exist_type($config->product_stock_field,$HolooProd)) or
+                                ((isset($config->update_product_name) && $config->update_product_name=="1") && $WCProd->name != trim($this->arabicToPersian($HolooProd->name)))
 
                                 ){
 
@@ -480,7 +487,7 @@ class UpdateProductFindStep2 implements ShouldQueue
                                         'price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                         'sale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && ((int)$WCProd->sale_price != $this->get_price_type($config->special_price_field,$HolooProd)) ? $this->get_price_type($config->special_price_field,$HolooProd)  :(int)$WCProd->sale_price,
                                         'wholesale_customer_wholesale_price' => (isset($config->update_product_price) && $config->update_product_price=="1") && (isset($wholesale_customer_wholesale_price) && (int)$wholesale_customer_wholesale_price != $this->get_price_type($config->wholesale_price_field,$HolooProd)) ? $this->get_price_type($config->wholesale_price_field,$HolooProd)  : ((isset($wholesale_customer_wholesale_price)) ? (int)$wholesale_customer_wholesale_price : null),
-                                        'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1") ? (int) $HolooProd->exist : (int)$WCProd->stock_quantity,
+                                        'stock_quantity' => (isset($config->update_product_stock) && $config->update_product_stock=="1") ? $this->get_exist_type($config->product_stock_field,$HolooProd) : (int)$WCProd->stock_quantity,
                                     ];
                                     log::info("add new update product to queue for product variation");
                                     log::info("for website id : ".$this->user->siteUrl);
@@ -546,4 +553,22 @@ class UpdateProductFindStep2 implements ShouldQueue
         }
         return $newHolooProducts;
     }
+
+    private function get_exist_type($exist_field,$HolooProd){
+        // "sales_price_field": "1",
+        // "special_price_field": "2",
+        // "wholesale_price_field": "3",
+
+
+        if((int)$exist_field==1){
+            return (int)(float) $HolooProd->few;
+        }
+        elseif((int)$exist_field==2){
+            return (int)(float) $HolooProd->fewspd;
+        }
+        elseif((int)$exist_field==3){
+            return (int)(float) $HolooProd->fewtak;
+        }
+    }
+
 }

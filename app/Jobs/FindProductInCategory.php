@@ -49,7 +49,7 @@ class FindProductInCategory implements ShouldQueue
     public function handle(){
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
+            CURLOPT_URL => 'https://myholoo.ir/api/Article/GetProducts?sidegroupcode='.$this->category->s_groupcode.'&maingroupcode='.$this->category->m_groupcode,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -60,15 +60,12 @@ class FindProductInCategory implements ShouldQueue
             CURLOPT_HTTPHEADER => array(
                 'serial: ' . $this->user->serial,
                 'database: ' . $this->user->holooDatabaseName,
-                'm_groupcode: ' . $this->category->m_groupcode,
-                's_groupcode: ' . $this->category->s_groupcode,
-                'isArticle: true',
                 'access_token: ' . $this->user->apiKey,
                 'Authorization: Bearer ' .$this->token,
             ),
         ));
         $response = curl_exec($curl);
-        $HolooProds = json_decode($response);
+        $HolooProds = json_decode($response)->data->product;
         // log::info($HolooProds);
         // log::info($this->category->m_groupcode);
         // log::info($this->category->s_groupcode);
@@ -78,12 +75,12 @@ class FindProductInCategory implements ShouldQueue
 
                 $param = [
                     "holooCode" => $HolooProd->a_Code,
-                    'name' => $this->arabicToPersian($HolooProd->a_Name),
+                    'name' => $this->arabicToPersian($HolooProd->name),
                     'regular_price' => $this->get_price_type($this->request["sales_price_field"],$HolooProd),
                     'price' => $this->get_price_type($this->request["special_price_field"],$HolooProd),
                     'sale_price' => $this->get_price_type($this->request["special_price_field"],$HolooProd),
                     'wholesale_customer_wholesale_price' => $this->get_price_type($this->request["wholesale_price_field"],$HolooProd),
-                    'stock_quantity' => (int) $HolooProd->exist>0 ?? 0,
+                    'stock_quantity' => $this->get_exist_type($this->request["product_stock_field"],$HolooProd),
                 ];
 
                 if(is_array($this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode])){
@@ -93,7 +90,7 @@ class FindProductInCategory implements ShouldQueue
                     $prodcat=$this->request["product_cat"][$this->category->m_groupcode."-".$this->category->s_groupcode];
                 }
 
-                if ((!isset($this->request["insert_product_with_zero_inventory"]) && $HolooProd->exist > 0) || (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "0" && $HolooProd->exist > 0)) {
+                if ((!isset($this->request["insert_product_with_zero_inventory"]) && $this->get_exist_type($this->request["product_stock_field"],$HolooProd) > 0) || (isset($this->request["insert_product_with_zero_inventory"]) && $this->request["insert_product_with_zero_inventory"] == "0" && $this->get_exist_type($this->request["product_stock_field"],$HolooProd) > 0)) {
 
 
                     if (isset($HolooProd->Poshak)) {
@@ -120,13 +117,42 @@ class FindProductInCategory implements ShouldQueue
     }
 
     private function get_price_type($price_field,$HolooProd){
+        // "sales_price_field": "1",
+        // "special_price_field": "2",
+        // "wholesale_price_field": "3",
 
-        if($price_field==1){
-            return (string)$HolooProd->sel_Price;
+        // "sellPrice": 12000,
+        // "sellPrice2": 0,
+        // "sellPrice3": 0,
+        // "sellPrice4": 0,
+        // "sellPrice5": 0,
+        // "sellPrice6": 0,
+        // "sellPrice7": 0,
+        // "sellPrice8": 0,
+        // "sellPrice9": 0,
+        // "sellPrice10": 0,
+
+
+        if((int)$price_field==1){
+            return (int)(float) $HolooProd->sellPrice*$this->get_tabdel_vahed();
         }
         else{
-            return (string)$HolooProd->{"sel_Price".$price_field};
+            return (int)(float) $HolooProd->{"sellPrice".$price_field}*$this->get_tabdel_vahed();
         }
+    }
+
+    public function get_tabdel_vahed(){
+
+        if ($this->user->holo_unit=="rial" and $this->user->plugin_unit=="toman"){
+            return 0.1;
+        }
+        elseif ($this->user->holo_unit=="toman" and $this->user->plugin_unit=="rial"){
+            return 10;
+        }
+        else{
+            return 1;
+        }
+
     }
 
     public static function arabicToPersian($string){
@@ -155,6 +181,22 @@ class FindProductInCategory implements ShouldQueue
         return str_replace(array_keys($characters), array_values($characters), $string);
     }
 
+    private function get_exist_type($exist_field,$HolooProd){
+        // "sales_price_field": "1",
+        // "special_price_field": "2",
+        // "wholesale_price_field": "3",
+
+
+        if((int)$exist_field==1){
+            return (int)(float) $HolooProd->few;
+        }
+        elseif((int)$exist_field==2){
+            return (int)(float) $HolooProd->fewspd;
+        }
+        elseif((int)$exist_field==3){
+            return (int)(float) $HolooProd->fewtak;
+        }
+    }
     /**
      * The unique ID of the job.
      *

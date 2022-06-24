@@ -55,6 +55,7 @@ class CreateProductFind implements ShouldQueue
             'special_price_field' => $this->param->special_price_field,
             'special_price_field' => $this->param->special_price_field,
             'wholesale_price_field' => $this->param->wholesale_price_field,
+            'product_stock_field' => $this->param->product_stock_field,
             'insert_product_with_zero_inventory' =>$this->param->insert_product_with_zero_inventory,
             'product_cat' => $this->param->product_cat
         ];
@@ -71,73 +72,8 @@ class CreateProductFind implements ShouldQueue
                     "apiKey"=>$this->user->apiKey,
                     "token"=>$this->user->token,
                 ],
+
                     $category,$this->token,$wcHolooExistCode,$param,$category->m_groupcode.'-'.$category->s_groupcode)->onQueue("low");
-
-                // curl_setopt_array($curl, array(
-                //     CURLOPT_URL => 'https://myholoo.ir/api/Article/SearchArticles?from.date=2022',
-                //     CURLOPT_RETURNTRANSFER => true,
-                //     CURLOPT_ENCODING => '',
-                //     CURLOPT_MAXREDIRS => 10,
-                //     CURLOPT_TIMEOUT => 0,
-                //     CURLOPT_FOLLOWLOCATION => true,
-                //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                //     CURLOPT_CUSTOMREQUEST => 'GET',
-                //     CURLOPT_HTTPHEADER => array(
-                //         'serial: ' . $this->user->serial,
-                //         'database: ' . $this->user->holooDatabaseName,
-                //         'm_groupcode: ' . $category->s_groupcode,
-                //         'isArticle: true',
-                //         'access_token: ' . $this->user->apiKey,
-                //         'Authorization: Bearer ' . $token,
-                //     ),
-                // ));
-                // $response = curl_exec($curl);
-                // $HolooProds = json_decode($response);
-
-                // foreach ($HolooProds as $HolooProd) {
-                //     if (!in_array($HolooProd->a_Code, $wcHolooExistCode)
-                //     ) { //&& $HolooProd->exist>0
-
-
-                //         // $param = [
-                //         //     "holooCode" => $HolooProd->a_Code,
-                //         //     "holooName" => $this->arabicToPersian($HolooProd->a_Name),
-                //         //     "holooRegularPrice" => (string) $HolooProd->sel_Price ?? 0,
-                //         //     "holooStockQuantity" => (string) $HolooProd->exist ?? 0,
-                //         // ];
-                //         $param = [
-                //             "holooCode" => $HolooProd->a_Code,
-                //             'name' => $this->arabicToPersian($HolooProd->a_Name),
-                //             'regular_price' => $this->get_price_type($this->param->sales_price_field,$HolooProd),
-                //             'price' => $this->get_price_type($this->param->special_price_field,$HolooProd),
-                //             'sale_price' => $this->get_price_type($this->param->special_price_field,$HolooProd),
-                //             'wholesale_customer_wholesale_price' => $this->get_price_type($this->param->wholesale_price_field,$HolooProd),
-                //             'stock_quantity' => (int) $HolooProd->exist ?? 0,
-                //         ];
-                //         if ((!isset($this->param->insert_product_with_zero_inventory) && $HolooProd->exist > 0) || (isset($this->param->insert_product_with_zero_inventory) && $this->param->insert_product_with_zero_inventory == "0" && $HolooProd->exist > 0)) {
-                //             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->s_groupcode,"name" => $category->m_groupname]);
-                //             $counter = $counter + 1;
-                //             if (isset($HolooProd->Poshak)) {
-                //                 AddProductsUser::dispatch($this->user, $param, ['id' => $data[$category->s_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
-                //             }
-                //             else{
-                //                 AddProductsUser::dispatch($this->user, $param, ['id' => $data[$category->s_groupcode], "name" => ""], $HolooProd->a_Code);
-                //             }
-                //         }
-                //         elseif (isset($this->param->insert_product_with_zero_inventory) && $this->param->insert_product_with_zero_inventory == "1") {
-                //             //$allRespose[]=app('App\Http\Controllers\WCController')->createSingleProduct($param,['id' => $category->s_groupcode,"name" => $category->m_groupname]);
-                //             $counter = $counter + 1;
-                //             if (isset($HolooProd->Poshak)) {
-                //                 AddProductsUser::dispatch($this->user, $param, ['id' => $data[$category->s_groupcode], "name" => ""], $HolooProd->a_Code,"variable",$HolooProd->Poshak);
-                //             }
-                //             else{
-                //                 AddProductsUser::dispatch($this->user, $param, ['id' => $data[$category->s_groupcode], "name" => ""], $HolooProd->a_Code);
-                //             }
-                //             //dd($data[$category->s_groupcode]);
-                //         }
-                //     }
-
-                // }
             }
         }
 

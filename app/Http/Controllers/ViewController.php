@@ -333,4 +333,22 @@ class ViewController extends Controller{
             return (int)(float) $HolooProd->{"sel_Price".$price_field}*$this->get_tabdel_vahed();
         }
     }
+
+    private function get_exist_type($exist_field,$HolooProd){
+        // "sales_price_field": "1",
+        // "special_price_field": "2",
+        // "wholesale_price_field": "3",
+
+
+        if((int)$exist_field==1){
+            return (int)(float) $HolooProd->few;
+        }
+        elseif((int)$exist_field==2){
+            return (int)(float) $HolooProd->fewspd;
+        }
+        elseif((int)$exist_field==3){
+            return (int)(float) $HolooProd->fewtak;
+        }
+    }
+
 }
