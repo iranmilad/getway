@@ -342,11 +342,14 @@ class UpdateProductFindStep3All implements ShouldQueue
 
             $response = curl_exec($curl);
 
-            $products = json_decode($response);
+            if($response){
+                $products = json_decode($response);
+                $all_products = array_merge($all_products,$products);
+            }
 
-            $all_products = array_merge($all_products,$products);
           }
           catch(\Throwable $th){
+            log::error("error in fetchAllWCProds".$th->getMessage());
             break;
           }
           $page++;

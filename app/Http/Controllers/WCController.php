@@ -957,10 +957,14 @@ class WCController extends Controller
 
             $response = curl_exec($curl);
             //log::info($response);
-            $products = json_decode($response);
-            $all_products = array_merge($all_products,$products);
+            if($response){
+                $products = json_decode($response);
+                $all_products = array_merge($all_products,$products);
+            }
+
           }
           catch(\Throwable $th){
+            log::error("error in fetchAllWCProds".$th->getMessage());
             break;
           }
           $page++;
