@@ -262,7 +262,7 @@ class UpdateProductFindStep3All implements ShouldQueue
 
                 $response = curl_exec($curl);
 
-                if($response and json_decode($response, true)["data"]["product"]){
+                if($response and isset(json_decode($response, true)["data"]) and isset(json_decode($response, true)["data"]["product"])){
                     $totalProduct=array_merge(json_decode($response, true)["data"]["product"] ??[],$totalProduct??[]);
                 }
 
