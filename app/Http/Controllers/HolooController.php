@@ -526,7 +526,7 @@ class HolooController extends Controller
         $user = auth()->user();
         $this->recordLog("Invoice Payed", $user->siteUrl, "Invoice Payed receive");
 
-        $invoice = Invoice::where(['invoiceId'=>$orderInvoice->id,"invoiceStatus"=>"processing"])
+        $invoice = Invoice::where(['invoiceId'=>$orderInvoice->id,"invoiceStatus"=>"processing","status"=>'["\u062b\u0628\u062a \u0633\u0641\u0627\u0631\u0634 \u0641\u0631\u0648\u0634 \u0627\u0646\u062c\u0627\u0645 \u0634\u062f"]'])
         ->first();
 
         if($invoice){
@@ -536,7 +536,7 @@ class HolooController extends Controller
             $invoice->invoiceId = isset($orderInvoice->id) ? $orderInvoice->id : null;
             $invoice->invoiceStatus = isset($orderInvoice->status) ? $orderInvoice->status : null;
             $invoice->save();
-            $this->InvoiceChangeStatus($invoice->id, 'ثبت سفارش فروش از قبل انجام شده است');
+            //$this->InvoiceChangeStatus($invoice->id, 'ثبت سفارش فروش از قبل انجام شده است');
             return $this->sendResponse('ثبت سفارش فروش انجام شد', Response::HTTP_OK, ["result" => ["msg_code" => 1]]);
         }
 
