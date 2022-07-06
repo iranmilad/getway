@@ -17,7 +17,7 @@ class UpdateProductsVariationUser implements ShouldQueue
     protected $user;
     protected $param;
     public $flag;
-
+    public $timeout = 10*60;
     /**
      * Create a new job instance.
      *
