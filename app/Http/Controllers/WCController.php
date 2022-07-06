@@ -1459,23 +1459,23 @@ class WCController extends Controller
             //dd($config);
 
             //log::info($this->getWcConfig());
-
+            sleep(10);
             if ($request->MsgType==0 && isset($config->insert_new_product) && $config->insert_new_product==1) {
-                //$HolooProds  = $this->fetchCategoryHolloProds($config->product_cat);
 
-                if($user->user_traffic=="heavy"){
-                    $HolooProds  = $this->fetchAllHolloProds();
-                    //$HolooProds  =$HolooProds->result;    old code
-                    $HolooProds  =$HolooProds->data->product;
 
-                }
-                else{
-                    $HolooProds  = $this->fetchAllHolloProds();
-                    //$HolooProds  =$HolooProds->result;    old code
-                    $HolooProds  =$HolooProds->data->product;
+                // if($user->user_traffic=="heavy"){
+                //     $HolooProds  = $this->fetchAllHolloProds();
+                //
+                //     $HolooProds  =$HolooProds->data->product;
 
-                }
-                //dd($HolooProds);
+                // }
+                // else{
+                //     $HolooProds  = $this->fetchAllHolloProds();
+                //
+                //     $HolooProds  =$HolooProds->data->product;
+
+                // }
+
             }
             foreach($HolooIDs as $holooID){
 
@@ -1541,8 +1541,7 @@ class WCController extends Controller
                 }
                 else if ($request->MsgType==0 && isset($config->insert_new_product) && $config->insert_new_product==1) {
 
-                    //$holooProduct=$this->findProduct($HolooProds,$holooID);
-                    //dd($holooID);
+
                     $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
 
                     if(!$holooProduct) continue;
