@@ -205,7 +205,7 @@ class UpdateProductFindStep3All implements ShouldQueue
                 log::info("take new token request and response");
                 log::info(json_encode($response));
 
-                $this->user->cloudTokenExDate = Carbon::now()->addDay(1);
+                $this->user->cloudTokenExDate = Carbon::now()->addHour(4);
                 return $response->result->apikey;
             }
         }
