@@ -335,7 +335,7 @@ class HolooController extends Controller
             if (!$custid) {
                 log::info("کد مشتری یافت نشد");
                 $this->InvoiceChangeStatus($invoice->id, "ثبت پیش فاکتور انجام نشد");
-                return $this->sendResponse("ثبت پیش فاکتور انجام نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+                return $this->sendResponse("ثبت پیش فاکتور انجام نشد", Response::HTTP_BAD_REQUEST, ["result" => ["msg_code" => 0]]);
             }
 
             $items = array();
@@ -566,7 +566,7 @@ class HolooController extends Controller
             if (!$custid) {
                 log::info("کد مشتری یافت نشد");
                 $this->InvoiceChangeStatus($invoice->id, " ثبت فاکتور انجام نشد کد مشتری یافت نشد");
-                return $this->sendResponse(" ثبت فاکتور انجام نشد کد مشتری یافت نشد", Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+                return $this->sendResponse(" ثبت فاکتور انجام نشد کد مشتری یافت نشد", Response::HTTP_BAD_REQUEST, ["result" => ["msg_code" => 0]]);
             }
 
             $items = array();
@@ -582,7 +582,7 @@ class HolooController extends Controller
             // log::info("payment: ".json_encode($orderInvoice->payment_method));
             if (!(array)$payment) {
                 $this->InvoiceChangeStatus($invoice->id, 'ثبت فاکتور انجام نشد.روش پرداخت نامعتبر');
-                return $this->sendResponse('ثبت فاکتور انجام نشد.روش پرداخت نامعتبر', Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+                return $this->sendResponse('ثبت فاکتور انجام نشد.روش پرداخت نامعتبر', Response::HTTP_BAD_REQUEST, ["result" => ["msg_code" => 0]]);
             }
             $payment =(object) $payment->{$orderInvoice->payment_method};
             //log::info("payment: ".json_encode($payment));
@@ -591,8 +591,10 @@ class HolooController extends Controller
 
 
             if(!is_object($orderInvoiceFull)){
+
+                log::alert(json_encode($orderInvoiceFull));
                 $this->InvoiceChangeStatus($invoice->id, 'ثبت فاکتور بدلیل عدم یافت انجام نشد');
-                return $this->sendResponse('ثبت فاکتور بدلیل عدم یافت انجام نشد', Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+                return $this->sendResponse('ثبت فاکتور بدلیل عدم یافت انجام نشد', Response::HTTP_BAD_REQUEST, ["result" => ["msg_code" => 0]]);
             }
             $cate=[];
             foreach ($orderInvoiceFull->line_items as $item) {
@@ -630,7 +632,7 @@ class HolooController extends Controller
                     }
                     elseif($orderInvoice->invoice_items_no_holo_code){
                         $this->InvoiceChangeStatus($invoice->id, 'ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد');
-                        return $this->sendResponse('ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد', Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+                        return $this->sendResponse('ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد', Response::HTTP_BAD_REQUEST, ["result" => ["msg_code" => 0]]);
                     }
                     else{
                         continue;
@@ -639,7 +641,7 @@ class HolooController extends Controller
                 }
                 elseif($orderInvoice->invoice_items_no_holo_code){
                     $this->InvoiceChangeStatus($invoice->id, 'ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد');
-                    return $this->sendResponse('ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد', Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+                    return $this->sendResponse('ثبت فاکتور بدلیل ایتم فاقد کد هلو انجام نشد', Response::HTTP_BAD_REQUEST, ["result" => ["msg_code" => 0]]);
                 }
 
             }
@@ -759,10 +761,10 @@ class HolooController extends Controller
                     $this->recordLog("Invoice Registration", $user->siteUrl, json_encode($response), "error");
                 }
 
-                return $this->sendResponse($response->message, Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0]]);
+                return $this->sendResponse($response->message, Response::HTTP_BAD_REQUEST, ["result" => ["msg_code" => 0]]);
             }
             $this->InvoiceChangeStatus($invoice->id, 'اقلام سفارش یافت نشد');
-            return $this->sendResponse('اقلام سفارش یافت نشد', Response::HTTP_INTERNAL_SERVER_ERROR, ["result" => ["msg_code" => 0,"item"=>$orderInvoiceFull]]);
+            return $this->sendResponse('اقلام سفارش یافت نشد', Response::HTTP_BAD_REQUEST, ["result" => ["msg_code" => 0,"item"=>$orderInvoiceFull]]);
         }
         $this->InvoiceChangeStatus($invoice->id, 'ثبت فاکتور خاموش است');
         return $this->sendResponse('ثبت فاکتور خاموش است', Response::HTTP_OK, ["result" => ["msg_code" => 0,"param"=>$orderInvoice->save_sale_invoice]]);
