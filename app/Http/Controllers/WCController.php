@@ -1544,7 +1544,12 @@ class WCController extends Controller
 
                     $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
 
-                    if(!$holooProduct) continue;
+                    if(!$holooProduct){
+
+                        log::info("holo code not found product ".$holooID);
+                        continue;
+                    }
+
 
                     $holooProduct=json_decode($holooProduct);
                     $holooProduct=$holooProduct->data->product;
