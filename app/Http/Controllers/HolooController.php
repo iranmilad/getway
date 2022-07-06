@@ -62,7 +62,7 @@ class HolooController extends Controller
                 log::info(json_encode($response));
                 User::where(['id' => $user->id])
                 ->update([
-                    'cloudTokenExDate' => Carbon::now()->addDay(1),
+                    'cloudTokenExDate' => Carbon::now()->addHour(4),
                     'cloudToken' => $response->result->apikey,
                 ]);
 
