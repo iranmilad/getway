@@ -308,6 +308,12 @@ class HolooController extends Controller
         //log::info("order: ".json_encode($orderInvoice->request->all()));
         //$orderInvoice->request->add($order);
         //return $this->sendResponse('test', Response::HTTP_OK, $orderInvoice);
+        $allStatus=['processing', 'pending','completed','on-hold','pws-shipping','cancelled','refunded','failed','trash'];
+        if (!in_array($orderInvoice->status, $allStatus)){
+            Log::alert("Invoice Payed status not valid");
+            Log::alert("Invoice status is".$orderInvoice->status);
+            return $this->sendResponse('وضعیت فاکتور تعریف نشده', Response::HTTP_BAD_REQUEST, ["result" => ["msg_code" => 0]]);
+        }
 
         $invoice = new Invoice();
         $invoice->invoice = json_encode($orderInvoice->request->all());
@@ -528,6 +534,13 @@ class HolooController extends Controller
 
         $invoice = Invoice::where(['invoiceId'=>$orderInvoice->id,"invoiceStatus"=>"processing","status"=>'["\u062b\u0628\u062a \u0633\u0641\u0627\u0631\u0634 \u0641\u0631\u0648\u0634 \u0627\u0646\u062c\u0627\u0645 \u0634\u062f"]'])
         ->first();
+
+        $allStatus=['processing', 'pending','completed','on-hold','pws-shipping','cancelled','refunded','failed','trash'];
+        if (!in_array($orderInvoice->status, $allStatus)){
+            Log::alert("Invoice Payed status not valid");
+            Log::alert("Invoice status is".$orderInvoice->status);
+            return $this->sendResponse('وضعیت فاکتور تعریف نشده', Response::HTTP_BAD_REQUEST, ["result" => ["msg_code" => 0]]);
+        }
 
         if($invoice){
             $invoice = new Invoice();
