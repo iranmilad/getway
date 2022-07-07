@@ -1058,14 +1058,16 @@ class WCController extends Controller
             ),
         ));
         $response = curl_exec($curl);
-
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
         $response = json_decode($response);
         if($response){
             log::info('update single product succsessfuly for wc product id '.$params['id']);
         }
         else{
-            $this->recordLog('update single product has error return',json_encode($response));
+            $this->recordLog('update single product has error return is ',json_encode($response));
+            log::warning("get http code ".$httpcode." for ".$params['id']." for user: ".$user->id);
+
         }
         curl_close($curl);
         return $response;
