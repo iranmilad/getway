@@ -1623,6 +1623,9 @@ class WCController extends Controller
                     //log::info(json_encode($response));
 
                 }
+                else{
+                    log::info("wc product not found and add new product is off for holo code ".$holooID);
+                }
 
             }
             $this->sendResponse('محصول با موفقیت دریافت شدند', Response::HTTP_OK,[]);

@@ -21,7 +21,7 @@ class CreateInvoiceTable extends Migration
             $table->json('holooInvoice')->nullable();
 
             $table->json('status')->nullable();
-            $table->enum('invoiceStatus', ['processing', 'pending','completed','on-hold','pws-shipping'])->nullable();
+            $table->enum('invoiceStatus', ['processing', 'pending','completed','on-hold','pws-shipping','cancelled','refunded','failed','trash'])->nullable();
 
             $table->timestamps();
         });
