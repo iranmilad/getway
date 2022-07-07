@@ -1490,14 +1490,15 @@ class WCController extends Controller
                     //update product
 
                     $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
-                    $holooProduct=json_decode($holooProduct)->data->product;
-                    $holooProduct = $holooProduct[0];
-
-                    if (!isset($holooProduct->sellPrice)){
-                        Log::alert("holo code not found for holoo id".$holooID);
+                    if (!isset(json_decode($holooProduct)->data->product)){
+                        Log::alert("holo code not found for holoo id ".$holooID." at webhook resived");
                         Log::alert(json_encode($holooProduct));
                         continue;
                     }
+                    $holooProduct=json_decode($holooProduct)->data->product;
+                    $holooProduct = $holooProduct[0];
+
+
 
                     //$WCProd=$this->getWcProductWithHolooId($holooID);
                     $WCProd=$WCProd[0];
@@ -1547,9 +1548,10 @@ class WCController extends Controller
 
                     $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
 
-                    if(!$holooProduct){
+                    if (!isset(json_decode($holooProduct)->data->product)){
 
-                        log::info("holo code not found product ".$holooID);
+                        Log::alert("holo code not found for holoo id ".$holooID." at webhook resived");
+                        Log::alert(json_encode($holooProduct));
                         continue;
                     }
 
