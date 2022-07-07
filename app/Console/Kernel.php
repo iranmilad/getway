@@ -53,7 +53,7 @@ class Kernel extends ConsoleKernel
 
 
             }
-        })->name('every day auto update')->withoutOverlapping()->dailyAt('02:46');
+        })->name('every day auto update')->withoutOverlapping()->dailyAt('23:00');
     }
 
     /**
