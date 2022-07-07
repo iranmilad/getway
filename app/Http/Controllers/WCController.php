@@ -1488,7 +1488,7 @@ class WCController extends Controller
 
                 $WCProd=$this->getWcProductWithHolooId($holooID);
                 if(!is_array($WCProd)){
-                    Log::alert("wc code not found and error for holoo id ".$holooID." at webhook resived");
+                    Log::alert("wc response code isnt array for holoo id ".$holooID." at webhook resived");
                     Log::alert(json_encode($WCProd));
                     continue;
                 }
