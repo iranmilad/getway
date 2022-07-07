@@ -1500,7 +1500,15 @@ class WCController extends Controller
 
 
                     //$WCProd=$this->getWcProductWithHolooId($holooID);
-                    $WCProd=$WCProd[0];
+                    try{
+                        $WCProd=$WCProd[0];
+                    }
+                    catch (\Exception $e){
+                        Log::alert("wc code not found and error for holoo id ".$holooID." at webhook resived");
+                        Log::alert(json_encode($WCProd));
+                        log::alert($e->getMessage());
+                        continue;
+                    }
                     if($WCProd->type=="variable"){
 
                         $WCProd=$this->getVariationProductWithHoloo($holooID,$WCProd,$holooProduct,$config);
