@@ -1514,7 +1514,7 @@ class WCController extends Controller
 
                         $WCProd=$this->getVariationProductWithHoloo($holooID,$WCProd,$holooProduct,$config);
                         if (!$WCProd) {
-                            Log::info("holo code not found variation product ".$holooID);
+                            Log::info("holo code not found variation product in wc for code ".$holooID);
                             continue;
                         }
                         Log::info("holo code found variation product ".$holooID);
