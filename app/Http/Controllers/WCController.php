@@ -1502,7 +1502,7 @@ class WCController extends Controller
                     $holooProduct=json_decode($holooProduct)->data->product;
                     $holooProduct = $holooProduct[0];
 
-                    if(!$WCProd[0]){
+                    if(is_object($WCProd)){
                         Log::alert("wc response code isnt array for holoo id ".$holooID." at webhook resived");
                         Log::alert(json_encode($WCProd));
                         continue;
