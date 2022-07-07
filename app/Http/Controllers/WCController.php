@@ -1794,10 +1794,12 @@ class WCController extends Controller
         $response=json_decode($response);
         curl_close($curl);
         if (isset($response)) {
-            log::info(json_encode($response));
+            //log::info(json_encode($response));
             return $response;
         }
         else{
+            log::warning("no wc product found for holoo id: ".$meta." for user: ".$user->id);
+
             return null;
         }
 
