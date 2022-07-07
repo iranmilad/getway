@@ -1461,7 +1461,6 @@ class WCController extends Controller
             if(!$config) return;
             //dd($config);
 
-            //log::info($this->getWcConfig());
             sleep(10);
             if ($request->MsgType==0 && isset($config->insert_new_product) && $config->insert_new_product==1) {
 
@@ -1505,8 +1504,11 @@ class WCController extends Controller
                     if($WCProd->type=="variable"){
 
                         $WCProd=$this->getVariationProductWithHoloo($holooID,$WCProd,$holooProduct,$config);
+                        if (!$WCProd) {
+                            Log::info("holo code not found variation product ".$holooID);
+                            continue;
+                        }
                         Log::info("holo code found variation product ".$holooID);
-                        if(!$WCProd) continue;
 
 
                     }
@@ -1536,7 +1538,7 @@ class WCController extends Controller
 
                         $response = $this->updateWCSingleProduct($param);
                         log::info("webhook update product");
-                        log::info(json_encode($response));
+                        //log::info(json_encode($response));
                     }
                     else{
                         continue;
