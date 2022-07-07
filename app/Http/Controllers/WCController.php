@@ -1061,7 +1061,12 @@ class WCController extends Controller
 
 
         $response = json_decode($response);
-        $this->recordLog('update single product',json_encode($response));
+        if($response){
+            log::info('update single product succsessfuly for wc product id '.$params['id']);
+        }
+        else{
+            $this->recordLog('update single product has error return',json_encode($response));
+        }
         curl_close($curl);
         return $response;
         //$this->sendResponse('محصول به روز شد', Response::HTTP_OK, ['res' => $response]);
