@@ -1451,6 +1451,9 @@ class WCController extends Controller
             }
             auth()->login($user);
             $HolooIDs=explode(",",$request->MsgValue);
+            if(count($HolooIDs)>30){
+                $this->sendResponse('تعداد کالا برای اعمال در هوک بیش از مقدار است', Response::HTTP_OK,[]);
+            }
             $HolooIDs=array_reverse($HolooIDs);
             //array_shift($HolooIDs);
 
