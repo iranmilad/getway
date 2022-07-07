@@ -2279,10 +2279,15 @@ class WCController extends Controller
         ));
 
         $response = curl_exec($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         if ($response) {
             $decodedResponse = json_decode($response);
             return $decodedResponse;
+        }
+        else{
+            $this->recordLog('variation product not response at get_variation_product response is ',json_encode($response));
+            log::warning("get http code ".$httpcode." for ".$product_id." for user: ".$user->id);
         }
         return null;
     }
