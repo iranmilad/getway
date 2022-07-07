@@ -1791,15 +1791,16 @@ class WCController extends Controller
         ));
 
         $response = curl_exec($curl);
-        $response=json_decode($response);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         if (isset($response)) {
             //log::info(json_encode($response));
+            $response=json_decode($response);
             return $response;
         }
         else{
             log::warning("no wc product found for holoo id: ".$meta." for user: ".$user->id);
-
+            log::warning("get http code ".$httpcode." for ".$meta." for user: ".$user->id);
             return null;
         }
 
