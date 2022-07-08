@@ -41,7 +41,7 @@ class Kernel extends ConsoleKernel
 
 
             }
-        })->name('every day auto update')->withoutOverlapping()->dailyAt('02:12');
+        })->name('every day auto update')->withoutOverlapping()->dailyAt('01:12');
 
         $schedule->call(function () {
 
