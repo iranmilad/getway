@@ -56,7 +56,7 @@ class UpdateProductFindStep2All implements ShouldQueue
      */
     public function handle()
     {
-        try {
+        // try {
     
             Log::info(' queue update product find step 2 start for all category');
             $callApi = $this->fetchAllHolloProds();
@@ -169,20 +169,20 @@ class UpdateProductFindStep2All implements ShouldQueue
     
             log::info("update finish for website : ".$this->user->siteUrl."for product count : ".$wcholooCounter);
     
-        } catch (\Throwable $exception) {
-            if ($this->attempts() > 1) {
-                // hard fail after 1 attempts
-                log::info("hard fail after 1 attempts");
-                log::info($exception);
-                throw $exception;
+        // } catch (\Throwable $exception) {
+        //     if ($this->attempts() > 1) {
+        //         // hard fail after 1 attempts
+        //         log::info("hard fail after 1 attempts");
+        //         log::info($exception);
+        //         throw $exception;
 
-            }
+        //     }
 
-            // requeue this job to be executes
-            // in 3 minutes (180 seconds) from now
-            $this->release(180);
-            return;
-        }
+        //     // requeue this job to be executes
+        //     // in 3 minutes (180 seconds) from now
+        //     $this->release(180);
+        //     return;
+        // }
 
     }
 
