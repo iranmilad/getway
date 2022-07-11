@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Exports\ReportExport;
 use Illuminate\Http\Response;
+use App\Jobs\UpdateProductFind;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -311,4 +312,12 @@ class DownloadController extends Controller
         return str_replace(array_keys($characters), array_values($characters), $string);
     }
 
+    public function sendUpdate($user_id){
+        $user=User::whereNotNull("config")->where(["id"=>$user_id])->get()->first();
+
+        log::info("run auto update admin for user: ".$user->id);
+        $config=json_decode($user->config);
+        UpdateProductFind::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"serial"=>$user->serial,"apiKey"=>$user->apiKey,"holooDatabaseName"=>$user->holooDatabaseName,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret,"cloudTokenExDate"=>$user->cloudTokenExDate,"cloudToken"=>$user->cloudToken, "holo_unit"=>$user->holo_unit, "plugin_unit"=>$user->plugin_unit,"user_traffic"=>$user->user_traffic],$config->product_cat,$config,1)->onQueue("high");
+
+    }
 }
