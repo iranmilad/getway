@@ -2434,6 +2434,7 @@ class WCController extends Controller
             //     dd($wcProducts);
             // }
             //$wcProducts=$wcProducts[0];
+            if (!$wcProducts) return;
 
             foreach ($wcProducts as $WCProd) {
 
