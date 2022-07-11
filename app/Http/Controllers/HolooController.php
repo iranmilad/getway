@@ -1491,14 +1491,20 @@ class HolooController extends Controller
             $customer = (object) $customer;
         }
         $holooCustomers = $this->getHolooDataTable();
-
-        foreach ($holooCustomers->result as $holloCustomer) {
-            if ($holloCustomer->c_Mobile == $customer->phone) {
-                log::info("finded customer: ".$holloCustomer->c_Code_C);
-                log::info("customer holoo mobile: ".$holloCustomer->c_Mobile);
-                log::info("customer holoo name: ".$holloCustomer->c_Name);
-                return $holloCustomer->c_Code_C;
+        if(!is_object($holooCustomers) or !isset($holooCustomers->result)){
+            log::alert("holooCustomers is not any response in cloud");
+            log::alert($holooCustomers);
+        }
+        else{
+            foreach ($holooCustomers->result as $holloCustomer) {
+                if ($holloCustomer->c_Mobile == $customer->phone) {
+                    log::info("finded customer: ".$holloCustomer->c_Code_C);
+                    log::info("customer holoo mobile: ".$holloCustomer->c_Mobile);
+                    log::info("customer holoo name: ".$holloCustomer->c_Name);
+                    return $holloCustomer->c_Code_C;
+                }
             }
+
         }
         log::info("customer for your mobile number not found i want to create new customer to holoo for mobile ".$customer->phone);
         return $this->createHolooCustomer($customer, $customerId);
