@@ -22,7 +22,7 @@ use App\Jobs\UpdateProductsVariationUser;
 
 class HolooController extends Controller
 {
-    private function getNewToken(): string
+    private function getNewToken($force=false): string
     {
 
         $user = auth()->user();
@@ -30,7 +30,7 @@ class HolooController extends Controller
         $userSerial = $user->serial;
         $userApiKey = $user->apiKey;
 
-        if ($user->cloudTokenExDate > Carbon::now()) {
+        if ($user->cloudTokenExDate > Carbon::now() and $force == false) {
 
             return $user->cloudToken;
         }
@@ -203,6 +203,25 @@ class HolooController extends Controller
         ));
 
         $response = curl_exec($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        if ($httpcode == 401) {
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://myholoo.ir/api/Article/GetProducts',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'serial: ' . $user->serial,
+                    'database: ' . $user->holooDatabaseName,
+                    'Authorization: Bearer ' . $this->getNewToken(true),
+                ),
+            ));
+            $response = curl_exec($curl);
+        }
+
         curl_close($curl);
         return $response;
     }

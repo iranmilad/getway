@@ -1522,7 +1522,11 @@ class WCController extends Controller
                             Log::info("holo code not found variation product in wc for code ".$holooID." for wc product id ".$WCParentProdCode);
                             continue;
                         }
-                        Log::info("holo code found variation product ".$holooID);
+                        else{
+                            Log::info("holo code found variation product ".$holooID);
+                            Log::info("variation product send to queue for update for ".$holooID);
+                            continue;
+                        }
 
 
                     }
@@ -2480,7 +2484,7 @@ class WCController extends Controller
 
 
                             }
-
+                            return $WCProd;
                         }
 
                     }

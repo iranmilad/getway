@@ -28,34 +28,39 @@ class Kernel extends ConsoleKernel
         })->name('job_remove_old_request')->withoutOverlapping()->everyMinute();
 
 
+
+        //schedule for light traffic
         $schedule->call(function () {
-
-            $users=User::where(["user_traffic"=>'light'])->get()->all();
-            foreach($users as $key=>$user){
-                if ($user->config==null) continue;
+            $users=User::whereNotNull("config")->where(["user_traffic"=>'light'])->get()->all();
+            foreach ($users as $key=>$user) {
                 log::info("run auto update night for user: ".$user->id);
+                $this->getNewToken($user);
+            }
+
+            $users=User::whereNotNull("config")->where(["user_traffic"=>'light'])->get()->all();
+            foreach($users as $key=>$user){
                 $config=json_decode($user->config);
-                $cloudToken= $this->getNewToken($user);
                 //log::info($config->product_cat);
-                UpdateProductFind::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"serial"=>$user->serial,"apiKey"=>$user->apiKey,"holooDatabaseName"=>$user->holooDatabaseName,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret,"cloudTokenExDate"=>Carbon::now()->addHour(4),"cloudToken"=>$cloudToken, "holo_unit"=>$user->holo_unit, "plugin_unit"=>$user->plugin_unit,"user_traffic"=>$user->user_traffic],$config->product_cat,$config,1)->onQueue("high");
-
-
+                UpdateProductFind::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"serial"=>$user->serial,"apiKey"=>$user->apiKey,"holooDatabaseName"=>$user->holooDatabaseName,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret,"cloudTokenExDate"=>$user->cloudTokenExDate,"cloudToken"=>$user->cloudToken, "holo_unit"=>$user->holo_unit, "plugin_unit"=>$user->plugin_unit,"user_traffic"=>$user->user_traffic],$config->product_cat,$config,1)->onQueue("high");
             }
         })->name('every day auto update')->withoutOverlapping()->dailyAt('01:12');
 
+
+        //schedule for heavy traffic
         $schedule->call(function () {
-
-            $users=User::where(["user_traffic"=>'heavy'])->get()->all();
-            foreach($users as $key=>$user){
-                if ($user->config==null) continue;
-                log::info("run auto update night for heavy user: ".$user->id);
-                $config=json_decode($user->config);
-                $cloudToken= $this->getNewToken($user);
-                //log::info($config->product_cat);
-                UpdateProductFind::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"serial"=>$user->serial,"apiKey"=>$user->apiKey,"holooDatabaseName"=>$user->holooDatabaseName,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret,"cloudTokenExDate"=>Carbon::now()->addHour(4),"cloudToken"=>$cloudToken, "holo_unit"=>$user->holo_unit, "plugin_unit"=>$user->plugin_unit,"user_traffic"=>$user->user_traffic],$config->product_cat,$config,1)->onQueue("high");
-
-
+            $users=User::whereNotNull("config")->where(["user_traffic"=>'heavy'])->get()->all();
+            foreach ($users as $key=>$user) {
+                log::info("run auto update night for user: ".$user->id);
+                $this->getNewToken($user);
             }
+
+            $users=User::whereNotNull("config")->where(["user_traffic"=>'heavy'])->get()->all();
+            foreach($users as $key=>$user){
+                $config=json_decode($user->config);
+                //log::info($config->product_cat);
+                UpdateProductFind::dispatch((object)["id"=>$user->id,"siteUrl"=>$user->siteUrl,"serial"=>$user->serial,"apiKey"=>$user->apiKey,"holooDatabaseName"=>$user->holooDatabaseName,"consumerKey"=>$user->consumerKey,"consumerSecret"=>$user->consumerSecret,"cloudTokenExDate"=>$user->cloudTokenExDate,"cloudToken"=>$user->cloudToken, "holo_unit"=>$user->holo_unit, "plugin_unit"=>$user->plugin_unit,"user_traffic"=>$user->user_traffic],$config->product_cat,$config,1)->onQueue("high");
+            }
+
         })->name('every day auto update')->withoutOverlapping()->dailyAt('23:00');
     }
 
@@ -107,6 +112,11 @@ class Kernel extends ConsoleKernel
             if ($response) {
                 log::info("take new token request and response");
                 log::info(json_encode($response));
+                User::where(['id' => $user->id])
+                ->update([
+                    'cloudTokenExDate' => Carbon::now()->addHour(4),
+                    'cloudToken' => $response->result->apikey,
+                ]);
                 return $response->result->apikey;
             }
             else {
