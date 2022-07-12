@@ -331,7 +331,7 @@ class UpdateProductFindStep2All implements ShouldQueue
         for ($x = 0; $x <= 1; $x+=1) {
             $response = curl_exec($curl);
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            if($response and $response!=null){
+            if($response and isset(json_decode($response, true)["data"]) and isset(json_decode($response, true)["data"]["product"])){
                 $response=json_decode($response, true)["data"]["product"];
             }
             else{
