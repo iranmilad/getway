@@ -384,7 +384,7 @@ class UpdateProductFindStep2All implements ShouldQueue
 
             if($response){
                 $products = json_decode($response);
-                if(is_array($products)){
+                if(is_array($products) and count($products)>0){
                     $all_products = array_merge($all_products,$products);
                 }
                 else{
@@ -395,7 +395,7 @@ class UpdateProductFindStep2All implements ShouldQueue
 
           }
           catch(\Throwable $th){
-            log::error("error in fetchAllWCProds".$th->getMessage());
+            log::error("error in fetchAllWCProds ".$th->getMessage());
             break;
           }
           $page++;
