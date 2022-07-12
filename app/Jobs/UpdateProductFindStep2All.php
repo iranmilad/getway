@@ -335,7 +335,7 @@ class UpdateProductFindStep2All implements ShouldQueue
                 $response=json_decode($response, true)["data"]["product"];
             }
             else{
-                $this->recordLog('cloud holo dont response any value');
+                log::warning('cloud holo dont response any value');
                 log::warning("get http code ".$httpcode." for all product for user: ".$this->user->id);
                 sleep(60);
                 continue;
