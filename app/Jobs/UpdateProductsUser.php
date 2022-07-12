@@ -79,8 +79,10 @@ class UpdateProductsUser implements ShouldQueue
         ));
 
         $response = curl_exec($curl);
-
-        log::info(json_encode($response));
+        if($response){
+            log::info("product updated for ".$this->param['id']); 
+        }
+        #log::info(json_encode($response));
 
         curl_close($curl);
     }
