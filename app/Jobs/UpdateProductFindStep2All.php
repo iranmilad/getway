@@ -30,7 +30,7 @@ class UpdateProductFindStep2All implements ShouldQueue
     public $flag;
     public $timeout = 3*60*60;
     public $failOnTimeout = true;
-    public $tries = 1;
+
 
     /**
      * Create a new job instance.
