@@ -111,3 +111,5 @@ Route::middleware(['auth:api','cors'])->group(function () {
 // php artisan queue:clear redis --queue=high,medium,low,default
 // php artisan queue:monitor redis:high,redis:medium,redis:default,redis:low,redis:deployments --max=100
 // php artisan queue:work --queue=default --memory=2048 --timeout=3600000
+// php artisan queue:retry all
+
