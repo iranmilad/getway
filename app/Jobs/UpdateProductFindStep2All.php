@@ -384,7 +384,13 @@ class UpdateProductFindStep2All implements ShouldQueue
 
             if($response){
                 $products = json_decode($response);
-                $all_products = array_merge($all_products,$products);
+                if(is_array($products)){
+                    $all_products = array_merge($all_products,$products);
+                }
+                else{
+                    log::error("error in WCProds not array");
+                    log::error(json_encode($products));
+                }
             }
 
           }
