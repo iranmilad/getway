@@ -337,6 +337,7 @@ class UpdateProductFindStep2All implements ShouldQueue
             else{
                 log::warning('cloud holo dont response any value');
                 log::warning("get http code ".$httpcode." for all product for user: ".$this->user->id);
+                log::warning($response);
                 sleep(60);
                 continue;
             }
@@ -388,7 +389,7 @@ class UpdateProductFindStep2All implements ShouldQueue
                     $all_products = array_merge($all_products,$products);
                 }
                 else{
-                    log::error("error in WCProds not array");
+                    log::error("error in WCProds not array for user id ".$this->user->id);
                     log::error(json_encode($products));
                 }
             }
