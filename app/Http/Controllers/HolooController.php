@@ -69,6 +69,8 @@ class HolooController extends Controller
                 return $response->result->apikey;
             }
             else {
+                log::alert("get take is problem");
+                log::alert(json_encode($response));
                 dd("توکن دریافت نشد", $response);
 
             }
