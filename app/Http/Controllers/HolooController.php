@@ -57,7 +57,7 @@ class HolooController extends Controller
             curl_close($curl);
             $response = json_decode($response);
 
-            if ($response) {
+            if ($response and isset($response->success) and $response->success == true) {
                 log::info("take new token request and response");
                 log::info(json_encode($response));
                 User::where(['id' => $user->id])
