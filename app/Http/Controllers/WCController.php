@@ -1470,7 +1470,7 @@ class WCController extends Controller
             if(!$config) return;
             //dd($config);
 
-            sleep(10);
+            sleep(60);
             if ($request->MsgType==0 && isset($config->insert_new_product) && $config->insert_new_product==1) {
 
 

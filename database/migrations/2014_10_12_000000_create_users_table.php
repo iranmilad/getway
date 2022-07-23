@@ -30,7 +30,7 @@ class CreateUsersTable extends Migration
 
             $table->string('serial')->default('10304923');
             $table->string('holooDatabaseName')->default('Holoo1');
-            $table->string('apiKey')->default('E5D3A60D3689D3CB8BD8BE91E5E29E934A830C2258B573B5BC28711F3F1D4B70');
+            $table->string('apiKey')->default('B06978A4BDC049EB9CFC17E7FDF329350BADB97DACA44E338C664E31F5EEB078');
             $table->enum('user_traffic', ['heavy', 'normal','light'])->default('light');
             $table->boolean('allow_insert_product')->default(false);
 
