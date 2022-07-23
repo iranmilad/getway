@@ -1150,6 +1150,7 @@ class HolooController extends Controller
         $user = auth()->user();
         $user_id = $user->id;
         $counter = 0;
+        log::info('add new all product resive for user: ' . $user->id);
         if(!$user->allow_insert_product)
             return $this->sendResponse('این سرویس توسط مدیریت روی اشتراک شما غیر فعال است', Response::HTTP_OK, ["result" => ["msg_code" => 0]]);
 

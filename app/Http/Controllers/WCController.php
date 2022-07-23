@@ -1081,7 +1081,7 @@ class WCController extends Controller
     {
         //return $config->special_price_field;
         $user=auth()->user();
-
+        log::info('request update all product resive for user: ' . $user->id);
         ini_set('max_execution_time', 0); // 120 (seconds) = 2 Minutes
         set_time_limit(0);
         //$callApi = $this->fetchAllHolloProds();
