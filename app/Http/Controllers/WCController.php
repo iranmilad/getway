@@ -1452,6 +1452,7 @@ class WCController extends Controller
             $hook->content = json_encode($request->all());
 
             $hook->user_id = ($user->id) ?? null;
+
             $hook->save();
             if($user==null){
                 $this->sendResponse('کاربر مورد نظر یافت نشد', Response::HTTP_OK,[]);
@@ -1469,8 +1470,8 @@ class WCController extends Controller
             $config=json_decode($user->config);
             if(!$config) return;
             //dd($config);
-
             sleep(60);
+
             if ($request->MsgType==0 && isset($config->insert_new_product) && $config->insert_new_product==1) {
 
 
