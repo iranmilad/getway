@@ -1140,7 +1140,8 @@ class HolooController extends Controller
 
 
         $response = curl_exec($curl);
-
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        log::info("get http code ".$httpcode."  for get single product from cloud for holoo product id: ".$holoo_id);
         curl_close($curl);
         return $response;
 
