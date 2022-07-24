@@ -1461,7 +1461,6 @@ class WCController extends Controller
             $HolooIDs=explode(",",$request->MsgValue);
             if(count($HolooIDs)>30){
                 log::alert("too many holoo ids");
-
                 return $this->sendResponse('تعداد کالا برای اعمال در هوک بیش از مقدار است', Response::HTTP_OK,[]);;
             }
             $HolooIDs=array_reverse($HolooIDs);
@@ -1489,8 +1488,8 @@ class WCController extends Controller
                 // }
 
             }
-            foreach($HolooIDs as $holooID){
-
+            foreach($HolooIDs as $ID){
+                $holooID=trim($ID);
                 $WCProd=$this->getWcProductWithHolooId($holooID);
 
                 if ($request->MsgType==0 && $WCProd) {    // if ($request->MsgType==1) {
@@ -1500,7 +1499,7 @@ class WCController extends Controller
 
                     $holooProduct=app('App\Http\Controllers\HolooController')->GetSingleProductHoloo($holooID);
                     if (!isset(json_decode($holooProduct)->data->product)){
-                        Log::alert("holo code not found for holoo id ".$holooID." at webhook resived");
+                        Log::alert("holo code not found for holoo id '".$holooID."' at webhook resived");
                         Log::alert(json_encode($holooProduct));
                         continue;
                     }
